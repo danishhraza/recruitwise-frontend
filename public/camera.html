@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Recruit Wise Webcam Stream</title>
+</head>
+<body>
+    <video id="video" autoplay playsinline></video>
+    <script>
+        navigator.mediaDevices.getUserMedia({ video: true,audio: true })
+            .then(stream => {
+                document.getElementById('video').srcObject = stream;
+            })
+            .catch(error => console.error("Error accessing webcam:", error));
+    </script>
+</body>
+</html>
