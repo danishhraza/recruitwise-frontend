@@ -7,8 +7,8 @@ import { CheckCircle } from "lucide-react";
 import { useRoom } from "../Context/RoomContext";
 
 function CheckDevices () {
-    const {setStage,deviceSettings,setDeviceSettings,audioInputDevices,setAudioInputDevices,videoInputDevices,setVideoInputDevices,audioOutputDevices,setAudioOutputDevices,
-      selectedMic,setSelectedMic,selectedVideo,setSelectedVideo,isLoading,setIsLoading,screenStream, setScreenStream} = useRoom()
+    const {setStage,deviceStates,setDeviceStates,audioInputDevices,setAudioInputDevices,videoInputDevices,setVideoInputDevices,audioOutputDevices,setAudioOutputDevices,
+      selectedMic,setSelectedMic,selectedVideo,setSelectedVideo,isLoading,setIsLoading,screenStream, setScreenStream,cameraStream,setCameraStream,setMicStream} = useRoom()
     const [testAudio,setTestAudio] = useState(false);
     // Audio Visualizer
     const [micLevel, setMicLevel] = useState(0);
@@ -16,86 +16,111 @@ function CheckDevices () {
     const analyserRef = useRef(null);
     const dataArrayRef = useRef(null);
     const sourceRef = useRef(null);
+    const videoRef = useRef(null);
     // -----------------
 
-    const [deviceStates, setDeviceStates] = useState({
-      microphone: false,
-      camera: false,
-      screen: false
-    });
 
-    const videoConstraints = {
-        width: 600,
-        height: 500,
-        facingMode: "user",
-        deviceId: selectedVideo.key
-      };
-      
+    // const videoConstraints = {
+    //     width: 600,
+    //     height: 500,
+    //     facingMode: "user",
+    //     deviceId: selectedVideo.key
+    //   };
+
+    
+    const startCamera = async () => {
+      try {
+          if (cameraStream) {
+              cameraStream.getTracks().forEach(track => track.stop());
+          }
+
+          const stream = await navigator.mediaDevices.getUserMedia({
+              video: {
+                  deviceId: selectedVideo.key ? { exact: selectedVideo.key } : undefined,
+              }
+          });
+
+          setCameraStream(stream);
+          if (videoRef.current) {
+              videoRef.current.srcObject = stream;
+          }
+          setDeviceStates(prev => ({ ...prev, camera: true }));
+
+      } catch (err) {
+          console.error("Error accessing camera:", err);
+          setDeviceStates(prev => ({ ...prev, camera: false }));
+          toast.error("Failed to access camera. Please check permissions.");
+      }
+  };
       useEffect(() => {
-        const checkDevicePermissions = async () => {
-            // Ensure loading toast appears first
-            await new Promise(resolve => setTimeout(resolve, 0));
-            toast.loading("Checking for microphone and camera permissions", {
-                duration: Infinity,
-                id: 'permission-check'
-            });
-    
-            try {
-                const cameraPermission = await navigator.permissions.query({ name: 'camera' });
-                if (cameraPermission.state !== 'granted') {
-                    await navigator.mediaDevices.getUserMedia({ video: true });
-                }
-                
-                const videoDevices = await navigator.mediaDevices.enumerateDevices();
-                const videos = videoDevices
-                    .filter((device) => device.kind === "videoinput")
-                    .map((device) => ({ key: device.deviceId, label: device.label }));
-                setSelectedVideo(videos[0]);
-                setVideoInputDevices(videos);
-                setDeviceStates(prev => ({ ...prev, camera: true }));
-    
-            } catch (err) {
-              setDeviceStates(prev => ({ ...prev, camera: false }));
-
-                if (err.name === 'NotAllowedError') {
-                    toast.error("Camera permissions denied, allow to proceed.", {
-                        duration: Infinity,
-                        id: 'Camera-permission-error'
-                    });
-                }
-            }
-    
-            try {
-                const microphonePermission = await navigator.permissions.query({ name: 'microphone' });
-                if (microphonePermission.state !== 'granted') {
-                    await navigator.mediaDevices.getUserMedia({ audio: true });
-                }
-    
-                const mediaDevices = await navigator.mediaDevices.enumerateDevices();
-                const microphones = mediaDevices
-                    .filter((device) => device.kind === "audioinput")
-                    .map((device) => ({ key: device.deviceId, label: device.label }));
-                setSelectedMic(microphones.find((device) => device.key === "default"));
-                setDeviceStates(prev => ({ ...prev, microphone: true }));
-                const speakers = mediaDevices.filter((device) => device.kind === "audiooutput");
-                setAudioOutputDevices(speakers);
-                setAudioInputDevices(microphones);
-    
-            } catch (err) {
-                if (err.name === 'NotAllowedError') {
-                    toast.error("Microphone permissions denied, allow to proceed.", {
-                        duration: Infinity,
-                        id: 'Mic-permission-error'
-                    });
-                }
-                setDeviceStates(prev => ({ ...prev, microphone: false }));
-            } finally {
-                toast.dismiss('permission-check');
+        startCamera();
+        return () => {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
             }
         };
-    
-        checkDevicePermissions();
-    }, []);
+    }, [selectedVideo]);
+      
+ // Device enumeration and initialization
+ useEffect(() => {
+  const checkDevicePermissions = async () => {
+      toast.loading("Checking for microphone and camera permissions", {
+          duration: Infinity,
+          id: 'permission-check'
+      });
+
+      try {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          
+          // Handle video devices
+          const videos = devices
+              .filter((device) => device.kind === "videoinput")
+              .map((device) => ({ key: device.deviceId, label: device.label }));
+          setVideoInputDevices(videos);
+          if (videos.length > 0) {
+              setSelectedVideo(videos[0]);
+          }
+
+          // Handle audio devices
+          const microphones = devices
+              .filter((device) => device.kind === "audioinput")
+              .map((device) => ({ key: device.deviceId, label: device.label }));
+          const speakers = devices.filter((device) => device.kind === "audiooutput");
+          
+          setAudioInputDevices(microphones);
+          setAudioOutputDevices(speakers);
+          
+          if (microphones.length > 0) {
+              const defaultMic = microphones.find(device => device.key === "default") || microphones[0];
+              setSelectedMic(defaultMic);
+              
+              // Initialize microphone stream
+              const micStream = await navigator.mediaDevices.getUserMedia({ 
+                  audio: { deviceId: defaultMic.key } 
+              });
+              setMicStream(micStream);
+              setDeviceStates(prev => ({ ...prev, microphone: true }));
+          }
+
+      } catch (err) {
+          console.error("Error during device initialization:", err);
+          if (err.name === 'NotAllowedError') {
+              toast.error("Device permissions denied. Please allow access to proceed.");
+          }
+      } finally {
+          toast.dismiss('permission-check');
+      }
+  };
+
+  checkDevicePermissions();
+
+  // Listen for device changes
+  navigator.mediaDevices.addEventListener('devicechange', checkDevicePermissions);
+  return () => {
+      navigator.mediaDevices.removeEventListener('devicechange', checkDevicePermissions);
+  };
+}, []);
+
 
 useEffect(() => {
     async function setupMicrophone() {
@@ -140,35 +165,55 @@ useEffect(() => {
     };
   }, [testAudio]);
 
-async function shareScreen(){
-  try {
-    setIsLoading(true)
-    const screenPermission = await navigator.mediaDevices.getDisplayMedia({ 
-      video: {
-        displaySurface: "monitor" // Forces entire screen selection
-    },
-        audio: false 
-    });
-    
-    const videoTrack = screenPermission.getVideoTracks()[0];
-    const settings = videoTrack.getSettings();
-    if (settings.displaySurface !== "monitor") {
-        stream.getTracks().forEach(track => track.stop());
-        throw new Error("Please select entire screen");
+  async function shareScreen(){
+    if (!deviceStates.screen) {
+    try {
+      setIsLoading(true)
+      const screenPermission = await navigator.mediaDevices.getDisplayMedia({ 
+        video: {
+          displaySurface: "monitor", // Forces entire screen selection
+          cursor:'always'
+      },
+          audio: false 
+      });
+      screenPermission.getVideoTracks()[0].addEventListener('ended', () => {
+        console.log('Screen sharing stopped by user');
+        setDeviceStates(prev => ({ ...prev, screen: false }));
+         });
+      const videoTrack = screenPermission.getVideoTracks()[0];
+      const settings = videoTrack.getSettings();
+      if (settings.displaySurface !== "monitor") {
+          screenPermission.getTracks().forEach(track => track.stop());
+          throw new Error("Please select entire screen");
+      }
+  
+      if (screenPermission) {
+  
+          setScreenStream(screenPermission);
+          setDeviceStates(prev => ({ ...prev, screen: true }));
+      }
+      console.log(screenPermission)
+      toast.dismiss('screen-share')
+    } catch (err) {
+      setDeviceStates(prev => ({ ...prev, screen: false }));
+      toast.error("Please share your entire screen", {duration: Infinity,id:'screen-share'});
+    }finally{
+      setIsLoading(false)
     }
-
-    if (screenPermission) {
-        setScreenStream(screenPermission);
-        setDeviceStates(prev => ({ ...prev, screen: true }));
-    }
-    console.log(screenPermission)
-    toast.dismiss('screen-share')
-  } catch (err) {
+  } else {
+    screenStream?.getTracks().forEach(track => track.stop());
+    setScreenStream(null);
     setDeviceStates(prev => ({ ...prev, screen: false }));
-    toast.error("Please share your entire screen", {duration: Infinity,id:'screen-share'});
-  }finally{
-    setIsLoading(false)
   }
+  }
+  
+
+function toggleMic(){
+
+}
+
+function toggleVideo(){
+
 }
 
 let selected =""
@@ -186,7 +231,14 @@ const areAllDevicesReady = deviceStates.microphone && deviceStates.camera && dev
   return (
     <div className="w-full h-screen flex justify-center items-center">
       <div className="w-[1000px] p-4 h-[400px] rounded-xl flex gap-6 bg-slate-200">
-            <Webcam className="rounded-xl" audio={testAudio} videoConstraints={videoConstraints} audioConstraints={{deviceId:selectedMic.key}}/>
+            <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    muted
+                    className="rounded-xl"
+                    style={{ width: 600, height: 370 }}
+                />
         <div id="checklist" className="gabarito-400 text-2xl flex flex-col justify-evenly gap-3">
         <div>
         <label>Select Microphone</label>
@@ -244,7 +296,7 @@ const areAllDevicesReady = deviceStates.microphone && deviceStates.camera && dev
         <label>
             Share your screen
         </label>
-        <Button className={screenStream != null && 'pointer-events-none'} color={screenStream!=null && 'green'} icon={screenStream != null && <CheckCircle size={'15px'} color="green"/>} variant="filled" loading={isLoading} onClick={()=>shareScreen()}>{screenStream == null ? 'Share':'Sharing Screen'}</Button>
+        <Button className={deviceStates.screen && 'pointer-events-none'} color={deviceStates.screen && 'green'} icon={deviceStates.screen && <CheckCircle size={'15px'} color="green"/>} variant="filled" loading={isLoading} onClick={()=>shareScreen()}>{screenStream == null ? 'Share':'Sharing Screen'}</Button>
       </div>
       <div className="flex justify-end">
       <Button disabled={!areAllDevicesReady} variant="solid" color="purple" size="large" onClick={()=>setStage('call')}>Join Call</Button>

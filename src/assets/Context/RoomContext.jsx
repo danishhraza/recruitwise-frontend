@@ -4,11 +4,13 @@ const RoomContext = createContext();
 
 export function RoomProvider({ children }) {
   const [stage, setStage] = useState('checkDevices');
-  const [deviceSettings, setDeviceSettings] = useState({
+
+  const [deviceStates, setDeviceStates] = useState({
     microphone: false,
     camera: false,
-    screenShare: false
+    screen: false
   });
+
   const [audioInputDevices,setAudioInputDevices] = useState([]);
       const [videoInputDevices,setVideoInputDevices] = useState([]);
       const [audioOutputDevices,setAudioOutputDevices] = useState([]);
@@ -17,12 +19,12 @@ export function RoomProvider({ children }) {
       const [testAudio,setTestAudio] = useState(false);
       const [screenStream, setScreenStream] = useState(null);
       const [isLoading,setIsLoading] = useState(false);
+      const [cameraStream, setCameraStream] = useState(null);
+      const [micStream, setMicStream] = useState(null);
       
   const value = {
     stage,
     setStage,
-    deviceSettings,
-    setDeviceSettings,
     audioInputDevices,
     setAudioInputDevices,
     videoInputDevices,
@@ -38,8 +40,13 @@ export function RoomProvider({ children }) {
     selectedMic,
     setSelectedMic,
     selectedVideo,
-    setSelectedVideo
-
+    setSelectedVideo,
+    cameraStream,
+    setCameraStream,
+    micStream,
+    setMicStream,
+    deviceStates,
+    setDeviceStates
   };
 
   return (
