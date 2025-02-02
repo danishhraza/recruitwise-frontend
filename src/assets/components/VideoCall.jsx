@@ -163,7 +163,7 @@ function VideoCall() {
                 <div className="absolute bottom-5 bg-slate-900 h-[80px] rounded-xl">
                     <ConfigProvider theme={{
                         token:{
-                            controlHeight:'85px'
+                            controlHeight:'80px'
                         }
                     }}>
                         <TooltipProvider>
@@ -210,8 +210,6 @@ function VideoCall() {
                                         Toggle Screen Share
                                     </TooltipContent>
                                 </Tooltip>
-                            </Space.Compact>
-                            <Space.Compact>
                                 <Tooltip>
                                     <TooltipTrigger>
                                         <Button icon={<SettingsIcon color="black" size={'40px'}/>} size="large" color="grey" variant="outlined"/>
