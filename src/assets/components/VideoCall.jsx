@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react"
-import Webcam from "react-webcam";
 import { useRoom } from "../Context/RoomContext";
 import { Button, ConfigProvider, Space} from "antd";
 import { MicIcon, MicOff, PhoneCallIcon, PhoneOffIcon, ScreenShareIcon, SettingsIcon, VideoIcon } from "lucide-react";

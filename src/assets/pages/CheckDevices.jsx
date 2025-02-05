@@ -1,7 +1,6 @@
 import { Button, ConfigProvider, Dropdown, Slider, Space, Typography } from "antd";
 import { DownOutlined } from '@ant-design/icons';
 import React, { useEffect, useRef, useState } from "react"
-import Webcam from "react-webcam";
 import { toast } from "sonner"
 import { CheckCircle } from "lucide-react";
 import { useRoom } from "../Context/RoomContext";
