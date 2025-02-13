@@ -3,13 +3,16 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./assets/pages/Home";
 import Room from "./assets/pages/Room";
-import Layout from "./assets/Layout/Layout";
+import JobLayout from "./assets/Layout/JobLayout";
 import { RoomProvider } from "./assets/Context/RoomContext";
+import ViewJobs from "./assets/pages/ViewJobs";
+import PublicLayout from "./assets/Layout/PublicLayout";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Layout />}>
+      <Route path="/" element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/jobs" element={<ViewJobs />} />
         <Route 
           path="/room/:roomid" 
           element={

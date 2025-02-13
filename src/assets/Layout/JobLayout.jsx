@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Toaster } from "../../components/ui/sonner";
 
 
-function Layout () {
+function JobLayout () {
   return (
     <>
         <Outlet/>
@@ -12,4 +12,4 @@ function Layout () {
   )
 };
 
-export default Layout;
+export default JobLayout;
