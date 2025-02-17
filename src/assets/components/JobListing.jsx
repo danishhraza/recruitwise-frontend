@@ -131,7 +131,10 @@ function JobListing({data}) {
       
 
   return (
-        <div className="text-white bg-slate-500 bg-opacity-50 rounded-lg w-[70dvw] p-4">
+<div className="relative w-full md:w-[70dvw] p-4 rounded-lg bg-gradient-to-r from-blue-400 to-blue-200 text-white border-2 border-transparent">
+<div className="absolute inset-0 rounded-lg bg-slate-900 "></div>
+<div className="relative z-10">
+
      <Row gutter={[16, 16]}>
   {/* Avatar */}
   <Col
@@ -139,7 +142,7 @@ function JobListing({data}) {
     sm={{ span: 6 }}
     md={{ span: 4 }}
     lg={{ span: 2 }}
-  >
+    >
     <Avatar shape="square" size={64} icon={<User2Icon />} />
   </Col>
 
@@ -148,8 +151,8 @@ function JobListing({data}) {
     xs={{ span: 18,order:2 }}
     sm={{ span: 18 }}
     md={{ span: 8 }}
-    lg={{ span: 4 }}
-  >
+    lg={{ span: 5 }}
+    >
     <div className="flex flex-col gap-2 px-6">
       <h1 className="text-2xl font-bold">{data.title}</h1>
       <p>{data.company}</p>
@@ -157,7 +160,7 @@ function JobListing({data}) {
   </Col>
 
   {/* Job Type (Full-time, Contract, etc.) */}
-  <Col xs={{span:24,order:4}} sm={{span:12,order:3}} md={{span:4}}>
+  <Col xs={{span:24,order:4}} sm={{span:12,order:3}} md={{span:3}}>
     <div className="flex w-full h-full items-center">
       <Tag bordered={false} color={jobType[data.jobType]} className="text-md">
         {data.jobType}
@@ -167,7 +170,7 @@ function JobListing({data}) {
 
   {/* Requirements */}
   <Col xs={{span:24,order:5}} sm={12} md={6}>
-    <div className="flex h-full items-center flex-wrap gap-y-2">
+    <div className="flex h-full items-center flex-wrap">
       {data.requirements.map((req, idx) => (
         <Tag bordered={false} color={skillColors[req.toLowerCase()]} key={idx}>
           {req}
@@ -194,6 +197,7 @@ function JobListing({data}) {
   </Col>
 </Row>
 
+      </div>
     </div>
   )
 }

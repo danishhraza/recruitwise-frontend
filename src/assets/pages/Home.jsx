@@ -30,7 +30,7 @@ function Home() {
     <p className="text-slate-300">Source, vet, and hire top talent in less than 24h</p>
             </div>
     <div className="w-full  flex justify-center gap-5 mt-5">
-    <Button color="primary" variant="solid">View Jobs</Button>
+    <Button color="primary" variant="solid" onClick={()=>navigate('/jobs')}>View Jobs</Button>
         <Button onClick={()=> openCallPage()} className="bg-white hover:bg-slate-200 w-[100px] gabarito-400 py-1 px-2 rounded-[8px] hover:cursor-pointer ">
           Hire Talents
         </Button>
