@@ -14,7 +14,7 @@ export default function PublicLayout() {
       },[])
 
   return (
-    <div className='bg-black w-full flex justify-center items-center overflow-auto  py-32'>
+    <div className='bg-black w-full  h-screen flex justify-center items-center overflow-auto  py-32'>
 {loading ? <RWloading /> : <>
 <Navbar/>
       <div className="w-full">

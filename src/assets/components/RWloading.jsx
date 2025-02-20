@@ -3,7 +3,7 @@ import RWpt from "./RWpt";
 
 function RWloading () {
   return (
-    <div className="h-screen "> 
+    <div> 
     <RWpt/>
     <div className="flex justify-center mt-4">
         <span class="loader"></span>

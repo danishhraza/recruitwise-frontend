@@ -3,13 +3,13 @@ import { Outlet } from "react-router-dom";
 import { Toaster } from "../../components/ui/sonner";
 
 
-function JobLayout () {
+function OtherLayout () {
   return (
-    <>
+    <div className="bg-black h-screen text-white">
         <Outlet/>
      <Toaster expand richColors position="top-center"/> 
-    </>
+    </div>
   )
 };
 
-export default JobLayout;
+export default OtherLayout;
