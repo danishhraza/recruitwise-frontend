@@ -55,7 +55,7 @@ function ViewJobs() {
                     View Jobs
                 </span>
             </h1>
-            <div className="w-full flex flex-wrap justify-center mt-5 gap-3">
+            <div className="w-full flex flex-wrap justify-center mt-5 gap-3 z-0">
                 <div className='w-[700px]'>
                     <Search 
                         size='large' 

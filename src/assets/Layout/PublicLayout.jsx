@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import Navbar from '../components/Navbar'
 import RWloading from '../components/RWloading'
+import StickyNavbar from '../components/StickyNavbar'
 
 export default function PublicLayout() {
       const [loading,setLoading] = useState(false)
-
       useEffect(()=>{
         setLoading(true)
         setTimeout(()=>{
@@ -14,10 +13,10 @@ export default function PublicLayout() {
       },[])
 
   return (
-    <div className='bg-black w-full  h-screen flex justify-center items-center overflow-auto  py-32'>
+    <div className='bg-black w-full  h-screen overflow-auto'>
 {loading ? <RWloading /> : <>
-<Navbar/>
-      <div className="w-full">
+      <StickyNavbar/>
+      <div className="w-full py-28">
         <Outlet context={{loading}}/> {/* This will render the correct page */}
       </div>
       </>

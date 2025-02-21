@@ -22,7 +22,7 @@ function Home() {
         <div className="flex-col"> 
           <div className="">
             <div className="text-center flex flex-col gap-6">
-        <h1 className="gabarito-400 text-center text-white text-7xl md:text-9xl">
+        <h1 className="gabarito-400 text-center text-white text-6xl md:text-7xl">
         <span className="bg-gradient-to-r from-blue-400 to-blue-200 text-transparent bg-clip-text">
   AI Recruitment engine
 </span><br/> to hire top global talent

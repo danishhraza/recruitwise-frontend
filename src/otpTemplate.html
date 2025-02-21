@@ -1,25 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <div style="text-align: center;background-color: black; color:white; padding: 20px; font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; width: 600px;">
-        <div>
-            <img src="../public/images/logo2-whiteBold.webp" alt="logo">
-        </div>
-
-        <h1 style="letter-spacing: 3px;">Test Message/Title 1</h1>
-        <p style="letter-spacing: 3px; text-align: left;">Hi <span>Khizar Asad</span>, Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-        <p>Your One Time Password</p>
-        <p><strong style="letter-spacing: 10px; font-size: 2rem; font-family: 'Courier New', Courier, monospace;">06253</strong></p>
-        <div style="height: 1px; background-color: grey;"></div>
-        <p style=" font-size: 12px;
-        text-align: center;
-        margin-top: 30px;
-        color: #777777;">All rights reserved © 2025 RecruitWise</p>
-    </div>
-</body>
-</html>
+            <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
+                <body>
+                    <div style="text-align: center; background-color: black; padding: 20px; width: 600px;">
+                        <div>
+                            <img src="https://cdn.discordapp.com/attachments/1331694081302073394/1342192593156444191/logo2-whiteBold.webp?ex=67b8bdc2&is=67b76c42&hm=503e6eeaac1ed72a3cfc042f87b3c62b048c5d12fe2f17761e8b022e181ae8ce&" alt="logo">
+                        </div>
+                                <h1 style="letter-spacing: 3px;text-align: center; color:#ffffff; font-family: 'Courier New', Courier, monospace;">
+                                    ${tagline}
+                                </h1> 
+                                <p style="letter-spacing: 3px; text-align: center;color:#ffffff; font-family: 'Courier New', Courier, monospace;">
+                                    Hi ${email.split('@')[0]}, your OTP:
+                                </p> 
+                                <p style="text-align: center;">
+                                    <strong style="letter-spacing: 10px; color:#ffffff; font-size: 2rem; font-family: 'Courier New', Courier, monospace;">
+                                        ${otp}
+                                    </strong>                 
+                                </p>
+                            <div style="height: 1px; background-color: grey;"></div>
+                            <p style="font-size: 12px; text-align: center; margin-top: 30px; color: #777777;">
+                                All rights reserved © ${new Date().getFullYear()} RecruitWise
+                            </p>
+                    </div>
+                </body>
+            </html>

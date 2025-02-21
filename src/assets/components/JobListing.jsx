@@ -133,7 +133,7 @@ function JobListing({data}) {
   return (
 <div className="relative w-full md:w-[70dvw] p-4 rounded-lg bg-gradient-to-r from-blue-400 to-blue-200 text-white border-2 border-transparent">
 <div className="absolute inset-0 rounded-lg bg-slate-900 "></div>
-<div className="relative z-10">
+<div className="relative">
 
      <Row gutter={[16, 16]}>
   {/* Avatar */}

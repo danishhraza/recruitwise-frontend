@@ -1,9 +1,11 @@
+import { mtConfig } from "@material-tailwind/react";
 /** @type {import('tailwindcss').Config} */
 export default {
     darkMode: ["class"],
     content: [
       "./index.html",
       "./src/**/*.{js,ts,jsx,tsx}",
+	  "./node_modules/@material-tailwind/react/**/*.{js,ts,jsx,tsx}"
     ],
     theme: {
     	extend: {
@@ -62,6 +64,6 @@ export default {
     		}
     	}
     },
-    plugins: [require("tailwindcss-animate")],
+    plugins: [require("tailwindcss-animate"),mtConfig],
   };
   
