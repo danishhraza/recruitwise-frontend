@@ -4,7 +4,6 @@ import { Button, ConfigProvider } from "antd"
 import VideoCall from "../components/VideoCall"
 import { useNavigate, useOutletContext } from "react-router-dom"
 import { v4 as uuidV4 } from 'uuid';
-import Navbar from "../components/Navbar"
 function Home() {
   const {loading} = useOutletContext();
   const [capture,setCapture] = useState(false)

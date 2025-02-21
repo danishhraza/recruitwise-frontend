@@ -15,7 +15,7 @@ import {
   Xmark,
   MediaImage,
 } from "iconoir-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LINKS = [
   {
@@ -42,7 +42,7 @@ const LINKS = [
 
 function NavList() {
   return (
-    <ul className="mt-4 flex flex-col gap-x-3 gap-y-1.5 lg:mt-0 lg:flex-row text-white lg:items-center">
+    <ul className="mt-4 flex flex-col gap-x-3 px-2 gap-y-1.5 lg:mt-0 lg:flex-row text-white lg:items-center">
       {LINKS.map(({ icon: Icon, title, href }) => (
         <li key={title}>
           <Typography
@@ -62,7 +62,7 @@ function NavList() {
 
 export default function StickyNavbar() {
   const [openNav, setOpenNav] = React.useState(false);
-
+  const navigate = useNavigate()
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -89,11 +89,11 @@ export default function StickyNavbar() {
             </div>
           <div className="flex gap-3 items-center">
 
-          <Link className="hidden lg:inline-block text-[0.8rem]">Apply as talent</Link>
+          <Link className="hidden lg:inline-block text-[0.8rem]" to='/auth/register'>Apply as talent</Link>
           <Button isPill size="sm" className="hidden lg:inline-block bg-blue-700 text-white  hover:bg-blue-800">
             Book a demo
           </Button>
-          <Button isPill variant="outline" size="sm" className="hidden lg:inline-block bg-blue-950 text-white hover:bg-blue-900">
+          <Button isPill variant="outline" size="sm" className="hidden lg:inline-block bg-blue-950 text-white hover:bg-blue-900" onClick={()=>navigate('/auth/login')}>
             Login
           </Button>
           </div>
@@ -114,11 +114,11 @@ export default function StickyNavbar() {
         <Collapse open={openNav}>
           <NavList />
           <div className="flex justify-end items-center px-2 gap-2">
-          <Link className="text-[0.8rem]">Apply as talent</Link>
+          <Link className="text-[0.8rem]" to='/auth/register'>Apply as talent</Link>
           <Button isPill size="sm" className="bg-blue-700 text-white  hover:bg-blue-800">
             Book a demo
           </Button>
-          <Button isPill variant="outline" size="sm" className="bg-blue-950 text-white hover:bg-blue-900">
+          <Button isPill variant="outline" size="sm" className="bg-blue-950 text-white hover:bg-blue-900" onClick={()=>navigate('/auth/login')}>
             Login
           </Button>
           </div>

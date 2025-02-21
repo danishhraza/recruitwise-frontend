@@ -11,6 +11,7 @@ import OtherLayout from "./assets/Layout/OtherLayout";
 import Authorization from "./assets/pages/Authorization";
 import LoginComponent from "./assets/components/LoginComponent";
 import RegisterComponent from "./assets/components/RegisterComponent";
+import DashboardLayout from "./assets/Layout/DashboardLayout";
 function App() {
   return (
     <Routes>
@@ -21,6 +22,9 @@ function App() {
             <ViewJobs />
         </FiltersProvider>
             } />
+      </Route>
+      <Route path="/dashboard" element={<DashboardLayout/>}>
+
       </Route>
         <Route path="/" element={<OtherLayout />}>
         <Route 
