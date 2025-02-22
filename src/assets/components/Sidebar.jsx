@@ -2,59 +2,41 @@ import * as React from "react";
 import {
   Card,
   List,
-  Typography,
   Chip,
-  Collapse,
 } from "@material-tailwind/react";
 import {
-  Archive,
-  EmptyPage,
-  Folder,
-  Mail,
-  MoreHorizCircle,
-  NavArrowRight,
-  Pin,
-  SendDiagonal,
-  Bin,
-  UserXmark,
+  User,
+  Settings,
 } from "iconoir-react";
+import { BriefcaseBusiness } from "lucide-react";
+import { CustomerServiceFilled } from "@ant-design/icons";
+import Profile from "./Profile";
+import Support from "./Support";
+import SettingsTab from "./SettingsTab";
+import UserSidebar from "./UserSidebar";
 
 const Links = [
   {
-    icon: Mail,
-    title: "Inbox",
-    href: "#",
-    badge: 14,
+    icon: User,
+    title: "Profile",
+    param: "",
+    component:<Profile/>
   },
   {
-    icon: SendDiagonal,
-    title: "Sent",
-    href: "#",
+    icon: Settings,
+    title: "Settings",
+    param: "settings",
+    component:<SettingsTab/>
   },
   {
-    icon: EmptyPage,
-    title: "Drafts",
-    href: "#",
-  },
-  {
-    icon: Pin,
-    title: "Pins",
-    href: "#",
-  },
-  {
-    icon: Archive,
-    title: "Archive",
-    href: "#",
-  },
-  {
-    icon: Bin,
-    title: "Trash",
-    href: "#",
+    icon: CustomerServiceFilled,
+    title: "Help & Support",
+    param: "support",
+    component:<Support/>
   },
 ];
 
-export default function MultiLevelSidebar() {
-  const [isOpen, setIsOpen] = React.useState(false);
+export default function MultiLevelSidebar({currentTab,setCurrentTab,currentComponent,setCurrentComponent}) {
 
   return (
     <Card className="hidden lg:inline-block max-w-[280px] h-screen bg-black border-slate-700 text-white">
@@ -63,8 +45,8 @@ export default function MultiLevelSidebar() {
       </Card.Header>
       <Card.Body className="p-3">
         <List>
-          {Links.map(({ icon: Icon, title, href, badge }) => (
-            <List.Item key={title} href={href} className="text-white">
+          {Links.map(({ icon: Icon, title, param,component, badge }) => (
+            <List.Item key={title} onClick={()=>{setCurrentTab(title); setCurrentComponent(component);console.log(component)}} className={`text-white hover:bg-slate-700 hover:text-white ${currentTab == title && 'bg-slate-700'}`}>
               <List.ItemStart>
                 <Icon className="h-[18px] w-[18px]" />
               </List.ItemStart>
@@ -78,40 +60,9 @@ export default function MultiLevelSidebar() {
               )}
             </List.Item>
           ))}
-          <List.Item onClick={() => setIsOpen((cur) => !cur)} className={`text-white ${isOpen && "bg-slate-700"} hover:bg-slate-700 hover:text-white`}>
-            <List.ItemStart>
-              <MoreHorizCircle className="h-[18px] w-[18px] " />
-            </List.ItemStart>
-            More
-            <List.ItemEnd>
-              <NavArrowRight
-                className={`h-4 w-4 ${isOpen ? "rotate-90" : ""}`}
-              />
-            </List.ItemEnd>
-          </List.Item>
-          <Collapse open={isOpen}>
-            <List>
-              <List.Item className="text-white">
-                <List.ItemStart>
-                  <Folder className="h-[18px] w-[18px]" />
-                </List.ItemStart>
-                Spam
-              </List.Item>
-              <List.Item className="text-white">
-                <List.ItemStart>
-                  <Folder className="h-[18px] w-[18px]" />
-                </List.ItemStart>
-                Spam
-              </List.Item>
-              <List.Item className="text-white">
-                <List.ItemStart>
-                  <Folder className="h-[18px] w-[18px]" />
-                </List.ItemStart>
-                Spam
-              </List.Item>
-            </List>
-          </Collapse>
+          <hr className="-mx-3 my-3 border-secondary border-slate-800" />
         </List>
+        <UserSidebar setCurrentTab={setCurrentTab} currentTab={currentTab} setCurrentComponent={setCurrentComponent}/>
       </Card.Body>
     </Card>
   );

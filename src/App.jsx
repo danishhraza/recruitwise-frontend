@@ -23,9 +23,7 @@ function App() {
         </FiltersProvider>
             } />
       </Route>
-      <Route path="/dashboard" element={<DashboardLayout/>}>
-
-      </Route>
+      <Route path="/dashboard" element={<DashboardLayout/>}/>
         <Route path="/" element={<OtherLayout />}>
         <Route 
           path="/room/:roomid" 
