@@ -13,7 +13,7 @@ export default function PublicLayout() {
       },[])
 
   return (
-    <div className='bg-black w-full  h-screen overflow-auto'>
+    <div className='bg-black w-full overflow-auto'>
 {loading ? <RWloading /> : <>
       <StickyNavbar/>
       <div className="w-full py-28">

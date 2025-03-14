@@ -5,9 +5,10 @@ import {
     Chip,
   } from "@material-tailwind/react";
 import { Bookmark, SendDiagonal, TimeZone } from 'iconoir-react';
-import AppliedJobs from './AppliedJobs';
 import { FileArchive } from 'lucide-react';
-import ListedJobs from './ListedJobs';
+import PendingAssessments from './UserComponents/PendingAssessments';
+import AppliedJobs from './UserComponents/AppliedJobs';
+import ListedJobs from './UserComponents/ListedJobs';
 
 const LIST = [
   {
@@ -32,7 +33,7 @@ const LIST = [
     icon: TimeZone,
     title: "Pending Assessments",
     param: "",
-    component:''
+    component:<PendingAssessments/>
   },
 ]
 export default function UserSidebar({setCurrentTab,setCurrentComponent,currentTab}) {
