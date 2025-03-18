@@ -238,7 +238,7 @@ const areAllDevicesReady = deviceStates.microphone && deviceStates.camera && dev
                     className="rounded-xl"
                     style={{ width: 600, height: 370 }}
                 />
-        <div id="checklist" className="gabarito-400 text-2xl flex flex-col justify-evenly gap-3">
+        <div id="checklist" className="outfit-400 text-2xl flex flex-col justify-evenly gap-3">
         <div>
         <label>Select Microphone</label>
         <Dropdown

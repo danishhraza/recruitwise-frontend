@@ -10,10 +10,12 @@ export default {
     theme: {
     	extend: {
     		fontFamily: {
+				sans: ['Outfit', 'sans-serif'], // Set Outfit as the default sans font
+				outfit: ['Outfit', 'sans-serif'],
     			gabarito: [
     				'Gabarito',
     				'serif'
-    			]
+    			],
     		},
     		borderRadius: {
     			lg: 'var(--radius)',

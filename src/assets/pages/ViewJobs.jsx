@@ -50,7 +50,7 @@ function ViewJobs() {
 
     return (
         <>
-            <h1 className="gabarito-400 text-center text-white text-6xl md:text-8xl">
+            <h1 className="outfit-400 text-center text-white text-6xl md:text-8xl">
                 <span className="bg-gradient-to-r from-blue-400 to-blue-200 text-transparent bg-clip-text">
                     View Jobs
                 </span>

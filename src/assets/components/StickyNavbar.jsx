@@ -51,7 +51,7 @@ function NavList() {
             type="small"
             className="flex items-center gap-x-2 p-1 hover:text-primary"
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-6 w-6" />
             {title}
           </Typography>
         </li>
@@ -71,7 +71,7 @@ export default function StickyNavbar() {
   }, []);
 
   return (
-      <Navbar className="z-10 sticky top-0 mx-auto w-full max-w-screen-xl text-white bg-black dark:bg-surface-dark border-slate-800 px-2">
+    <Navbar className="z-10 fixed top-5 left-0 right-0 mx-auto w-full max-w-screen-xl text-white bg-[#1515155b] dark:bg-surface-dark backdrop-blur-xl border-0 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex">
 
@@ -81,7 +81,7 @@ export default function StickyNavbar() {
             type="small"
             className="ml-2 mr-2 block py-1 font-semibold"
           >
-            <img src="/images/logo2-white.webp" alt="logo" className="w-32"/>
+            <img src="/images/logo-white.webp" alt="logo" className="w-36"/>
           </Typography>
           <div className="hidden lg:block">
             <NavList />
@@ -89,11 +89,11 @@ export default function StickyNavbar() {
             </div>
           <div className="flex gap-3 items-center">
 
-          <Link className="hidden lg:inline-block text-[0.8rem]" to='/auth/register'>Apply as talent</Link>
-          <Button isPill size="sm" className="hidden lg:inline-block bg-blue-700 text-white  hover:bg-blue-800">
+          <Link className="hidden lg:inline-block text-[1rem]" to='/auth/register'>Apply as talent</Link>
+          <Button isPill size="md" className="hidden lg:inline-block bg-blue-700 text-white  hover:bg-blue-800">
             Book a demo
           </Button>
-          <Button isPill variant="outline" size="sm" className="hidden lg:inline-block bg-blue-950 text-white hover:bg-blue-900" onClick={()=>navigate('/auth/login')}>
+          <Button isPill variant="outline" size="md" className="hidden lg:inline-block bg-blue-950 text-white hover:bg-blue-900" onClick={()=>navigate('/auth/login')}>
             Login
           </Button>
           </div>

@@ -9,7 +9,7 @@ export default function RegisterComponent() {
   return (
     <div>
     <div className='flex flex-col gap-3 text-center'>
-    <h1 className='text-3xl font-gabarito'>Create your account</h1>   
+    <h1 className='text-3xl font-outfit'>Create your account</h1>   
     <Input disabled={step == 1 ? false:true} prefix={<User2 size={18} color='grey'/>} placeholder='Email Address' className='w-80 h-10' />
    {step == 2 && <Input prefix={<LockFilled size={18} color='grey'/>} placeholder='Password' className='w-80 h-10' />}
     
