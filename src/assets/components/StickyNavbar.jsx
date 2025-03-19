@@ -77,7 +77,7 @@ export default function StickyNavbar() {
 
           <Typography
             as="a"
-            href="#"
+            href="/"
             type="small"
             className="ml-2 mr-2 block py-1 font-semibold"
           >

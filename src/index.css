@@ -40,19 +40,26 @@ font-style: normal;
   font-style: normal;
 }
 
-.content{
+.content {
   width: 100%;
-  height: 100px;
+  height: 100vh; /* Use the full height of the viewport */
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  position: relative; /* Ensure the absolute positioning works for the text */
 }
+
 .content h1 {
 	color: #fff;
 	position: absolute;
 }
 
 
-.content h1:nth-child(2) {
-	color: #a05dff;
-	animation: animate 4s ease-in-out infinite;
+.content h1 .wise {
+  color: #4c36ef;
+  animation: animate 4s ease-in-out infinite;
+  position: relative;
+  z-index: 10; /* Ensure "Wise" is on top */
 }
 
 @keyframes animate {

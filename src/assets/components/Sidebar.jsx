@@ -41,7 +41,7 @@ export default function MultiLevelSidebar({currentTab,setCurrentTab,currentCompo
   return (
     <Card className="hidden lg:inline-block max-w-[280px] h-screen bg-black border-slate-700 text-white">
       <Card.Header className="mx-4 mb-0 mt-3 h-max">
-        <img src="/images/logo2-white.webp" alt="logo" className="w-[220px]"/>
+        <img src="/images/logo-white.webp" alt="logo" className="w-[220px]"/>
       </Card.Header>
       <Card.Body className="p-3">
         <List>

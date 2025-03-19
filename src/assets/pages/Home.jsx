@@ -5,7 +5,8 @@ import VideoCall from "../components/VideoCall"
 import { useNavigate, useOutletContext } from "react-router-dom"
 import { v4 as uuidV4 } from 'uuid';
 import bannerImage from "../../images/banner.webp";
-import Profiles from "../components/ProfilesBanner"; // Import your Profiles component
+import Profiles from "../components/ProfilesBanner";
+
 
 function Home() {
   const {loading} = useOutletContext();
