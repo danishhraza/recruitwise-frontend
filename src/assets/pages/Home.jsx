@@ -6,6 +6,7 @@ import { useNavigate, useOutletContext } from "react-router-dom"
 import { v4 as uuidV4 } from 'uuid';
 import bannerImage from "../../images/banner.webp";
 import Profiles from "../components/ProfilesBanner";
+import InterviewPlatform from "../components/candidate-profile-home";
 
 
 function Home() {
@@ -21,6 +22,7 @@ function Home() {
     navigate(`/room/${uniqueId}`)
   }
   return (
+
  <>
 <div className="h-[40rem] mx-[3rem] rounded-[15px] pt-20 relative overflow-hidden">
   {/* Background image with blur */}
@@ -44,6 +46,10 @@ function Home() {
 
 <div>
   <Profiles/>
+</div>
+
+<div className="mt-[13rem] flex justify-center">
+  <InterviewPlatform/>
 </div>
 
 </>
