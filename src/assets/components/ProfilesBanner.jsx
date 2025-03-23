@@ -1,9 +1,7 @@
-import React from 'react';
-
-function Profiles() {
+export default function Profiles() {
   return (
-    <div className="absolute inset-x-0 md:top-[70%] md:mt-0 mt-16 flex md:flex-row flex-col justify-center items-center gap-5 overflow-hidden">
-      <div className="flex bg-[#25272e] shadow-lg rounded-lg p-4 gap-4 max-w-lg">
+    <div className="relative z-10 -mt-16 mb-16 flex flex-col md:flex-row justify-center items-center gap-5 px-4 md:px-8">
+      <div className="flex bg-[#25272e] shadow-lg rounded-lg p-4 gap-4 max-w-lg w-full md:w-auto">
         <div className="flex-shrink-0">
           <img
             className="w-24 h-24 rounded-full"
@@ -14,16 +12,16 @@ function Profiles() {
         <div className="flex flex-col justify-center">
           <h3 className="font-semibold text-xl text-white">Danish</h3>
           <p className="text-gray-100">Software Engineer</p>
-          <div className="flex gap-2 mt-2">
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Typescript</span>
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">AWS</span>
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Full Stack</span>
+          <div className="flex flex-wrap gap-2 mt-2">
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">Typescript</span>
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">AWS</span>
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">Full Stack</span>
           </div>
           <p className="mt-3 text-gray-200">$16,401/month</p>
         </div>
-        
       </div>
-      <div className="flex bg-[#3c50e6] shadow-lg rounded-lg p-4 gap-4 max-w-lg">
+      
+      <div className="flex bg-[#3c50e6] shadow-lg rounded-lg p-4 gap-4 max-w-lg w-full md:w-auto mt-4 md:mt-0">
         <div className="flex-shrink-0">
           <img
             className="w-24 h-24 rounded-full"
@@ -34,16 +32,16 @@ function Profiles() {
         <div className="flex flex-col justify-center">
           <h3 className="font-semibold text-xl text-white">Grace</h3>
           <p className="text-gray-100">Talent Recruiter</p>
-          <div className="flex gap-2 mt-2">
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Dance</span>
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Social Media</span>
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Eating</span>
+          <div className="flex flex-wrap gap-2 mt-2">
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">Dance</span>
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">Social Media</span>
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">Eating</span>
           </div>
           <p className="mt-3 text-gray-200">$2,401/month</p>
         </div>
-        
       </div>
-      <div className="flex bg-[#25272e] shadow-lg rounded-lg p-4 gap-4 max-w-lg">
+      
+      <div className="flex bg-[#25272e] shadow-lg rounded-lg p-4 gap-4 max-w-lg w-full md:w-auto mt-4 md:mt-0">
         <div className="flex-shrink-0">
           <img
             className="w-24 h-24 rounded-full"
@@ -54,18 +52,14 @@ function Profiles() {
         <div className="flex flex-col justify-center">
           <h3 className="font-semibold text-xl text-white">Shaheer</h3>
           <p className="text-gray-100">Data Engineer</p>
-          <div className="flex gap-2 mt-2">
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Python</span>
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Azure</span>
-            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Databricks</span>
+          <div className="flex flex-wrap gap-2 mt-2">
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">Python</span>
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">Azure</span>
+            <span className="bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-sm">Databricks</span>
           </div>
           <p className="mt-3 text-gray-200">$6,401/month</p>
         </div>
-        
       </div>
     </div>
-    
   );
 }
-
-export default Profiles;

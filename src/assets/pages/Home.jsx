@@ -7,12 +7,15 @@ import { v4 as uuidV4 } from 'uuid';
 import bannerImage from "../../images/banner.webp";
 import Profiles from "../components/ProfilesBanner";
 import InterviewPlatform from "../components/candidate-profile-home";
+import SnapScroll from "../components/SnapScroll"
 
 function Home() {
   const {loading} = useOutletContext();
   const [capture, setCapture] = useState(false);
   const navigate = useNavigate();
   const interviewRef = useRef(null);
+  const stickyTextRef = useRef(null);
+  const stickyContainerRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
   
   // Use Intersection Observer directly
@@ -102,6 +105,11 @@ function Home() {
           <InterviewPlatform />
         </div>
       </div>
+
+      <div>
+        <SnapScroll/>
+      </div>
+
     </>
   )
 }

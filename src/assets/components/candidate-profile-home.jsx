@@ -95,7 +95,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Strong Hiring Signal section */}
-          <div className="border-t border-zinc-800 p-3">
+          <div className="border-t border-zinc-800 p-3 hover:bg-slate-800">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer" 
               onClick={() => toggleSection('hiringSignal')}
@@ -120,7 +120,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Contact info section */}
-          <div className="border-t border-zinc-800 p-3">
+          <div className="border-t border-zinc-800 p-3 hover:bg-slate-800">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer"
               onClick={() => toggleSection('contactInfo')}
@@ -139,7 +139,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Links section */}
-          <div className="border-t border-zinc-800 p-3">
+          <div className="border-t border-zinc-800 p-3 hover:bg-slate-800">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer"
               onClick={() => toggleSection('links')}
@@ -159,7 +159,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Reviews section */}
-          <div className="border-t border-zinc-800 p-3">
+          <div className="border-t border-zinc-800 p-3 hover:bg-slate-800">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer"
               onClick={() => toggleSection('reviews')}
@@ -194,10 +194,10 @@ export default function InterviewPlatform() {
         <div className="flex-1 flex flex-col">
           {/* Tabs */}
           <Tabs defaultValue="interviews" className="w-full" onValueChange={setActiveTab}>
-            <div className="border-b border-zinc-800">
-              <TabsList className="bg-transparent h-12">
+            <div className="border-b-2 border-blue-800">
+              <TabsList className="h-12 rounded-none bg-transparent">
                 <TabsTrigger 
-                  value="interviews" 
+                  value="interviews"
                   className={`px-6 rounded-none h-12 text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "interviews" ? "text-white" : "text-zinc-400"}`}
                 >
                   Interviews
@@ -310,7 +310,7 @@ export default function InterviewPlatform() {
                   <h4 className="font-medium text-sm">Knockout Questions</h4>
                 </div>
                 
-                <div className="border-b border-zinc-800 p-3 flex">
+                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
                   <div className="w-12 h-12 bg-zinc-800 rounded-md flex items-center justify-center mr-3">
                     <PauseIcon size={16} />
                   </div>
@@ -320,7 +320,7 @@ export default function InterviewPlatform() {
                   </div>
                 </div>
                 
-                <div className="border-b border-zinc-800 p-3 flex">
+                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
                   <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden mr-3">
                     <img src="https://placehold.co/48x48/374151/FFFFFF" alt="Interview thumbnail" />
                   </div>
@@ -330,7 +330,7 @@ export default function InterviewPlatform() {
                   </div>
                 </div>
                 
-                <div className="border-b border-zinc-800 p-3 flex">
+                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
                   <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden mr-3">
                     <img src="https://placehold.co/48x48/374151/FFFFFF" alt="Interview thumbnail" />
                   </div>
@@ -344,7 +344,7 @@ export default function InterviewPlatform() {
                   <h4 className="font-medium text-sm">Why Bryan?</h4>
                 </div>
                 
-                <div className="border-b border-zinc-800 p-3 flex">
+                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
                   <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden mr-3">
                     <img src="https://placehold.co/48x48/374151/FFFFFF" alt="Interview thumbnail" />
                   </div>
@@ -358,7 +358,7 @@ export default function InterviewPlatform() {
                   <h4 className="font-medium text-sm">Technical Interviews</h4>
                 </div>
                 
-                <div className="border-b border-zinc-800 p-3 flex">
+                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
                   <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden mr-3">
                     <img src="https://placehold.co/48x48/374151/FFFFFF" alt="Interview thumbnail" />
                   </div>
