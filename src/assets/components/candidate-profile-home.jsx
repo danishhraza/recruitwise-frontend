@@ -11,9 +11,9 @@ export default function InterviewPlatform() {
   // State for collapsible sections
   const [collapsedSections, setCollapsedSections] = useState({
     hiringSignal: false,
-    contactInfo: false,
-    links: false,
-    reviews: false
+    contactInfo: true,
+    links: true,
+    reviews: true
   });
 
   // Toggle collapse state for a section
@@ -27,7 +27,8 @@ export default function InterviewPlatform() {
   };
 
   return (
-    <div className="flex flex-col text-white w-[65%] border-zinc-950 border bg-black rounded-t-[1rem]">
+    
+    <div className="flex flex-col text-white z-10 w-[65%] border bg-black rounded-t-[1rem] border-1 border-gray-400 rounded-lg">
 
       {/* Title bar with dots */}
       <div className="h-6 bg-white flex items-center px-3 rounded-t-[1rem]">
@@ -238,7 +239,7 @@ export default function InterviewPlatform() {
                         alt="Interview video"
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                      <div className="absolute inset-0 bg-black bg-opacity-0"></div>
                     </div>
                     
                     {/* Video Controls */}
@@ -390,3 +391,8 @@ export default function InterviewPlatform() {
     </div>
   );
 }
+
+
+
+
+
