@@ -106,21 +106,21 @@ const InterviewResultDashboard = () => {
   };
 
   return (
-    <div className="bg-[#0e0e0e] border-[1px] border-white rounded-lg text-gray-200 p-4 w-[85%] -translate-y-10">
+    <div className="bg-[#0e0e0e] border-[1px] border-white rounded-lg text-gray-200 p-4 w-full md:w-[85%] md:-translate-y-10">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex md:flex-row flex-col justify-between items-center mb-6">
         <div className="flex items-center space-x-2">
-          <h1 className="text-xl font-bold">Your Job Post</h1>
+          <h1 className="text-lg md:text-xl font-bold md:mb-0 my-4">Your Job Post</h1>
         </div>
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" className="text-gray-300">
+          <Button variant="ghost" className="text-gray-300 hidden md:block">
             Manage saved tests
           </Button>
-          <Button className="bg-[#3c50e6] hover:bg-indigo-700 flex items-center">
+          <Button className="bg-[#3c50e6] hover:bg-indigo-700 items-center flex">
             <Plus size={16} className="mr-2" />
             <span>Invite a candidate</span>
           </Button>
-          <Button variant="ghost" className="text-gray-300 flex items-center">
+          <Button variant="outline" className="text-gray-800 flex items-center">
             <Link size={16} className="mr-1" />
             <span>Copy link instead</span>
           </Button>
@@ -143,7 +143,7 @@ const InterviewResultDashboard = () => {
           <Filter size={16} className="mr-2" />
           <span>Filters</span>
         </Button>
-        <div className="flex items-center space-x-2">
+        <div className="items-center space-x-2 hidden md:flex">
           <Switch
             id="contacted"
             checked={contacted}
@@ -156,7 +156,7 @@ const InterviewResultDashboard = () => {
         </div>
         <Button
           variant="ghost"
-          className="text-gray-300 flex items-center"
+          className="text-gray-300 items-center hidden md:flex"
         >
           <Archive size={16} className="mr-2" />
           <span>View archive</span>
@@ -172,7 +172,6 @@ const InterviewResultDashboard = () => {
               <TableHead className="text-gray-300">Date Taken</TableHead>
               <TableHead className="text-gray-300">Hard skills</TableHead>
               <TableHead className="text-gray-300">Soft skills</TableHead>
-              <TableHead className="text-gray-300">Coding exercise</TableHead>
               <TableHead className="text-gray-300">Proctoring result</TableHead>
               <TableHead className="w-10"></TableHead>
             </TableRow>
@@ -201,9 +200,6 @@ const InterviewResultDashboard = () => {
                 </TableCell>
                 <TableCell>
                   {candidate.softSkills ? candidate.softSkills : "—"}
-                </TableCell>
-                <TableCell className={getResultColor(candidate.codingExercise)}>
-                  {candidate.codingExercise}
                 </TableCell>
                 <TableCell>{candidate.proctoring}</TableCell>
                 <TableCell>

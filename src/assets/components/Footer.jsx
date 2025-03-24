@@ -4,9 +4,9 @@ export default function ResendFooterWithLogo() {
   const [isOperational, setIsOperational] = useState(true);
   
   return (
-    <div className="relative bg-[#000] text-white min-h-screen">
+    <div className="relative bg-[#000] text-white md:min-h-screen md:mt-0 mt-[105rem]">
       {/* Logo positioned to be partially hidden by footer */}
-      <div className="absolute bottom-[110px] left-0 right-0 px-8">
+      <div className="absolute bottom-[1630px] md:bottom-[300px] lg:bottom-[220px] xl:bottom-[110px] left-0 right-0 px-8">
         <img src="/images/footer.jpg" alt="" />
       </div>
       

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronDown, Play, PauseIcon, Volume2, SquareIcon, Maximize2, ChevronUp } from "lucide-react";
 
 export default function InterviewPlatform() {
-  const [activeTab, setActiveTab] = useState("interviews");
+  const [activeTab, setActiveTab] = useState("Interview");
   
   // State for collapsible sections
   const [collapsedSections, setCollapsedSections] = useState({
@@ -28,7 +28,7 @@ export default function InterviewPlatform() {
 
   return (
     
-    <div className="flex flex-col text-white z-10 w-[65%] border bg-black rounded-t-[1rem] border-1 border-gray-400 rounded-lg">
+    <div className="flex flex-col text-white z-10 md:w-[65%] w-[90%] border bg-black rounded-t-[1rem] border-1 border-gray-400 rounded-lg">
 
       {/* Title bar with dots */}
       <div className="h-6 bg-white flex items-center px-3 rounded-t-[1rem]">
@@ -193,45 +193,27 @@ export default function InterviewPlatform() {
         {/* Main content */}
         <div className="flex-1 flex flex-col">
           {/* Tabs */}
-          <Tabs defaultValue="interviews" className="w-full" onValueChange={setActiveTab}>
+          <Tabs defaultValue="Interview" className="w-full" onValueChange={setActiveTab}>
             <div className="border-b-2 border-blue-800">
               <TabsList className="h-12 rounded-none bg-transparent">
                 <TabsTrigger 
-                  value="interviews"
-                  className={`px-6 rounded-none h-12 text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "interviews" ? "text-white" : "text-zinc-400"}`}
+                  value="Interview"
+                  className={`px-3 md:px-6 rounded-none h-12 text-xs md:text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "Interview" ? "text-white" : "text-zinc-400"}`}
                 >
-                  Interviews
+                  Scores and Transcript
                 </TabsTrigger>
                 <TabsTrigger 
-                  value="resume" 
-                  className={`px-6 rounded-none h-12 text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "resume" ? "text-white" : "text-zinc-400"}`}
+                  value="Proctoring Result" 
+                  className={`px-3 md:px-6 rounded-none h-12 text-xs md:text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "Proctoring Result" ? "text-white" : "text-zinc-400"}`}
                 >
-                  Resume
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="skills"
-                  className={`px-6 rounded-none h-12 text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "skills" ? "text-white" : "text-zinc-400"}`}
-                >
-                  Skills
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="reviews" 
-                  className={`px-6 rounded-none h-12 text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "reviews" ? "text-white" : "text-zinc-400"}`}
-                >
-                  Reviews
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="resume2"
-                  className={`px-6 rounded-none h-12 text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "resume2" ? "text-white" : "text-zinc-400"}`}
-                >
-                  Resume
+                  Proctoring Result
                 </TabsTrigger>
               </TabsList>
             </div>
             
             <div className="flex flex-1">
-              <div className="flex-1 bg-zinc-900 p-4 relative">
-                <TabsContent value="interviews" className="h-full m-0 relative">
+              <div className="bg-zinc-900 p-4 relative">
+                <TabsContent value="Interview" className="h-full m-0 relative">
                   <div className="w-full h-96 bg-zinc-800 rounded-md overflow-hidden relative">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <img 
@@ -279,33 +261,16 @@ export default function InterviewPlatform() {
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="resume" className="h-full m-0">
+                <TabsContent value="Proctoring Result" className="h-full m-0">
                   <div className="w-full h-full flex items-center justify-center text-zinc-400">
-                    Resume content goes here
+                    Proctoring Result content goes here
                   </div>
                 </TabsContent>
-                
-                <TabsContent value="skills" className="h-full m-0">
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400">
-                    Skills content goes here
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="reviews" className="h-full m-0">
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400">
-                    Reviews content goes here
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="resume2" className="h-full m-0">
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400">
-                    Another resume content goes here
-                  </div>
-                </TabsContent>
+              
               </div>
               
               {/* Right sidebar */}
-              <div className="w-64 border-l border-zinc-800">
+              <div className="w-64 border-l border-zinc-800 hidden lg:flex lg:flex-col">
                 <div className="p-3 border-b border-zinc-800">
                   <h4 className="font-medium text-sm">Knockout Questions</h4>
                 </div>
@@ -355,7 +320,7 @@ export default function InterviewPlatform() {
                 </div>
                 
                 <div className="p-3 border-b border-zinc-800">
-                  <h4 className="font-medium text-sm">Technical Interviews</h4>
+                  <h4 className="font-medium text-sm">Technical Interview</h4>
                 </div>
                 
                 <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">

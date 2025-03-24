@@ -8,6 +8,7 @@ import bannerImage from "../../images/banner.webp";
 import Profiles from "../components/ProfilesBanner";
 import InterviewPlatform from "../components/candidate-profile-home";
 import SnapScroll from "../components/SnapScroll"
+import MobileSnapScroll from "../components/MobileSnapScroll"
 
 function Home() {
   const {loading} = useOutletContext();
@@ -80,11 +81,11 @@ function Home() {
       >
         {/* Title with animation */}
         <h1 
-          className={`text-6xl font-outfit font-bold text-white mb-14 relative transition-all duration-700 ${
+          className={`text-4xl md:text-6xl font-outfit font-bold text-white mb-14 relative transition-all duration-700 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          Quality matches, quickly.
+          Quality hires, quickly.
         </h1>
         
         {/* Background pattern div with animation */}
@@ -106,8 +107,11 @@ function Home() {
         </div>
       </div>
 
-      <div>
+      <div className="hidden md:block">
         <SnapScroll/>
+      </div>
+      <div className="md:hidden">
+        <MobileSnapScroll/>
       </div>
 
     </>
