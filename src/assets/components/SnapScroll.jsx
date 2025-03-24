@@ -4,7 +4,7 @@ function SnapScroll() {
     return (
       <div className="flex w-full mt-60">
         {/* Sticky Left Side */}
-        <div className="w-1/2 h-screen sticky top-10 bg-black text-white p-8 flex flex-col text-left justify-center pl-60">
+        <div className="w-1/2 h-screen sticky top-0 bg-[#3c50e6] text-white p-8 flex flex-col text-left justify-center pl-60">
             <h1 className="text-4xl font-bold mb-12">How it works</h1>
             <div className="relative">
                 <div className="absolute left-6 top-0 w-0.5 h-full bg-gray-200"></div>
