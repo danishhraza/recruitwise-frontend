@@ -83,7 +83,7 @@ const InterviewResultDashboard = () => {
     },
   ]);
 
-  const [contacted, setContacted] = useState(false);
+  const [contacted, setContacted] = useState(true);
 
   const getBadgeColor = (level) => {
     switch (level) {
@@ -148,6 +148,7 @@ const InterviewResultDashboard = () => {
             id="contacted"
             checked={contacted}
             onCheckedChange={setContacted}
+            className="border-gray-500"
           />
           <label htmlFor="contacted" className="text-sm">
             Contacted only
