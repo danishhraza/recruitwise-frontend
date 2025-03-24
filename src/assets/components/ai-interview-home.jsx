@@ -25,7 +25,7 @@ const VideoChat = () => {
   ]);
 
   return (
-    <div className="flex h-[50%] w-[90%] border-2 border-white rounded-lg overflow-hidden">
+    <div className="flex h-[50%] w-[90%] border-[1px] border-white rounded-lg overflow-hidden">
       {/* Left side - Video Feed */}
       <div className="w-2/3 p-4 bg-gray-900 relative">
         {/* Removed Card component to avoid conflicting styles */}
