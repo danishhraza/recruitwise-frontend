@@ -7,7 +7,7 @@ export default function ResendFooterWithLogo() {
     <div className="relative bg-[#000] text-white min-h-screen">
       {/* Logo positioned to be partially hidden by footer */}
       <div className="absolute bottom-[110px] left-0 right-0 px-8">
-        <img src="/public/images/footer.jpg" alt="" />
+        <img src="../../images/footer.jpg" alt="" />
       </div>
       
       {/* Footer container */}
