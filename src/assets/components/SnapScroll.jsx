@@ -6,7 +6,7 @@ function SnapScroll() {
     return (
       <div className="flex w-full mt-60">
         {/* Sticky Left Side */}
-        <div className="w-1/2 h-screen sticky top-0 bg-[#3c50e6] text-white p-8 flex flex-col text-left justify-center pl-60">
+        <div className="w-1/2 h-screen sticky top-0 bg-[#3c50e6] text-white p-8 flex flex-col text-left justify-left md:justify-center lg:pl-60">
             <h1 className="text-4xl font-bold mb-12">How it works</h1>
             <div className="relative">
                 <div className="absolute left-6 top-0 w-0.5 h-full bg-gray-200"></div>
@@ -17,8 +17,8 @@ function SnapScroll() {
                         <div className="ml-4">
                         <p className="font-medium text-lg">
                             {num === 1 && 'Input your hiring requirements'}
-                            {num === 2 && 'Use AI Recruiter to source and interview 1000s of candidates'}
-                            {num === 3 && 'Let AI match you with the best talent'}
+                            {num === 2 && 'Use AI Recruiter to interview 1000s of candidates'}
+                            {num === 3 && 'Let AI find you the best talent'}
                         </p>
                         </div>
                     </div>

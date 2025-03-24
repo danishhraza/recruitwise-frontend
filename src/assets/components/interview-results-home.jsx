@@ -112,10 +112,7 @@ const InterviewResultDashboard = () => {
         <div className="flex items-center space-x-2">
           <h1 className="text-lg md:text-xl font-bold md:mb-0 my-4">Your Job Post</h1>
         </div>
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" className="text-gray-300 hidden md:block">
-            Manage saved tests
-          </Button>
+        <div className="flex flex-wrap items-center space-x-4">
           <Button className="bg-[#3c50e6] hover:bg-indigo-700 items-center flex">
             <Plus size={16} className="mr-2" />
             <span>Invite a candidate</span>
