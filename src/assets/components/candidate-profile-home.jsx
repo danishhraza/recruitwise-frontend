@@ -40,9 +40,9 @@ export default function InterviewPlatform() {
       </div>
       
       {/* Main content */}
-      <div className="flex flex-1">
+      <div className="flex md:flex-row flex-col flex-1">
         {/* Left sidebar */}
-        <div className="w-80 border-r border-zinc-800 flex flex-col">
+        <div className="md:w-80 w-full border-r border-zinc-800 flex flex-col">
           <div className="p-3 flex items-center">
             <Avatar className="h-9 w-9 mr-3 bg-zinc-700">
               <div className="h-full w-full flex items-center justify-center text-sm font-medium">JH</div>
@@ -95,7 +95,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Strong Hiring Signal section */}
-          <div className="border-t border-zinc-800 p-3 hover:bg-slate-800">
+          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-slate-800">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer" 
               onClick={() => toggleSection('hiringSignal')}
@@ -120,7 +120,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Contact info section */}
-          <div className="border-t border-zinc-800 p-3 hover:bg-slate-800">
+          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-slate-800">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer"
               onClick={() => toggleSection('contactInfo')}
@@ -139,7 +139,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Links section */}
-          <div className="border-t border-zinc-800 p-3 hover:bg-slate-800">
+          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-slate-800">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer"
               onClick={() => toggleSection('links')}
@@ -159,7 +159,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Reviews section */}
-          <div className="border-t border-zinc-800 p-3 hover:bg-slate-800">
+          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-slate-800">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer"
               onClick={() => toggleSection('reviews')}
@@ -217,7 +217,7 @@ export default function InterviewPlatform() {
                   <div className="w-full h-96 bg-zinc-800 rounded-md overflow-hidden relative">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <img 
-                        src="https://placehold.co/500x320/374151/FFFFFF" 
+                        src="/images/pov-interview2.jpg" 
                         alt="Interview video"
                         className="w-full h-full object-cover"
                       />

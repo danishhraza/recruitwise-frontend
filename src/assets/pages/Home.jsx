@@ -51,17 +51,17 @@ function Home() {
 
   return (
     <>
-      <div className="h-[40rem] mx-[3rem] rounded-[15px] pt-20 relative overflow-hidden">
+      <div className="h-[35rem] md:h-[40rem] mx-[2rem] md:mx-[3rem] rounded-[15px]  md:mt-0 mt-10 justify-center flex flex-col relative overflow-hidden">
         {/* Background image with blur */}
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${bannerImage})`, opacity: 0.6 }}
         ></div>
         <div className="text-center flex flex-col gap-6 relative"> 
-          <h1 className="outfit-600 text-center text-white text-6xl md:text-8xl">
+          <h1 className="outfit-600 text-center text-white text-4xl md:text-8xl">
             <span className="bg-gradient-to-r from-[#1f2154] text-transparent to-[#5656a7] bg-clip-text">AI Recruitment engine</span><br/> to hire top global talent
           </h1>
-          <p className="text-slate-300 mt-10 text-xl">Source, vet, and hire top talent in less than 24h</p>
+          <p className="text-slate-300 mt-10 text-lg md:text-xl">Source, vet, and hire top talent in less than 24h</p>
         </div>
         <div className="w-full flex justify-center gap-5 mt-5 relative">
           <Button color="primary" variant="solid" onClick={() => navigate('/jobs')}>View Jobs</Button>
@@ -77,7 +77,7 @@ function Home() {
 
       <div 
         ref={interviewRef}
-        className="mt-[17rem] flex flex-col justify-center items-center relative"
+        className="md:mt-[17rem] mt-[10rem] flex flex-col justify-center items-center relative"
       >
         {/* Title with animation */}
         <h1 

@@ -1,6 +1,6 @@
 export default function Profiles() {
   return (
-    <div className="relative mt-20 md:-mt-16 md:mb-16 flex flex-col md:flex-row justify-center items-center gap-5 md:gap-10 px-10">
+    <div className="relative hidden mt-20 md:-mt-16 md:mb-16 lg:flex flex-col md:flex-row justify-center items-center gap-5 md:gap-10 px-10">
       <div className="flex bg-[#25272e] shadow-lg rounded-lg p-4 gap-4 max-w-lg w-full md:w-auto">
         <div className="flex-shrink-0">
           <img

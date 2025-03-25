@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Plus, Link, Filter, MoreVertical } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,9 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { MoreVertical, Filter, Archive, Plus, Link } from "lucide-react";
 
 const InterviewResultDashboard = () => {
   const [candidates, setCandidates] = useState([
@@ -34,7 +32,6 @@ const InterviewResultDashboard = () => {
         { name: "Html", level: "Mid-level" },
       ],
       softSkills: "Average",
-      codingExercise: "Senior",
       proctoring: "100%",
     },
     {
@@ -49,7 +46,6 @@ const InterviewResultDashboard = () => {
         { name: "SQL", level: "Junior" },
       ],
       softSkills: "Good",
-      codingExercise: "Junior",
       proctoring: "100%",
     },
     {
@@ -63,7 +59,6 @@ const InterviewResultDashboard = () => {
         { name: "Redux", level: "Not experienced" },
       ],
       softSkills: "Average",
-      codingExercise: "Not experienced",
       proctoring: "92%",
     },
     {
@@ -78,7 +73,6 @@ const InterviewResultDashboard = () => {
         { name: "MongoDB", level: "Senior" },
       ],
       softSkills: "Excellent",
-      codingExercise: "Senior",
       proctoring: "98%",
     },
   ]);
@@ -100,76 +94,64 @@ const InterviewResultDashboard = () => {
     }
   };
 
-  const getResultColor = (result) => {
-    if (result === "Not experienced") return "text-red-500";
-    return "";
-  };
-
   return (
-    <div className="bg-[#0e0e0e] border-[1px] border-white rounded-lg text-gray-200 p-4 w-full md:w-[85%] md:-translate-y-10">
-      {/* Header */}
-      <div className="flex md:flex-row flex-col justify-between items-center mb-6">
-        <div className="flex items-center space-x-2">
-          <h1 className="text-lg md:text-xl font-bold md:mb-0 my-4">Your Job Post</h1>
-        </div>
-        <div className="flex flex-wrap items-center space-x-4">
-          <Button className="bg-[#3c50e6] hover:bg-indigo-700 items-center flex">
+    <div className="bg-[#0e0e0e] border-[1px] border-white rounded-lg text-gray-200 p-4 w-full">
+      {/* Mobile-friendly Header */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+        <h1 className="text-lg md:text-xl font-bold mb-4 md:mb-0">Your Job Post</h1>
+        <div className="flex flex-wrap justify-center gap-2">
+          <Button className="bg-[#3c50e6] hover:bg-indigo-700 flex items-center">
             <Plus size={16} className="mr-2" />
-            <span>Invite a candidate</span>
+            <span className="text-sm">Invite</span>
           </Button>
           <Button variant="outline" className="text-gray-800 flex items-center">
             <Link size={16} className="mr-1" />
-            <span>Copy link instead</span>
+            <span className="text-sm">Copy link</span>
           </Button>
         </div>
       </div>
 
-      {/* Search and filters */}
-      <div className="flex space-x-4 mb-4">
-        <div className="relative w-60">
+      {/* Search and Filters */}
+      <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-4 mb-4">
+        <div className="relative w-full md:w-60">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search"
             className="pl-8 bg-gray-800 border-gray-700"
           />
         </div>
-        <Button
-          variant="outline"
-          className="bg-gray-800 border-gray-700 flex items-center"
-        >
-          <Filter size={16} className="mr-2" />
-          <span>Filters</span>
-        </Button>
-        <div className="items-center space-x-2 hidden md:flex">
-          <Switch
-            id="contacted"
-            checked={contacted}
-            onCheckedChange={setContacted}
-            className="border-gray-500"
-          />
-          <label htmlFor="contacted" className="text-sm">
-            Contacted only
-          </label>
+        <div className="flex space-x-2">
+          <Button
+            variant="outline"
+            className="bg-gray-800 border-gray-700 flex items-center"
+          >
+            <Filter size={16} className="mr-2" />
+            <span>Filters</span>
+          </Button>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="contacted"
+              checked={contacted}
+              onCheckedChange={setContacted}
+              className="border-gray-500"
+            />
+            <label htmlFor="contacted" className="text-sm">
+              Contacted
+            </label>
+          </div>
         </div>
-        <Button
-          variant="ghost"
-          className="text-gray-300 items-center hidden md:flex"
-        >
-          <Archive size={16} className="mr-2" />
-          <span>View archive</span>
-        </Button>
       </div>
 
       {/* Table */}
-      <div className="rounded-md border border-gray-700 overflow-hidden">
+      <div className="rounded-md border border-gray-700 overflow-x-auto">
         <Table>
           <TableHeader className="bg-gray-800">
             <TableRow>
               <TableHead className="text-gray-300">Name</TableHead>
-              <TableHead className="text-gray-300">Date Taken</TableHead>
-              <TableHead className="text-gray-300">Hard skills</TableHead>
-              <TableHead className="text-gray-300">Soft skills</TableHead>
-              <TableHead className="text-gray-300">Proctoring result</TableHead>
+              <TableHead className="text-gray-300 hidden md:table-cell">Date</TableHead>
+              <TableHead className="text-gray-300">Skills</TableHead>
+              <TableHead className="text-gray-300 hidden md:table-cell">Soft Skills</TableHead>
+              <TableHead className="text-gray-300">Proctoring</TableHead>
               <TableHead className="w-10"></TableHead>
             </TableRow>
           </TableHeader>
@@ -179,10 +161,8 @@ const InterviewResultDashboard = () => {
                 key={candidate.id}
                 className="border-t border-gray-700 hover:bg-gray-800"
               >
-                <TableCell className="font-medium flex items-center space-x-2">
-                  <span>{candidate.name}</span>
-                </TableCell>
-                <TableCell>{candidate.dateTaken}</TableCell>
+                <TableCell className="font-medium">{candidate.name}</TableCell>
+                <TableCell className="hidden md:table-cell">{candidate.dateTaken}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {candidate.hardSkills.map((skill, idx) => (
@@ -190,13 +170,13 @@ const InterviewResultDashboard = () => {
                         key={idx}
                         className={`${getBadgeColor(skill.level)} text-xs font-normal`}
                       >
-                        {skill.name} {skill.level !== "Not experienced" && skill.level}
+                        {skill.name}
                       </Badge>
                     ))}
                   </div>
                 </TableCell>
-                <TableCell>
-                  {candidate.softSkills ? candidate.softSkills : "—"}
+                <TableCell className="hidden md:table-cell">
+                  {candidate.softSkills}
                 </TableCell>
                 <TableCell>{candidate.proctoring}</TableCell>
                 <TableCell>

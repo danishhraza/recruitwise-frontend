@@ -25,11 +25,10 @@ const VideoChat = () => {
   ]);
 
   return (
-    <div className="flex max-h-96 md:h-[50%] w-full md:w-[90%] border-[1px] border-white rounded-lg overflow-hidden">
-      {/* Left side - Video Feed */}
-      <div className="w-2/3 p-4 bg-gray-900 relative">
-        {/* Removed Card component to avoid conflicting styles */}
-        <div className="h-full overflow-hidden relative rounded-lg">
+    <div className="flex flex-col md:flex-row max-h-96 w-full md:w-[80%] border-[1px] border-white rounded-lg overflow-hidden">
+      {/* Video Feed - Full width on mobile, 2/3 on desktop */}
+      <div className="w-full md:w-2/3 md:p-4 p-2 bg-gray-900 relative">
+        <div className="h-64 md:h-full overflow-hidden relative rounded-lg">
           {/* Main video feed */}
           <div className="h-full relative rounded-lg overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center">
@@ -80,8 +79,8 @@ const VideoChat = () => {
         </div>
       </div>
       
-      {/* Right side - Transcript */}
-      <div className="w-1/3 p-4 flex flex-col bg-gray-900">
+      {/* Transcript - Hidden on mobile, full width on desktop */}
+      <div className="hidden md:flex md:w-1/3 p-4 flex-col bg-gray-900">
         <Card className="flex-1 overflow-hidden flex flex-col rounded-lg">
           <div className="p-3 border-b flex items-center justify-between">
             <h3 className="text-lg font-medium">Live Transcript</h3>

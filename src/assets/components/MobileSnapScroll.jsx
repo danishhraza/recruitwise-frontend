@@ -12,7 +12,7 @@ function MobileSnapScroll() {
                 </div>
 
                 <div className="mb-8">
-                    <h2 className="text-3xl font-bold my-8 text-center">AI Interview Process</h2>
+                    <h2 className="text-3xl font-bold my-8 text-center w-[350px]">AI Interview Process</h2>
                     <VideoChat />
                 </div>
 
