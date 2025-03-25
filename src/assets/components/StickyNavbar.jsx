@@ -18,26 +18,26 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 
 const LINKS = [
-  {
-    icon: MultiplePages,
-    title: "Pages",
-    href: "#",
-  },
-  {
-    icon: ProfileCircle,
-    title: "Account",
-    href: "#",
-  },
-  {
-    icon: SelectFace3d,
-    title: "Blocks",
-    href: "#",
-  },
-  {
-    icon: Archive,
-    title: "Docs",
-    href: "#",
-  },
+  // {
+  //   icon: MultiplePages,
+  //   title: "Pages",
+  //   href: "#",
+  // },
+  // {
+  //   icon: ProfileCircle,
+  //   title: "Account",
+  //   href: "#",
+  // },
+  // {
+  //   icon: SelectFace3d,
+  //   title: "Blocks",
+  //   href: "#",
+  // },
+  // {
+  //   icon: Archive,
+  //   title: "Docs",
+  //   href: "#",
+  // },
 ];
 
 function NavList() {
@@ -71,7 +71,7 @@ export default function StickyNavbar() {
   }, []);
 
   return (
-    <Navbar className="z-10 fixed top-5 left-0 right-0 mx-auto w-full max-w-screen-xl text-white bg-[#1515155b] dark:bg-surface-dark backdrop-blur-xl border-0 px-4 py-3">
+    <Navbar className="z-10 fixed lg:top-5 left-0 right-0 md:mx-auto w-full rounded-none border-b-2 border-x-0 border-t-0 border-blue-500 lg:rounded-lg max-w-screen-xl text-white bg-[#3f3f3f89] dark:bg-surface-dark backdrop-blur-xl px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex">
 
@@ -87,13 +87,13 @@ export default function StickyNavbar() {
             <NavList />
           </div>
             </div>
-          <div className="flex gap-3 items-center">
+          <div className="flex gap-4 items-center">
 
           <Link className="hidden lg:inline-block text-[1rem]" to='/auth/register'>Apply as talent</Link>
           <Button isPill size="md" className="hidden lg:inline-block bg-blue-700 text-white  hover:bg-blue-800">
-            Book a demo
+            Post a Job
           </Button>
-          <Button isPill variant="outline" size="md" className="hidden lg:inline-block bg-blue-950 text-white hover:bg-blue-900" onClick={()=>navigate('/auth/login')}>
+          <Button isPill variant="outline" size="md" className="hidden lg:inline-block bg-green-500 text-white hover:bg-green-700" onClick={()=>navigate('/auth/login')}>
             Login
           </Button>
           </div>
@@ -113,12 +113,12 @@ export default function StickyNavbar() {
         </div>
         <Collapse open={openNav}>
           <NavList />
-          <div className="flex justify-end items-center px-2 gap-2">
-          <Link className="text-[0.8rem]" to='/auth/register'>Apply as talent</Link>
-          <Button isPill size="sm" className="bg-blue-700 text-white  hover:bg-blue-800">
-            Book a demo
+          <div className="flex flex-col justify-start items-center px-2 pb-3 gap-3">
+          <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/auth/register'>Apply as talent</Link>
+          <Button className="text-sm border-[1px] w-full text-center p-3 rounded-sm bg-blue-700 text-white  hover:bg-blue-800">
+            Post a Job
           </Button>
-          <Button isPill variant="outline" size="sm" className="bg-blue-950 text-white hover:bg-blue-900" onClick={()=>navigate('/auth/login')}>
+          <Button variant="outline" size="sm" className="text-sm border-[1px] w-full text-center p-3 rounded-sm bg-green-500 text-white hover:bg-green-700" onClick={()=>navigate('/auth/login')}>
             Login
           </Button>
           </div>
