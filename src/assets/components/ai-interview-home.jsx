@@ -33,7 +33,7 @@ const VideoChat = () => {
           <div className="h-full relative rounded-lg overflow-hidden">
             <div className="absolute inset-0 flex items-center justify-center">
               <img 
-                src="/images/smiling.jpg" 
+                src="/images/pov-interview5.jpg" 
                 alt="Video of woman with curly hair" 
                 className="w-full h-full object-cover"
               />

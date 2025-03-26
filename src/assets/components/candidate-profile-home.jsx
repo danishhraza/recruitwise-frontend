@@ -217,7 +217,7 @@ export default function InterviewPlatform() {
                   <div className="w-full h-96 bg-zinc-800 rounded-md overflow-hidden relative">
                     <div className="absolute inset-0 flex items-center justify-center">
                       <img 
-                        src="/images/pov-interview2.jpg" 
+                        src="/images/pov-interview3.jpg" 
                         alt="Interview video"
                         className="w-full h-full object-cover"
                       />
