@@ -89,11 +89,13 @@ export default function StickyNavbar() {
             </div>
           <div className="flex gap-4 items-center">
 
-          <Link className="hidden lg:inline-block text-[1rem]" to='/auth/register'>Apply as talent</Link>
-          <Button isPill size="md" className="hidden lg:inline-block bg-blue-700 text-white  hover:bg-blue-800">
+          <Link className="hidden lg:inline-block text-[1rem]" to='/jobs'>Apply as talent</Link>
+          <Link to='/recruiter-dashboard'>
+          <Button isPill size="md" className="hidden lg:inline-block bg-blue-700 text-white border-none hover:bg-blue-800">
             Post a Job
           </Button>
-          <Button isPill variant="outline" size="md" className="hidden lg:inline-block bg-green-500 text-white hover:bg-green-700" onClick={()=>navigate('/auth/login')}>
+          </Link>
+          <Button isPill variant="outline" size="md" className="hidden lg:inline-block border-none bg-green-500 text-white hover:bg-green-700" onClick={()=>navigate('/auth/login')}>
             Login
           </Button>
           </div>
@@ -114,11 +116,13 @@ export default function StickyNavbar() {
         <Collapse open={openNav}>
           <NavList />
           <div className="flex flex-col justify-start items-center px-2 pb-3 gap-3">
-          <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/auth/register'>Apply as talent</Link>
-          <Button className="text-sm border-[1px] w-full text-center p-3 rounded-sm bg-blue-700 text-white  hover:bg-blue-800">
+          <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/jobs'>Apply as talent</Link>
+ 
+          <Button className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-blue-700 text-white  hover:bg-blue-800" onClick={()=>navigate('/recruiter-dashboard')}>
             Post a Job
           </Button>
-          <Button variant="outline" size="sm" className="text-sm border-[1px] w-full text-center p-3 rounded-sm bg-green-500 text-white hover:bg-green-700" onClick={()=>navigate('/auth/login')}>
+
+          <Button variant="outline" size="sm" className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-green-500 text-white hover:bg-green-700" onClick={()=>navigate('/auth/login')}>
             Login
           </Button>
           </div>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import RWloading from '../components/RWloading'
 import StickyNavbar from '../components/StickyNavbar'
 import ResendFooterWithLogo from '../components/Footer'
 
@@ -14,15 +13,14 @@ export default function PublicLayout() {
       },[])
 
   return (
-    <div className='bg-[#000] w-full scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800'>
-{loading ? <RWloading /> : <>
+    <div className='bg-[#000] w-full scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 flex flex-col min-h-screen"'>
+   
       <StickyNavbar/>
-      <div className="w-full py-28">
+      <div className="w-full py-28 flex-grow">
         <Outlet context={{loading}}/> {/* This will render the correct page */}
       </div>
       <ResendFooterWithLogo/>
-      </>
-  }
+   
   </div>
   )
 }

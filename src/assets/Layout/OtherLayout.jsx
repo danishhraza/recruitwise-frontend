@@ -5,7 +5,7 @@ import { Toaster } from "../../components/ui/sonner";
 
 function OtherLayout () {
   return (
-    <div className="bg-black h-screen text-white">
+    <div className="bg-black w-full h-screen text-white">
         <Outlet/>
      <Toaster expand richColors position="top-center"/> 
     </div>

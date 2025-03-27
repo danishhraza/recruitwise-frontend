@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react"
-import RWloading from "../components/RWloading"
 import { Button, ConfigProvider } from "antd"
 import VideoCall from "../components/VideoCall"
 import { useNavigate, useOutletContext } from "react-router-dom"
@@ -113,8 +112,21 @@ function Home() {
       <div className="md:hidden">
         <MobileSnapScroll/>
       </div>
+      
+{/* Image above footer */}
+<div className="relative md:block hidden mt-28">
+  <div className="absolute bottom-[-200px] md:bottom-[-250px] lg:bottom-[-280px] left-0 w-full">
+    <div className="mx-auto px-8">
+      <img 
+        src="/images/footer.jpg" 
+        alt="Footer Logo" 
+        className="w-full object-contain mb-10" 
+      />
+    </div>
+  </div>
+</div>
 
-    </>
+  </>
   )
 }
 

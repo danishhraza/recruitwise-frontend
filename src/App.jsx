@@ -12,34 +12,53 @@ import Authorization from "./assets/pages/Authorization";
 import LoginComponent from "./assets/components/LoginComponent";
 import RegisterComponent from "./assets/components/RegisterComponent";
 import DashboardLayout from "./assets/Layout/DashboardLayout";
+import RecruiterDashboardPage from "./assets/pages/RecruiterDashboardPage"
+import JobPage from "./assets/pages/JobPage"
+import { SidebarProvider } from "./components/ui/sidebar"
+import { ThemeProvider } from "../src/assets/components/theme-provider"
+
 function App() {
   return (
+    
+    <SidebarProvider>
     <Routes>
       <Route path="/" element={<PublicLayout />}>
-        <Route index element={<Home />} />
-        <Route path="/jobs" element={
-          <FiltersProvider>
-            <ViewJobs />
-        </FiltersProvider>
-            } />
+          <Route index element={<Home />} />
+          <Route path="/jobs" element={
+              <FiltersProvider>
+                <ViewJobs />
+            </FiltersProvider>
+          } />
+          
       </Route>
-      <Route path="/dashboard" element={<DashboardLayout/>}/>
-        <Route path="/" element={<OtherLayout />}>
-        <Route 
-          path="/room/:roomid" 
-          element={
-            <RoomProvider>
-              <Room />
-            </RoomProvider>
-          }
-        />
-        <Route path="/auth" element={<Authorization />}>
-          <Route index element={<Navigate to="/auth/login" replace />} />
-          <Route path="login" element={<LoginComponent />}/>
-          <Route path="register" element={<RegisterComponent/>}/>
-        </Route>
-        </Route>
+
+
+
+      <Route path="/" element={<OtherLayout />}>
+          <Route 
+              path="/room/:roomid" 
+              element={
+                <RoomProvider>
+                  <Room />
+                </RoomProvider>
+              }
+          />
+          <Route path="/auth" element={<Authorization />}>
+              <Route index element={<Navigate to="/auth/login" replace />} />
+                <Route path="login" element={<LoginComponent />}/>
+                <Route path="register" element={<RegisterComponent/>}/>
+          </Route>
+          
+            <Route path="/jobs/:id" element={<JobPage />} />
+            {/* <Route path="/dashboard" element={<DashboardLayout/>}/> */}
+            <Route path="/recruiter-dashboard" element={<RecruiterDashboardPage />} />
+         
+      </Route>
+
+
     </Routes>
+    </SidebarProvider>
+    
   );
 }
 
