@@ -11,11 +11,9 @@ import OtherLayout from "./assets/Layout/OtherLayout";
 import Authorization from "./assets/pages/Authorization";
 import LoginComponent from "./assets/components/LoginComponent";
 import RegisterComponent from "./assets/components/RegisterComponent";
-import DashboardLayout from "./assets/Layout/DashboardLayout";
 import RecruiterDashboardPage from "./assets/pages/RecruiterDashboardPage"
 import JobPage from "./assets/pages/JobPage"
 import { SidebarProvider } from "./components/ui/sidebar"
-import { ThemeProvider } from "../src/assets/components/theme-provider"
 import UserDashboardPage from "./assets/pages/UserDashboardPage"
 import ApplicationsPage from "./assets/pages/ApplicationsPage"
 import SavedJobsPage from "./assets/pages/SavedJobsPage"
