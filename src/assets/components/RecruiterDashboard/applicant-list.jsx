@@ -61,7 +61,7 @@ export function ApplicantList({ applicants }) {
         <Button>Export to CSV</Button>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border bg-primary-foreground">
         <Table>
           <TableHeader>
             <TableRow>

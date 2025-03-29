@@ -8,6 +8,7 @@ import { DashboardSidebar } from "../components/RecruiterDashboard//sidebar"
 import { Button } from "../../components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { getJobById } from "../../lib/data"
+import { ThemeProvider } from "../components/theme-provider";
 
 export default function JobPage() {
   const params = useParams()
@@ -32,6 +33,7 @@ export default function JobPage() {
 
   if (loading) {
     return (
+      <ThemeProvider defaultTheme="dark">
       <div className="flex min-h-screen bg-background">
         <DashboardSidebar />
         <div className="flex-1">
@@ -45,11 +47,13 @@ export default function JobPage() {
           </main>
         </div>
       </div>
+      </ThemeProvider>
     )
   }
 
   if (!job) {
     return (
+      <ThemeProvider defaultTheme="dark">
       <div className="flex min-h-screen bg-background">
         <DashboardSidebar />
         <div className="flex-1">
@@ -67,11 +71,13 @@ export default function JobPage() {
           </main>
         </div>
       </div>
+      </ThemeProvider>
     )
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <ThemeProvider defaultTheme="dark">
+    <div className="flex min-h-screen bg-background text-foreground">
       <DashboardSidebar />
       <div className="flex-1">
         <DashboardHeader />
@@ -121,6 +127,7 @@ export default function JobPage() {
         </main>
       </div>
     </div>
+    </ThemeProvider>
   )
 }
 

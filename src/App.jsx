@@ -16,6 +16,10 @@ import RecruiterDashboardPage from "./assets/pages/RecruiterDashboardPage"
 import JobPage from "./assets/pages/JobPage"
 import { SidebarProvider } from "./components/ui/sidebar"
 import { ThemeProvider } from "../src/assets/components/theme-provider"
+import UserDashboardPage from "./assets/pages/UserDashboardPage"
+import ApplicationsPage from "./assets/pages/ApplicationsPage"
+import SavedJobsPage from "./assets/pages/SavedJobsPage"
+import DocumentsPage from "./assets/pages/DocumentsPage"
 
 function App() {
   return (
@@ -50,8 +54,13 @@ function App() {
           </Route>
           
             <Route path="/jobs/:id" element={<JobPage />} />
-            {/* <Route path="/dashboard" element={<DashboardLayout/>}/> */}
             <Route path="/recruiter-dashboard" element={<RecruiterDashboardPage />} />
+
+            {/* User Dashboard Routes */}
+            <Route path="/user-dashboard" element={<UserDashboardPage />} />
+            <Route path="/user-dashboard/applications" element={<ApplicationsPage />} />
+            <Route path="/user-dashboard/saved-jobs" element={<SavedJobsPage />} />
+            <Route path="/user-dashboard/documents" element={<DocumentsPage />} />
          
       </Route>
 

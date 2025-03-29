@@ -22,13 +22,13 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="flex h-14 items-center justify-between border-b px-4 text-muted-foreground">
+      <SidebarHeader className="flex h-14 items-center bg-background justify-between border-b px-4 text-foreground">
         <Link to="/" className="flex items-center gap-2 font-semibold">
           <span className="text-xl">RecruitWise</span>
         </Link>
         <ModeToggle className='text-foreground'/>
       </SidebarHeader>
-      <SidebarContent className="p-2 text-muted-foreground">
+      <SidebarContent className="p-2 text-foreground bg-background">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={isActive("/")}>
@@ -56,7 +56,7 @@ export function DashboardSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter className="border-t p-2">
+      <SidebarFooter className="border-t p-2 bg-background">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>

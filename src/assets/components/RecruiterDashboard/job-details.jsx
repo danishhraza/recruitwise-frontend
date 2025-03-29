@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui
 export function JobDetails({ job }) {
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="rounded-md bg-primary-foreground">
         <CardHeader>
           <CardTitle>Job Information</CardTitle>
         </CardHeader>
@@ -46,7 +46,7 @@ export function JobDetails({ job }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-md bg-primary-foreground">
         <CardHeader>
           <CardTitle>Job Description</CardTitle>
         </CardHeader>
@@ -57,7 +57,7 @@ export function JobDetails({ job }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-md bg-primary-foreground">
         <CardHeader>
           <CardTitle>Requirements</CardTitle>
         </CardHeader>
@@ -72,7 +72,7 @@ export function JobDetails({ job }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="rounded-md bg-primary-foreground">
         <CardHeader>
           <CardTitle>Responsibilities</CardTitle>
         </CardHeader>
