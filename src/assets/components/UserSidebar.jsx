@@ -6,7 +6,6 @@ import {
   } from "@material-tailwind/react";
 import { Bookmark, SendDiagonal, TimeZone } from 'iconoir-react';
 import { FileArchive } from 'lucide-react';
-import PendingAssessments from './UserComponents/PendingAssessments';
 import AppliedJobs from './UserComponents/AppliedJobs';
 import ListedJobs from './UserComponents/ListedJobs';
 
@@ -28,12 +27,6 @@ const LIST = [
     title: "Resumes & Cover Letters",
     param: "",
     component:''
-  },
-  {
-    icon: TimeZone,
-    title: "Pending Assessments",
-    param: "",
-    component:<PendingAssessments/>
   },
 ]
 export default function UserSidebar({setCurrentTab,setCurrentComponent,currentTab}) {
