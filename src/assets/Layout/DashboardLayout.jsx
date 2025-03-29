@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import MultiLevelSidebar from '../components/Sidebar'
 import Profile from '../components/Profile'
 
 export default function DashboardLayout() {
