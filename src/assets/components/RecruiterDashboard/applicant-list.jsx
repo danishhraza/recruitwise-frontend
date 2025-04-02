@@ -1,7 +1,5 @@
-"use client"
-
 import { useState } from "react"
-
+import { useNavigate } from "react-router-dom"
 import { Badge } from "../../../components/ui/badge"
 import { Button } from "../../../components/ui/button"
 import { Card } from "../../../components/ui/card"
@@ -9,20 +7,29 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Input } from "../../../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table"
+import { getAllApplicants } from "../../../lib/applicant-data"
 
-export function ApplicantList({ applicants }) {
+export function ApplicantList({ applicants: propApplicants }) {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+
+  // Use either provided applicants or fetch all applicants
+  const applicants = propApplicants || getAllApplicants()
 
   const filteredApplicants = applicants.filter((applicant) => {
     const matchesSearch =
       applicant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      applicant.email.toLowerCase().includes(searchQuery.toLowerCase())
+      (applicant.email && applicant.email.toLowerCase().includes(searchQuery.toLowerCase()))
 
     const matchesStatus = statusFilter === "all" || applicant.status === statusFilter
 
     return matchesSearch && matchesStatus
   })
+
+  const handleApplicantClick = (applicantId) => {
+    navigate(`/applicants/${applicantId}`)
+  }
 
   if (applicants.length === 0) {
     return (
@@ -61,7 +68,7 @@ export function ApplicantList({ applicants }) {
         <Button>Export to CSV</Button>
       </div>
 
-      <div className="rounded-md border bg-primary-foreground">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
@@ -82,11 +89,15 @@ export function ApplicantList({ applicants }) {
               </TableRow>
             ) : (
               filteredApplicants.map((applicant) => (
-                <TableRow key={applicant.id}>
+                <TableRow
+                  key={applicant.id}
+                  className="cursor-pointer hover:bg-accent/50"
+                  onClick={() => handleApplicantClick(applicant.id)}
+                >
                   <TableCell>
                     <div>
                       <div className="font-medium">{applicant.name}</div>
-                      <div className="text-sm text-muted-foreground">{applicant.email}</div>
+                      <div className="text-sm text-muted-foreground">{applicant.role}</div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -104,7 +115,7 @@ export function ApplicantList({ applicants }) {
                       }
                       className="capitalize"
                     >
-                      {applicant.interviewStatus}
+                      {applicant.interviewStatus || "Not scheduled"}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -125,7 +136,7 @@ export function ApplicantList({ applicants }) {
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
+                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
                         <Button variant="ghost" size="sm">
                           <span className="sr-only">Open menu</span>
                           <svg
@@ -147,10 +158,17 @@ export function ApplicantList({ applicants }) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>View Profile</DropdownMenuItem>
-                        <DropdownMenuItem>Schedule Interview</DropdownMenuItem>
-                        <DropdownMenuItem>Send Email</DropdownMenuItem>
-                        <DropdownMenuItem>Update Status</DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleApplicantClick(applicant.id)
+                          }}
+                        >
+                          View Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Schedule Interview</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Send Email</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Update Status</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

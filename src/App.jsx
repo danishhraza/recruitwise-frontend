@@ -18,6 +18,7 @@ import UserDashboardPage from "./assets/pages/UserDashboardPage"
 import ApplicationsPage from "./assets/pages/ApplicationsPage"
 import SavedJobsPage from "./assets/pages/SavedJobsPage"
 import DocumentsPage from "./assets/pages/DocumentsPage"
+import ApplicantProfilePage from "./assets/pages/ApplicantProfilePage"
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
           
             <Route path="/jobs/:id" element={<JobPage />} />
             <Route path="/recruiter-dashboard" element={<RecruiterDashboardPage />} />
+            <Route path="/applicants/:id" element={<ApplicantProfilePage />} />
 
             {/* User Dashboard Routes */}
             <Route path="/user-dashboard" element={<UserDashboardPage />} />
