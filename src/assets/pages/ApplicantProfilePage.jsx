@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useParams } from "react-router-dom"
 import { Star, ChevronDown, ExternalLink, Play, Volume2, Maximize2 } from "lucide-react"
-
 import { DashboardHeader } from "../components/RecruiterDashboard/header"
 import { DashboardSidebar } from "../components/RecruiterDashboard/sidebar"
 import { Badge } from "../../components/ui/badge"
@@ -11,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import { Progress } from "../../components/ui/progress"
 import { getApplicantById } from "../../lib/applicant-data"
+import { ThemeProvider } from "../components/theme-provider";
 
 export default function ApplicantProfilePage() {
   const { id } = useParams()
@@ -19,6 +19,7 @@ export default function ApplicantProfilePage() {
 
   if (!applicant) {
     return (
+      <ThemeProvider defaultTheme="dark">
       <div className="flex min-h-screen bg-background">
         <DashboardSidebar />
         <div className="flex-1">
@@ -36,17 +37,19 @@ export default function ApplicantProfilePage() {
           </main>
         </div>
       </div>
+      </ThemeProvider>
     )
   }
 
   return (
+    <ThemeProvider defaultTheme="dark">
     <div className="flex min-h-screen bg-background">
       <DashboardSidebar />
       <div className="flex-1">
         <DashboardHeader />
         <main className="container mx-auto p-4 md:p-6">
           <div className="mb-6 flex items-center">
-            <Button variant="outline" size="sm" asChild className="mr-4">
+            <Button variant="outline" size="sm" asChild className="mr-4 text-foreground">
               <a href="/jobs/job-1">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -65,22 +68,17 @@ export default function ApplicantProfilePage() {
                 Back to Job
               </a>
             </Button>
-            <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{applicant.name}</h1>
+            <h1 className="text-2xl font-bold tracking-tight md:text-3xl text-primary">{applicant.name}</h1>
             {applicant.favorite && <Star className="ml-2 h-5 w-5 fill-yellow-400 text-yellow-400" />}
-            <div className="ml-auto">
-              <span className="text-sm text-muted-foreground mr-2">{applicant.views} views</span>
-              <span className="text-sm text-amber-500">Expires in {applicant.expiresIn}</span>
-            </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 text-foreground">
             {/* Left column - Applicant details */}
             <div className="lg:col-span-3 space-y-6">
               <ApplicantDetails applicant={applicant} />
               <HiringSignal applicant={applicant} />
               <ContactInfo applicant={applicant} />
               <Links applicant={applicant} />
-              <Reviews applicant={applicant} />
             </div>
 
             {/* Right column - Interview content */}
@@ -168,12 +166,13 @@ export default function ApplicantProfilePage() {
         </main>
       </div>
     </div>
+    </ThemeProvider>
   )
 }
 
 function ApplicantDetails({ applicant }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-primary-foreground p-4 rounded-lg shadow-md">
       <div className="flex items-center">
         <Avatar className="h-12 w-12 mr-4">
           <AvatarFallback className="bg-primary/10 text-primary">
@@ -220,7 +219,7 @@ function ApplicantDetails({ applicant }) {
 
 function HiringSignal({ applicant }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 bg-primary-foreground p-4 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Strong Hiring Signal</h3>
         <ChevronDown className="h-4 w-4" />
@@ -238,7 +237,7 @@ function HiringSignal({ applicant }) {
 
 function ContactInfo({ applicant }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 bg-primary-foreground p-4 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Contact info</h3>
         <ChevronDown className="h-4 w-4" />
@@ -263,7 +262,7 @@ function ContactInfo({ applicant }) {
 
 function Links({ applicant }) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 bg-primary-foreground p-4 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Links</h3>
         <ChevronDown className="h-4 w-4" />
@@ -277,41 +276,6 @@ function Links({ applicant }) {
             </a>
           </div>
         ))}
-      </div>
-    </div>
-  )
-}
-
-function Reviews({ applicant }) {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Reviews ({applicant.reviews.length})</h3>
-        <ChevronDown className="h-4 w-4" />
-      </div>
-      <div className="space-y-3">
-        {applicant.reviews.slice(0, 1).map((review, index) => (
-          <div key={index} className="space-y-1">
-            <div className="flex items-center">
-              <span className="font-medium">{review.reviewer}</span>
-              <span className="text-muted-foreground text-sm ml-2">• {review.date}</span>
-            </div>
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-4 w-4 ${i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted"}`}
-                />
-              ))}
-            </div>
-            <p className="text-sm">{review.comment}</p>
-          </div>
-        ))}
-        {applicant.reviews.length > 1 && (
-          <Button variant="ghost" size="sm" className="w-full text-primary">
-            View all {applicant.reviews.length} reviews
-          </Button>
-        )}
       </div>
     </div>
   )

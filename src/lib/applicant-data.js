@@ -6,8 +6,6 @@ export function getApplicantById(id) {
         id: "applicant-1",
         name: "Bryan Johnson",
         favorite: true,
-        views: 326,
-        expiresIn: "4 days",
         role: "Senior Full Stack",
         experience: 8,
         rate: 80,
@@ -27,21 +25,6 @@ export function getApplicantById(id) {
           { type: "Resume", url: "#" },
           { type: "GitHub", url: "https://github.com/bryanjohnson" },
           { type: "Portfolio", url: "https://bryanjohnson.dev" },
-        ],
-        reviews: [
-          {
-            reviewer: "Jane Smith",
-            date: "2 months ago",
-            rating: 5,
-            comment:
-              "Bryan was an excellent candidate. His technical knowledge is impressive and he communicates clearly.",
-          },
-          {
-            reviewer: "Michael Wong",
-            date: "3 months ago",
-            rating: 4,
-            comment: "Strong technical skills and good cultural fit.",
-          },
         ],
         interviewImage:
           "https://recruitwise-frontend.vercel.app/images/pov-interview5.jpg",
@@ -74,8 +57,6 @@ export function getApplicantById(id) {
         id: "applicant-2",
         name: "Sarah Miller",
         favorite: false,
-        views: 215,
-        expiresIn: "6 days",
         role: "Frontend Developer",
         experience: 5,
         rate: 65,
@@ -95,14 +76,6 @@ export function getApplicantById(id) {
           { type: "Resume", url: "#" },
           { type: "GitHub", url: "https://github.com/sarahmiller" },
           { type: "Portfolio", url: "https://sarahmiller.dev" },
-        ],
-        reviews: [
-          {
-            reviewer: "David Chen",
-            date: "1 month ago",
-            rating: 4,
-            comment: "Sarah has excellent frontend skills and a good eye for design.",
-          },
         ],
         questions: [
           {
