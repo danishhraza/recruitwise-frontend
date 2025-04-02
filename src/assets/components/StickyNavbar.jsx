@@ -16,35 +16,25 @@ import {
   MediaImage,
 } from "iconoir-react";
 import { Link, useNavigate } from "react-router-dom";
+import { message } from 'antd'
 import useGeneral from "../../hooks/useGeneral";
 import axios from "../../api/axios";
+import { Avatar, AvatarFallback, AvatarImage } from "../../components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../../components/ui/dropdown-menu"
 
 const LINKS = [
-  // {
-  //   icon: MultiplePages,
-  //   title: "Pages",
-  //   href: "#",
-  // },
-  // {
-  //   icon: ProfileCircle,
-  //   title: "Account",
-  //   href: "#",
-  // },
-  // {
-  //   icon: SelectFace3d,
-  //   title: "Blocks",
-  //   href: "#",
-  // },
-  // {
-  //   icon: Archive,
-  //   title: "Docs",
-  //   href: "#",
-  // },
+  // Commented out links as in original
 ];
 
 function NavList() {
-  const {isLoggedIn} = useGeneral()
-
   return (
     <ul className="mt-4 flex flex-col gap-x-3 px-2 gap-y-1.5 lg:mt-0 lg:flex-row text-white lg:items-center">
       {LINKS.map(({ icon: Icon, title, href }) => (
@@ -66,7 +56,9 @@ function NavList() {
 
 export default function StickyNavbar() {
   const [openNav, setOpenNav] = React.useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const {isLoggedIn, user, setIsLoggedIn, setUser} = useGeneral();
+  
   React.useEffect(() => {
     window.addEventListener(
       "resize",
@@ -74,63 +66,150 @@ export default function StickyNavbar() {
     );
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post('/auth/logout');
+      message.success('Logout successful!');
+      setIsLoggedIn(false)
+      setUser(null)
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
-    <Navbar className="z-10 fixed lg:top-5 left-0 right-0 md:mx-auto w-full rounded-none border-b-2 border-x-0 border-t-0 border-blue-500 lg:rounded-lg max-w-screen-xl text-white bg-[#3f3f3f89] dark:bg-surface-dark backdrop-blur-xl px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex">
-
-          <Typography
-            as="a"
-            href="/"
-            type="small"
-            className="ml-2 mr-2 block py-1 font-semibold"
-          >
-            <img src="/images/logo-white.webp" alt="logo" className="w-36"/>
-          </Typography>
-          <div className="hidden lg:block">
-            <NavList />
+    <div className="relative">
+      <Navbar className="z-10 fixed lg:top-5 left-0 right-0 md:mx-auto w-full rounded-none border-[#ffffff1a] lg:rounded-xl max-w-screen-xl text-white bg-[#00000066] dark:bg-surface-dark backdrop-blur-xl px-6 py-4">
+        <div className="flex items-center">
+          {/* Logo section - left aligned */}
+          <div className="flex-shrink-0">
+            <Typography
+              as="a"
+              href="/"
+              type="small"
+              className="block"
+            >
+              <img src="/images/logo-white.webp" alt="logo" className="w-36"/>
+            </Typography>
           </div>
+          
+          {/* Navigation links - center aligned with flex-1 and justify-center */}
+          <div className="flex-1 flex justify-center -ml-20">
+            <div className="flex items-center gap-2">
+              <Link className="hidden lg:inline-block" to='/jobs'>
+                {!(user && user.role === 'recruiter') && (
+                  <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
+                    Apply as talent
+                  </Button>
+                )}
+              </Link>
+              {/* Divider line that fades at top and bottom, hidden when logged in */}
+              {!isLoggedIn && (
+                <div className="hidden lg:block h-8 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent mx-1"></div>
+              )}
+              <Link className="hidden lg:inline-block" to='/recruiter-dashboard'>
+                {!(user && user.role === 'candidate') && (
+                  <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
+                    Post a Job
+                  </Button>
+                )}
+              </Link>
             </div>
-          <div className="flex gap-4 items-center">
-
-          <Link className="hidden lg:inline-block text-[1rem]" to='/jobs'>Apply as talent</Link>
-          <Link to='/recruiter-dashboard'>
-          <Button isPill size="md" className="hidden lg:inline-block bg-blue-700 text-white border-none hover:bg-blue-800">
-            Post a Job
-          </Button>
-          </Link>
-          <Button isPill variant="outline" size="md" className="hidden lg:inline-block border-none bg-green-500 text-white hover:bg-green-700" onClick={()=>navigate('/auth/login')}>
-            Login
-          </Button>
           </div>
-          <IconButton
-            size="sm"
-            variant="ghost"
-            color="secondary"
-            onClick={() => setOpenNav(!openNav)}
-            className="ml-auto grid lg:hidden border-slate-700"
-          >
-            {openNav ? (
-              <Xmark className="h-4 w-4" color="white" />
+          
+          {/* User actions - right aligned */}
+          <div className="flex items-center gap-4">
+            {isLoggedIn ? (
+              <div className="relative">
+                <DropdownMenu modal={false}>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src="/placeholder.svg" alt="User" />
+                        <AvatarFallback>
+                          {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent 
+                    className="w-56 text-gray-200 bg-black border-[#ffffff1a] p-3" 
+                    align="end" 
+                    forceMount
+                    sideOffset={5}
+                    side="bottom"
+                    avoidCollisions={true}
+                    collisionPadding={{ top: 10, right: 10, bottom: 10, left: 10 }}
+                  >
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{user.name}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuGroup>
+                      <DropdownMenuItem className="mt-2 cursor-pointer">
+                        Profile
+                      </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator className="bg-[#ffffff2a] mx-1"/>
+                    <DropdownMenuItem className="text-red-500 cursor-pointer" onClick={handleLogout}>
+                      Log out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             ) : (
-              <Menu className="h-4 w-4" color="white" />
+              <Button 
+                variant="outline" 
+                size="md" 
+                className="hidden lg:inline-block border-none bg-green-500 text-white hover:bg-green-700" 
+                onClick={()=>navigate('/auth/login')}
+              >
+                Login
+              </Button>
             )}
-          </IconButton>
+            
+            <IconButton
+              size="sm"
+              variant="ghost"
+              color="secondary"
+              onClick={() => setOpenNav(!openNav)}
+              className="grid lg:hidden border-slate-700"
+            >
+              {openNav ? (
+                <Xmark className="h-4 w-4" color="white" />
+              ) : (
+                <Menu className="h-4 w-4" color="white" />
+              )}
+            </IconButton>
+          </div>
         </div>
+        
         <Collapse open={openNav}>
           <NavList />
           <div className="flex flex-col justify-start items-center px-2 pb-3 gap-3">
-          <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/jobs'>Apply as talent</Link>
- 
-          <Button className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-blue-700 text-white  hover:bg-blue-800" onClick={()=>navigate('/recruiter-dashboard')}>
-            Post a Job
-          </Button>
-
-          <Button variant="outline" size="sm" className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-green-500 text-white hover:bg-green-700" onClick={()=>navigate('/auth/login')}>
-            Login
-          </Button>
+            <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/jobs'>
+              Apply as talent
+            </Link>
+            <Button 
+              className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-blue-700 text-white hover:bg-blue-800" 
+              onClick={()=>navigate('/recruiter-dashboard')}
+            >
+              Post a Job
+            </Button>
+            <Button 
+              variant="outline" 
+              size="md" 
+              className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-green-500 text-white hover:bg-green-700" 
+              onClick={()=>navigate('/auth/login')}
+            >
+              Login
+            </Button>
           </div>
         </Collapse>
       </Navbar>
+    </div>
   );
 }

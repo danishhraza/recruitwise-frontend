@@ -8,8 +8,6 @@ import ViewJobs from "./assets/pages/ViewJobs";
 import PublicLayout from "./assets/Layout/PublicLayout";
 import { FiltersProvider } from "./assets/Context/FiltersContext";
 import OtherLayout from "./assets/Layout/OtherLayout";
-import Authorization from "./assets/pages/Authorization";
-import LoginComponent from "./assets/components/LoginComponent";
 import RegisterComponent from "./assets/components/RegisterComponent";
 import RecruiterDashboardPage from "./assets/pages/RecruiterDashboardPage"
 import JobPage from "./assets/pages/JobPage"
@@ -21,6 +19,7 @@ import DocumentsPage from "./assets/pages/DocumentsPage"
 import ApplicantProfilePage from "./assets/pages/ApplicantProfilePage"
 import axios from "./api/axios";
 import useGeneral from "./hooks/useGeneral";
+import LoginPage from "./assets/pages/login-page";
 
 // Auth guard component to redirect logged in users
 const UnauthenticatedRoute = ({ children }) => {
@@ -79,11 +78,11 @@ function App() {
                 </RoomProvider>
               }
           />
-          <Route path="/auth" element={<Authorization />}>
+          <Route path="/auth" >
               <Route index element={<Navigate to="/auth/login" replace />} />
                 <Route path="login" element={
                   <UnauthenticatedRoute>
-                    <LoginComponent />
+                    <LoginPage />
                   </UnauthenticatedRoute>
                 }/>
                 <Route path="register" element={
