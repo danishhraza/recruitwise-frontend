@@ -7,7 +7,7 @@ function OtherLayout () {
   return (
     <div className="bg-black w-full h-screen text-white">
         <Outlet/>
-     <Toaster expand richColors position="top-center"/> 
+     {/* <Toaster expand richColors position="top-center"/>  */}
     </div>
   )
 };

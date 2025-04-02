@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   IconButton,
@@ -16,6 +16,8 @@ import {
   MediaImage,
 } from "iconoir-react";
 import { Link, useNavigate } from "react-router-dom";
+import useGeneral from "../../hooks/useGeneral";
+import axios from "../../api/axios";
 
 const LINKS = [
   // {
@@ -41,6 +43,8 @@ const LINKS = [
 ];
 
 function NavList() {
+  const {isLoggedIn} = useGeneral()
+
   return (
     <ul className="mt-4 flex flex-col gap-x-3 px-2 gap-y-1.5 lg:mt-0 lg:flex-row text-white lg:items-center">
       {LINKS.map(({ icon: Icon, title, href }) => (

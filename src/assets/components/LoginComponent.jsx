@@ -1,25 +1,77 @@
 import { GoogleOutlined, LinkedinFilled, WindowsFilled } from '@ant-design/icons'
-import { Button, Divider, Input } from 'antd'
-import { User2 } from 'lucide-react'
+import { Button, Divider, Input, message } from 'antd'
+import { User2, Lock } from 'lucide-react'
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useForm, Controller } from 'react-hook-form'
+import axios from '../../api/axios'
+import useGeneral from '../../hooks/useGeneral'
 
 export default function LoginComponent() {
+  const { control, handleSubmit } = useForm();
+  const from = location.state?.from?.pathname || "/";
+  const {isLoggedIn,setIsLoggedIn} = useGeneral()
+  const navigate = useNavigate();
+  const onSubmit = async (data) => {
+    console.log(data)
+    try {
+      const response = await axios.post('/auth/login', {
+        email: data.email,
+        password: data.password,
+      });
+      message.success('Login successful!');
+      setIsLoggedIn(true)
+      navigate(from,{replace:true});
+    } catch (error) {
+      message.error('Login failed. Please try again.');
+      console.error(error);
+    }
+  };
+
   return (
     <div>
-    <div className='flex flex-col gap-3 text-center'>
-    <h1 className='text-3xl font-outfit'>Welcome Back</h1>   
-    <Input prefix={<User2 size={18} color='grey'/>} placeholder='Email Address' className='w-80 h-10' />
-    <Button type='primary' className='w-80 mt-3'>Continue</Button>
-    <p className='text-[0.9rem]'>Don't have an account? <Link className='text-blue-600' to={'/auth/register'}>Sign Up</Link></p>
+      <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3 text-center'>
+        <h1 className='text-3xl font-outfit'>Welcome Back</h1>
+        
+        <Controller
+          name="email"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <Input
+              {...field}
+              prefix={<User2 size={18} color='grey' />}
+              placeholder='Email Address'
+              className='w-80 h-10'
+            />
+          )}
+        />
+        
+        <Controller
+          name="password"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <Input.Password
+              {...field}
+              prefix={<Lock size={18} color='grey' />}
+              placeholder='Password'
+              className='w-80 h-10'
+            />
+          )}
+        />
+        
+        <Button htmlType='submit' type='primary' className='w-80 mt-3'>Sign In</Button>
+        <p className='text-[0.9rem]'>
+          Don't have an account? <Link className='text-blue-600' to={'/auth/register'}>Sign Up</Link>
+        </p>
+      </form>
+      <Divider style={{ borderColor: 'grey', color: 'white' }}>OR</Divider>
+      <div className='flex flex-col gap-3'>
+        <Button type='primary' className='w-80' icon={<GoogleOutlined />}>Google</Button>
+        <Button type='primary' className='w-80' icon={<LinkedinFilled />}>LinkedIn</Button>
+        <Button type='primary' className='w-80' icon={<WindowsFilled />}>Outlook</Button>
+      </div>
     </div>
-    <Divider style={{ borderColor: 'grey',color:'white' }}>OR</Divider>
-    <div className='flex flex-col gap-3'>
-
-    <Button type='primary' className='w-80' icon={<GoogleOutlined/>}>Google</Button>
-    <Button type='primary' className='w-80' icon={<LinkedinFilled/>}>LinkedIn</Button>
-    <Button type='primary' className='w-80' icon={<WindowsFilled/>}>Outlook</Button>
-    </div>
-</div>
-  )
+  );
 }
