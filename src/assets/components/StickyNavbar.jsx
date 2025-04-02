@@ -79,8 +79,8 @@ export default function StickyNavbar() {
   };
 
   return (
-    <div className="relative">
-      <Navbar className="z-10 fixed lg:top-5 left-0 right-0 md:mx-auto w-full rounded-none border-[#ffffff1a] lg:rounded-xl max-w-screen-xl text-white bg-[#00000066] dark:bg-surface-dark backdrop-blur-xl px-6 py-4">
+    <div className="fixed top-5 left-0 right-0 px-4 z-10">
+      <Navbar className="border-[#ffffff1a] rounded-2xl max-w-screen-xl mx-auto text-white bg-[#00000066] dark:bg-surface-dark backdrop-blur-xl px-6 py-4">
         <div className="flex items-center">
           {/* Logo section - left aligned */}
           <div className="flex-shrink-0">
