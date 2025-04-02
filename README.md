@@ -1,8 +1,26 @@
-# React + Vite
+# RecruitWise
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![RecruitWise Logo](src/images/logo-white.webp)
 
-Currently, two official plugins are available:
+RecruitWise is a cutting-edge recruitment platform designed to simplify and accelerate the hiring process. Built with React and Vite, it provides a seamless and efficient user experience for recruiters and candidates alike.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
+
+- **AI-Powered Recruitment**: Leverage AI to source, vet, and hire top talent globally.
+- **Responsive Design**: Optimized for both desktop and mobile devices.
+- **Video Interview Platform**: Conduct interviews directly within the platform.
+- **Dynamic Components**: Modular and reusable components for scalability.
+- **Tailwind CSS**: Styled using Tailwind for rapid UI development.
+- **Fast Development**: Built with Vite for lightning-fast development and HMR (Hot Module Replacement).
+
+## Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-repo/recruitwise.git
+   cd recruitwise
+   npm install
+   npm run dev
+   npm run build
+   ```
