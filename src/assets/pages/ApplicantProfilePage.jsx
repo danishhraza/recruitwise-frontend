@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { useParams } from "react-router-dom"
 import { Star, ChevronDown, ExternalLink, Play, Volume2, Maximize2 } from "lucide-react"
 import { DashboardHeader } from "../components/RecruiterDashboard/header"
@@ -11,6 +11,8 @@ import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import { Progress } from "../../components/ui/progress"
 import { getApplicantById } from "../../lib/applicant-data"
 import { ThemeProvider } from "../components/theme-provider";
+import { ProctoringResults } from "../components/RecruiterDashboard/proctor-component"
+import ReactPlayer from "react-player"
 
 export default function ApplicantProfilePage() {
   const { id } = useParams()
@@ -90,70 +92,21 @@ export default function ApplicantProfilePage() {
                 </TabsList>
 
                 <TabsContent value="scores" className="mt-0">
-                  <div className="space-y-6">
+                  <div className="space-y-6">                
+                    <InterviewScore applicant={applicant} />
                     <InterviewVideo applicant={applicant} />
-                    <InterviewQuestions applicant={applicant} />
                   </div>
                 </TabsContent>
 
                 <TabsContent value="proctoring" className="mt-0">
-                  <Card className="p-6">
-                    <h3 className="text-lg font-medium mb-4">Proctoring Results</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex justify-between mb-2">
-                          <span>Identity Verification</span>
-                          <Badge variant="outline" className="bg-green-500/10 text-green-500">
-                            Passed
-                          </Badge>
-                        </div>
-                        <Progress value={100} className="h-2 bg-muted" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between mb-2">
-                          <span>Environment Check</span>
-                          <Badge variant="outline" className="bg-green-500/10 text-green-500">
-                            Passed
-                          </Badge>
-                        </div>
-                        <Progress value={100} className="h-2 bg-muted" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between mb-2">
-                          <span>Browser Focus</span>
-                          <Badge variant="outline" className="bg-amber-500/10 text-amber-500">
-                            Warning
-                          </Badge>
-                        </div>
-                        <Progress value={85} className="h-2 bg-muted" />
-                        <p className="text-sm text-muted-foreground mt-1">Browser focus lost for 15 seconds at 12:45</p>
-                      </div>
-                      <div>
-                        <div className="flex justify-between mb-2">
-                          <span>Audio Quality</span>
-                          <Badge variant="outline" className="bg-green-500/10 text-green-500">
-                            Good
-                          </Badge>
-                        </div>
-                        <Progress value={95} className="h-2 bg-muted" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between mb-2">
-                          <span>Video Quality</span>
-                          <Badge variant="outline" className="bg-green-500/10 text-green-500">
-                            Good
-                          </Badge>
-                        </div>
-                        <Progress value={90} className="h-2 bg-muted" />
-                      </div>
-                    </div>
-                  </Card>
+                  {/* Replace with the new ProctoringResults component */}
+                  <ProctoringResults applicant={applicant} />
                 </TabsContent>
               </Tabs>
 
               <div className="flex justify-between">
                 <div className="space-x-2">
-                  <Button variant="outline">
+                  <Button variant="destructive">
                     Decline
                     <ChevronDown className="ml-1 h-4 w-4" />
                   </Button>
@@ -281,92 +234,102 @@ function Links({ applicant }) {
   )
 }
 
-function InterviewVideo({ applicant }) {
+function InterviewVideo() {
+    const playerRef = useRef(null)
+    const [muted, setMuted] = useState(false)
   return (
     <Card className="overflow-hidden">
-      <div className="relative">
         <div className="aspect-video bg-black">
-          <img
-            src={applicant.interviewImage || "/placeholder.svg?height=480&width=854"}
-            alt="Interview recording"
-            className="w-full h-full object-cover"
+          <ReactPlayer
+            ref={playerRef}
+            url="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+            width="100%"
+            height="100%"
+            muted={muted}
+            controls={true}
+            config={{
+              file: {
+                attributes: {
+                  style: { width: '100%', height: '100%' }
+                }
+              }
+            }}
           />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Button size="icon" className="rounded-full bg-primary/90 hover:bg-primary h-12 w-12">
-              <Play className="h-6 w-6 ml-1" />
-            </Button>
-          </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-2 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Button size="icon" variant="ghost" className="text-white h-8 w-8">
-              <Play className="h-4 w-4" />
-            </Button>
-            <Button size="icon" variant="ghost" className="text-white h-8 w-8">
-              <Volume2 className="h-4 w-4" />
-            </Button>
-            <div className="flex-1 mx-2">
-              <div className="h-1 bg-white/30 rounded-full">
-                <div className="h-1 bg-primary rounded-full" style={{ width: "40%" }}></div>
-              </div>
-            </div>
-            <span className="text-xs">00:12 / 02:12</span>
-          </div>
-          <Button size="icon" variant="ghost" className="text-white h-8 w-8">
-            <Maximize2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
       <div className="p-4">
         <p className="text-sm">
-          {applicant.currentQuestion ||
-            "Can you describe your experience with building cloud-based, streaming microservices at scale? Please provide specific examples, including the technologies and architectures used."}
+          Watch Bryan's full interview here.
         </p>
       </div>
     </Card>
   )
 }
 
-function InterviewQuestions({ applicant }) {
+function InterviewScore({ applicant }) {
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Knockout Questions</h3>
-      <div className="space-y-3">
-        {applicant.questions.map((question, index) => (
-          <Card key={index} className="p-3 hover:bg-accent/50 cursor-pointer">
-            <div className="flex items-start">
-              <div className="h-12 w-12 rounded bg-muted flex-shrink-0 overflow-hidden mr-3">
-                {question.thumbnail ? (
-                  <img src={question.thumbnail || "/placeholder.svg"} alt="" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
-                    {question.time}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                <h4 className="font-medium">{question.title}</h4>
-                <p className="text-sm text-muted-foreground">{question.duration} Min</p>
-              </div>
-            </div>
-          </Card>
-        ))}
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Interview Performance</h3>
+        <div className="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full">
+          Overall Score: {applicant.interviewScore}/100
+        </div>
       </div>
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold mb-3">Technical Interview</h3>
-        <Card className="p-3 hover:bg-accent/50 cursor-pointer">
-          <div className="flex items-start">
-            <div className="h-12 w-12 rounded bg-muted flex-shrink-0 overflow-hidden mr-3 flex items-center justify-center text-xs">
-              48 × 48
-            </div>
-            <div className="flex-1">
-              <h4 className="font-medium">React Interview</h4>
-              <p className="text-sm text-muted-foreground">37:12 Min</p>
-            </div>
-          </div>
-        </Card>
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-4">
+        {Object.entries(applicant.skillRatings).map(([skill, rating]) => (
+          <SkillRatingChart key={skill} skill={skill} rating={rating} />
+        ))}
       </div>
     </div>
   )
 }
 
+function SkillRatingChart({ skill, rating }) {
+  // Calculate percentage for the donut chart
+  const percentage = (rating / 10) * 100;
+  
+  // Define colors based on rating
+  let color = "text-red-500";
+  if (rating >= 8) {
+    color = "text-emerald-500";
+  } else if (rating >= 6) {
+    color = "text-amber-500";
+  }
+
+  return (
+    <Card className="p-4 flex flex-col items-center">
+      <h4 className="font-medium mb-3">{skill}</h4>
+      <div className="relative w-24 h-24">
+        {/* Background circle */}
+        <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+          <circle
+            className="text-muted stroke-current"
+            strokeWidth="10"
+            cx="50"
+            cy="50"
+            r="40"
+            fill="transparent"
+          />
+          {/* Foreground circle */}
+          <circle
+            className={`${color} stroke-current`}
+            strokeWidth="10"
+            strokeLinecap="round"
+            cx="50"
+            cy="50"
+            r="40"
+            fill="transparent"
+            strokeDasharray={`${percentage * 2.51} 251`}
+          />
+        </svg>
+        {/* Rating text in the middle */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className={`${color} text-xl font-bold`}>{rating}</span>
+        </div>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">
+        {rating >= 8 ? "Excellent" : rating >= 6 ? "Good" : "Needs Improvement"}
+      </p>
+    </Card>
+  )
+}
