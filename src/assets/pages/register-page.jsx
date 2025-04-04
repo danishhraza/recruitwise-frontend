@@ -1,5 +1,5 @@
 import { GalleryVerticalEnd } from "lucide-react"
-import LoginComponent from "../components/LoginComponent"
+import RegisterComponent from "../components/RegisterComponent"
 
 export default function LoginPage() {
   return (
@@ -15,7 +15,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginComponent />
+            <RegisterComponent />
           </div>
         </div>
       </div>
