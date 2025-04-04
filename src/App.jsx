@@ -6,6 +6,7 @@ import Room from "./assets/pages/Room";
 import { RoomProvider } from "./assets/Context/RoomContext";
 import ViewJobs from "./assets/pages/ViewJobs";
 import PublicLayout from "./assets/Layout/PublicLayout";
+import DarkHomeLayout from "./assets/Layout/DarkHomeLayout";
 import { FiltersProvider } from "./assets/Context/FiltersContext";
 import OtherLayout from "./assets/Layout/OtherLayout";
 import RegisterComponent from "./assets/components/RegisterComponent";
@@ -20,6 +21,7 @@ import ApplicantProfilePage from "./assets/pages/ApplicantProfilePage"
 import axios from "./api/axios";
 import useGeneral from "./hooks/useGeneral";
 import LoginPage from "./assets/pages/login-page";
+import RegisterPage from "./assets/pages/register-page";
 
 // Auth guard component to redirect logged in users
 const UnauthenticatedRoute = ({ children }) => {
@@ -57,15 +59,19 @@ function App() {
     
     <SidebarProvider>
     <Routes>
-      <Route path="/" element={<PublicLayout />}>
+        {/* Dark Home Layout - Only for the home page */}
+        <Route path="/" element={<DarkHomeLayout />}>
           <Route index element={<Home />} />
+        </Route>
+
+        {/* Public Layout - For other public pages */}
+        <Route path="/" element={<PublicLayout />}>
           <Route path="/jobs" element={
-              <FiltersProvider>
-                <ViewJobs />
+            <FiltersProvider>
+              <ViewJobs />
             </FiltersProvider>
           } />
-          
-      </Route>
+        </Route>
 
 
 
@@ -87,7 +93,7 @@ function App() {
                 }/>
                 <Route path="register" element={
                   <UnauthenticatedRoute>
-                    <RegisterComponent/>
+                    <RegisterPage/>
                   </UnauthenticatedRoute>
                 }/>
           </Route>

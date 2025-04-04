@@ -62,13 +62,7 @@ export function UserDashboardHeader() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Link to="/user">Profile</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link to="/user/applications">Applications</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link to="/user/documents">Resumes & Cover Letters</Link>
+                <Link to="/user-dashboard">Profile</Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

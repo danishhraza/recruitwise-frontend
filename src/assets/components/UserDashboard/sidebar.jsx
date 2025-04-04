@@ -16,15 +16,15 @@ export function UserSidebar() {
   const location = useLocation()
 
   const isActive = (path) => {
-    if (path === "/user" && location.pathname === "/user") return true
-    if (path !== "/user" && location.pathname === path) return true
+    if (path === "/user-dashboard" && location.pathname === "/user-dashboard") return true
+    if (path !== "/user-dashboard" && location.pathname === path) return true
     return false
   }
 
   return (
     <Sidebar>
       <SidebarHeader className="flex h-14 bg-background items-center justify-between border-b px-4 text-foreground">
-        <Link to="/user" className="flex items-center gap-2 font-semibold">
+        <Link to="/" className="flex items-center gap-2 font-semibold">
           <span className="text-xl">RecruitWise</span>
         </Link>
         <ModeToggle />
@@ -32,7 +32,7 @@ export function UserSidebar() {
       <SidebarContent className="p-2 text-foreground bg-background">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/user")}>
+            <SidebarMenuButton asChild isActive={isActive("/user-dashboard")}>
               <Link to="/user-dashboard">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,37 @@ export function UserSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/user/applications")}>
+            <SidebarMenuButton asChild isActive={isActive("/user-dashboard")}>
+              <Link to="/jobs">
+                  <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  className="mr-2 h-4 w-4"
+                >
+                  <rect x="2" y="7" width="20" height="14" rx="2" />
+                  <path d="M16 3H8a1 1 0 0 0-1 1v3h10V4a1 1 0 0 0-1-1Z" />
+                  <line x1="6" y1="14" x2="6" y2="14" />
+                  <line x1="10" y1="14" x2="10" y2="14" />
+                  <line x1="14" y1="14" x2="14" y2="14" />
+                  <line x1="18" y1="14" x2="18" y2="14" />
+                  <line x1="6" y1="18" x2="6" y2="18" />
+                  <line x1="10" y1="18" x2="10" y2="18" />
+                  <line x1="14" y1="18" x2="14" y2="18" />
+                  <line x1="18" y1="18" x2="18" y2="18" />
+                </svg>
+                View Jobs
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={isActive("/user-dashboard/applications")}>
               <Link to="/user-dashboard/applications">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -75,12 +105,12 @@ export function UserSidebar() {
                   <path d="m19 7-3 2" />
                   <path d="m5 7 3 2" />
                 </svg>
-                Applications
+                My Applications
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/user/saved-jobs")}>
+            <SidebarMenuButton asChild isActive={isActive("/user-dashboard/saved-jobs")}>
               <Link to="/user-dashboard/saved-jobs">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -128,7 +158,7 @@ export function UserSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link to="/user/settings">
+              <Link to="/user-dashboard/settings">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
