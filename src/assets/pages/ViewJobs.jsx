@@ -15,6 +15,8 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import Filters from '../components/Filters';
+import { useFilters } from '../Context/FiltersContext';
 
 // Mock job data
 const jobsData = [
@@ -162,13 +164,15 @@ const jobsData = [
 
 const JobListingPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedJob, setSelectedJob] = useState(jobsData[0]);
-  const [filters, setFilters] = useState({
-    jobType: [],
-    employmentType: [],
-    experienceLevel: [],
-    timePosted: 'Anytime',
-  });
+  const [selectedJob, setSelectedJob] = useState(jobsData[0]);  
+  const {filters} = useFilters()
+  const {filteredJobs} = filters;
+  // const [filters, setFilters] = useState({
+  //   jobType: [],
+  //   employmentType: [],
+  //   experienceLevel: [],
+  //   timePosted: 'Anytime',
+  // });
   const [showFilters, setShowFilters] = useState(false);
 
   // Handle search input change
@@ -182,40 +186,40 @@ const JobListingPage = () => {
   };
 
   // Handle checkbox filter change
-  const handleFilterChange = (category, value) => {
-    setFilters(prev => {
-      const newFilters = { ...prev };
-      if (newFilters[category].includes(value)) {
-        newFilters[category] = newFilters[category].filter(item => item !== value);
-      } else {
-        newFilters[category] = [...newFilters[category], value];
-      }
-      return newFilters;
-    });
-  };
+  // const handleFilterChange = (category, value) => {
+  //   setFilters(prev => {
+  //     const newFilters = { ...prev };
+  //     if (newFilters[category].includes(value)) {
+  //       newFilters[category] = newFilters[category].filter(item => item !== value);
+  //     } else {
+  //       newFilters[category] = [...newFilters[category], value];
+  //     }
+  //     return newFilters;
+  //   });
+  // };
 
   // Handle time posted filter change
-  const handleTimePostedChange = (value) => {
-    setFilters(prev => ({ ...prev, timePosted: value }));
-  };
+  // const handleTimePostedChange = (value) => {
+  //   setFilters(prev => ({ ...prev, timePosted: value }));
+  // };
 
-  // Filter jobs based on search and filters
-  const filteredJobs = jobsData
-    .filter(job => 
-      job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      job.company.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .filter(job => 
-      filters.jobType.length === 0 || filters.jobType.includes(job.employmentType)
-    )
-    .filter(job => 
-      filters.employmentType.length === 0 || filters.employmentType.includes(job.employmentType.split('-')[0].trim())
-    )
-    .filter(job => 
-      filters.experienceLevel.length === 0 || filters.experienceLevel.includes(job.experienceLevel)
-    )
-    // Sort by latest date
-    .sort((a, b) => new Date(b.postedDate) - new Date(a.postedDate));
+  // // Filter jobs based on search and filters
+  // const filteredJobs = jobsData
+  //   .filter(job => 
+  //     job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+  //     job.company.toLowerCase().includes(searchTerm.toLowerCase())
+  //   )
+  //   .filter(job => 
+  //     filters.jobType.length === 0 || filters.jobType.includes(job.employmentType)
+  //   )
+  //   .filter(job => 
+  //     filters.employmentType.length === 0 || filters.employmentType.includes(job.employmentType.split('-')[0].trim())
+  //   )
+  //   .filter(job => 
+  //     filters.experienceLevel.length === 0 || filters.experienceLevel.includes(job.experienceLevel)
+  //   )
+  //   // Sort by latest date
+  //   .sort((a, b) => new Date(b.postedDate) - new Date(a.postedDate));
 
   // Calculate days ago for posted date
   const getDaysAgo = (dateString) => {
@@ -252,88 +256,9 @@ const JobListingPage = () => {
   </div>
   <ModeToggle className="fixed bottom-7 left-7" />
 </div>
-
+      <Filters open={showFilters} onClose={setShowFilters}/>
       {/* Filters Dialog */}
-      <Dialog open={showFilters} onOpenChange={setShowFilters}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex justify-between items-center">
-              <span>Filters</span>
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6 py-4">
-            {/* Job Type */}
-            <div>
-              <h3 className="font-medium mb-3">Job Type</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {['Full-time', 'Part-time', 'Internship', 'Contract', 'Temporary'].map((type) => (
-                  <div key={type} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`job-type-${type}`} 
-                      checked={filters.jobType.includes(type)}
-                      onCheckedChange={() => handleFilterChange('jobType', type)}
-                    />
-                    <Label htmlFor={`job-type-${type}`}>{type}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <hr />
-            
-            {/* Employment Type */}
-            <div>
-              <h3 className="font-medium mb-3">Employment Type</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {['On Site', 'Hybrid', 'Remote'].map((type) => (
-                  <div key={type} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`employment-${type}`} 
-                      checked={filters.employmentType.includes(type)}
-                      onCheckedChange={() => handleFilterChange('employmentType', type)}
-                    />
-                    <Label htmlFor={`employment-${type}`}>{type}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <hr />
-            
-            {/* Experience Level */}
-            <div>
-              <h3 className="font-medium mb-3">Experience Level</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {['Entry-level', 'Junior', 'Mid-level', 'Senior', 'Executive'].map((level) => (
-                  <div key={level} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`level-${level}`} 
-                      checked={filters.experienceLevel.includes(level)}
-                      onCheckedChange={() => handleFilterChange('experienceLevel', level)}
-                    />
-                    <Label htmlFor={`level-${level}`}>{level}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <hr />
-            
-            {/* Time Posted */}
-            <div>
-              <h3 className="font-medium mb-3">Time Posted</h3>
-              <Select value={filters.timePosted} onValueChange={handleTimePostedChange}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select time range" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Anytime">Anytime</SelectItem>
-                  <SelectItem value="Past 24 hours">Past 24 hours</SelectItem>
-                  <SelectItem value="Past week">Past week</SelectItem>
-                  <SelectItem value="Past month">Past month</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+     
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">

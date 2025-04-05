@@ -1,7 +1,17 @@
-import { Checkbox, Divider, Drawer, Dropdown } from 'antd'
+
 import React from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useFilters } from '../Context/FiltersContext';
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    DialogHeader,
+    DialogTrigger,
+  } from "@/components/ui/dialog";
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 // import { useFilters } from '../Hooks/useFilters';
 
 export default function Filters({open,onClose}) {
@@ -12,12 +22,13 @@ export default function Filters({open,onClose}) {
         setFilters
     } = useFilters();
 
-    const { selectedTime, selectedTimeKey, selectedJobType, selectedEmploymentType } = filters;
+    // const { selectedTime, selectedTimeKey, selectedJobType, selectedEmploymentType } = filters;
     const [searchParams,setSearchParams] = useSearchParams()
 
 
 // Handle time selection
 const handleSelect = ({ key }) => {
+    console.log(key)
     setFilters(prevFilters => ({
         ...prevFilters,
         selectedTimeKey: [key],
@@ -54,6 +65,7 @@ const handleDeselect = () => {
 
 // Handle job type filter
 const handleJobTypeFilter = (jobType) => {
+    console.log(jobType)
     setFilters(prevFilters => {
         const updatedJobTypes = { 
             ...prevFilters.selectedJobType, 
@@ -83,7 +95,41 @@ const handleJobTypeFilter = (jobType) => {
     });
 };
 
+const handleExperienceLevel = (expLevel) => {
+    console.log(expLevel)
+    setFilters(prevFilters => {
+        const updatedExperienceLevels = { 
+            ...prevFilters.selectedExperienceLevel, 
+            [expLevel]: !prevFilters.selectedExperienceLevel[expLevel] 
+        };
+
+        // Get active experience levels
+        const activeExpLevels = Object.keys(updatedExperienceLevels).filter(level => updatedExperienceLevels[level]);
+
+        setSearchParams(prevParams => {
+            const currentQuery = prevParams.get("query") || "";
+            const jobType = prevParams.get("jobType") || "";
+            const eType = prevParams.get("eType") || "";
+            const currTime = prevParams.get("time") || "";
+
+            return {
+                ...(currentQuery ? { query: currentQuery } : {}),
+                ...(jobType ? { jobType: jobType } : {}),
+                ...(eType ? { eType: eType } : {}),
+                ...(currTime ? { time: currTime } : {}),
+                ...(activeExpLevels.length > 0 ? { expLevel: activeExpLevels.join(",") } : {})
+            };
+        });
+
+        return {
+            ...prevFilters,
+            selectedExperienceLevel: updatedExperienceLevels
+        };
+    });
+};
+
 const handleEmploymentType = (employType) => {
+    console.log(employType)
     setFilters(prevFilters => {
         const updatedEmploymentTypes = { 
             ...prevFilters.selectedEmploymentType, 
@@ -115,33 +161,104 @@ const handleEmploymentType = (employType) => {
 
 
 return (
-<Drawer title="Filters" placement="right" closable onClose={onClose} open={open}>
-    <div className='space-y-3'>
-        <h3>Job Type</h3>
-        <div className='flex flex-wrap gap-2'>
-        <Checkbox checked={selectedJobType?.fullTime} 
-  onChange={() => handleJobTypeFilter('fullTime')}>Full-time</Checkbox>
-            <Checkbox checked={selectedJobType?.partTime} onChange={() => handleJobTypeFilter('partTime')}>Part-time</Checkbox>
-            <Checkbox checked={selectedJobType?.internship} onChange={() => handleJobTypeFilter('internship')}>Internship</Checkbox>
-            <Checkbox checked={selectedJobType?.contract} onChange={() => handleJobTypeFilter('contract')}>Contract</Checkbox>
-            <Checkbox checked={selectedJobType?.temporary} onChange={() => handleJobTypeFilter('temporary')}>Temporary</Checkbox>
+<Dialog open={open} onOpenChange={onClose}>
+  <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogTitle className="flex justify-between items-center">
+        <span>Filters</span>
+      </DialogTitle>
+    </DialogHeader>
+    <div className="space-y-6 py-4">
+      
+      {/* Job Type */}
+      <div>
+        <h3 className="font-medium mb-3">Job Type</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {['Full-time', 'Part-time', 'Internship', 'Contract', 'Temporary'].map((type) => (
+            <div key={type} className="flex items-center space-x-2">
+              <Checkbox 
+                id={`job-type-${type}`} 
+                checked={filters.selectedJobType?.[type] || false}
+                onCheckedChange={() => handleJobTypeFilter(type)}
+              />
+              <Label htmlFor={`job-type-${type}`}>{type}</Label>
+            </div>
+          ))}
+        </div>
+      </div>
+      <hr />
 
+      {/* Employment Type */}
+      <div>
+        <h3 className="font-medium mb-3">Employment Type</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {['On Site', 'Hybrid', 'Remote'].map((type) => (
+            <div key={type} className="flex items-center space-x-2">
+              <Checkbox 
+                id={`employment-${type}`} 
+                checked={filters.selectedEmploymentType?.[type] || false}
+                onCheckedChange={() => handleEmploymentType(type)}
+              />
+              <Label htmlFor={`employment-${type}`}>{type}</Label>
             </div>
-    </div>
-    <Divider/>
-    <div className='space-y-3'>
-        <h3>Employment Type</h3>
-        <div className='flex flex-wrap gap-2'>
-            <Checkbox checked={selectedEmploymentType?.onsite} onChange={()=> handleEmploymentType('onsite')}>On Site</Checkbox>
-            <Checkbox checked={selectedEmploymentType?.hybrid} onChange={()=> handleEmploymentType('hybrid')}>Hybrid</Checkbox>
-            <Checkbox checked={selectedEmploymentType?.remote} onChange={()=> handleEmploymentType('remote')}>Remote</Checkbox>
+          ))}
+        </div>
+      </div>
+      <hr />
+
+      {/* Experience Level */}
+      <div>
+        <h3 className="font-medium mb-3">Experience Level</h3>
+        <div className="grid grid-cols-2 gap-2">
+          {['Entry-level', 'Junior', 'Mid-level', 'Senior', 'Executive'].map((level) => (
+            <div key={level} className="flex items-center space-x-2">
+              <Checkbox 
+                id={`level-${level}`} 
+                checked={filters.selectedExperienceLevel?.[level] || false}
+                onCheckedChange={() => handleExperienceLevel(level)}
+              />
+              <Label htmlFor={`level-${level}`}>{level}</Label>
             </div>
+          ))}
+        </div>
+      </div>
+      <hr />
+
+      {/* Time Posted */}
+      <div>
+        <h3 className="font-medium mb-3">Time Posted</h3>
+        <Select
+          value={filters.selectedTime}
+          onValueChange={(value) => {
+            if (value === 'Anytime') {
+              handleDeselect();
+            } else {
+              const key =
+                value === 'Last 24 hours'
+                  ? 'day'
+                  : value === 'Last 7 days'
+                  ? 'week'
+                  : value === 'Last 30 days'
+                  ? 'month'
+                  : 'all';
+              handleSelect({ key });
+            }
+          }}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select time range" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Anytime">Anytime</SelectItem>
+            <SelectItem value="Last 24 hours">Past 24 hours</SelectItem>
+            <SelectItem value="Last 7 days">Past week</SelectItem>
+            <SelectItem value="Last 30 days">Past month</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
-    <Divider/>
-    <div className='space-y-3'>
-        <h3>Time Posted</h3>
-        <Dropdown.Button menu={{items:[{key:'all',label:'Anytime'},{key:'day',label:'Last 24 hours'},{key:'week',label:'Last 7 days'},{key:'month',label:'Last 30 days'}],selectable:true,onSelect:handleSelect,onDeselect:handleDeselect,selectedKeys:selectedTimeKey,defaultSelectedKeys:'all'}}>{selectedTime}</Dropdown.Button>
-    </div>
-</Drawer>
+  </DialogContent>
+</Dialog>
+
   )
 }
