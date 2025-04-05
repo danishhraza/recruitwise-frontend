@@ -1,19 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, Play, PauseIcon, Volume2, SquareIcon, Maximize2, ChevronUp } from "lucide-react";
+import { ProctoringResults } from "../components/RecruiterDashboard/proctor-component"
+import { Card } from "../../components/ui/card"
+import ReactPlayer from "react-player"
 
 export default function InterviewPlatform() {
   const [activeTab, setActiveTab] = useState("Interview");
-  
+  const applicant = {
+    name: "Sarah Miller",
+    favorite: false,
+    role: "Frontend Developer",
+    experience: 5,
+    rate: 65,
+    location: "Austin, TX • USA",
+    skills: ["React", "TypeScript", "CSS"],
+    certifications: [
+      { name: "AWS Certified", primary: false },
+      { name: "React", primary: true },
+    ],
+    hiringSignals: [
+      "5 years of experience with modern frontend frameworks",
+      "Strong portfolio of responsive and accessible web applications",
+    ],
+    email: "sarah.miller@example.com",
+    phone: "+1 (555) 987-6543",
+    links: [
+      { type: "Resume", url: "#" },
+      { type: "GitHub", url: "https://github.com/sarahmiller" },
+      { type: "Portfolio", url: "https://sarahmiller.dev" },
+    ],
+    interviewScore: 82,
+    skillRatings: {
+      React: 8,
+      TypeScript: 9,
+      CSS: 9,
+      "Communication Skills": 7
+    }
+  }
+
   // State for collapsible sections
   const [collapsedSections, setCollapsedSections] = useState({
     hiringSignal: false,
     contactInfo: true,
     links: true,
-    reviews: true
+
   });
 
   // Toggle collapse state for a section
@@ -22,13 +56,12 @@ export default function InterviewPlatform() {
       hiringSignal: section === 'hiringSignal' ? !collapsedSections.hiringSignal : true,
       contactInfo: section === 'contactInfo' ? !collapsedSections.contactInfo : true,
       links: section === 'links' ? !collapsedSections.links : true,
-      reviews: section === 'reviews' ? !collapsedSections.reviews : true
     });
   };
 
   return (
     
-    <div className="flex flex-col text-white z-10 md:w-[65%] w-[90%] border bg-black rounded-t-[1rem] border-1 border-gray-400 rounded-lg">
+    <div className="flex flex-col text-white z-10 md:w-[55%] w-[90%] border bg-black rounded-t-[1rem] border-1 border-gray-400 rounded-lg">
 
       {/* Title bar with dots */}
       <div className="h-6 bg-white flex items-center px-3 rounded-t-[1rem]">
@@ -158,36 +191,6 @@ export default function InterviewPlatform() {
             )}
           </div>
           
-          {/* Collapsible Reviews section */}
-          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-slate-800">
-            <div 
-              className="flex justify-between items-center mb-2 cursor-pointer"
-              onClick={() => toggleSection('reviews')}
-            >
-              <span className="font-semibold">Reviews (4)</span>
-              <span className="text-zinc-500">
-                {collapsedSections.reviews ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-              </span>
-            </div>
-            {!collapsedSections.reviews && (
-              <div className="text-sm text-zinc-400">
-                <div className="mb-2">
-                  <div className="flex items-center">
-                    <span className="text-yellow-500 mr-1">★★★★★</span>
-                    <span className="text-sm">Tech Lead at Acme Inc.</span>
-                  </div>
-                  <p>"Excellent problem solver with deep React knowledge."</p>
-                </div>
-                <div className="mb-2">
-                  <div className="flex items-center">
-                    <span className="text-yellow-500 mr-1">★★★★★</span>
-                    <span className="text-sm">Senior Dev at TechCorp</span>
-                  </div>
-                  <p>"Great team player, delivered on time."</p>
-                </div>
-              </div>
-            )}
-          </div>
         </div>
         
         {/* Main content */}
@@ -212,127 +215,19 @@ export default function InterviewPlatform() {
             </div>
             
             <div className="flex flex-1">
-              <div className="bg-zinc-900 p-4 relative">
-                <TabsContent value="Interview" className="h-full m-0 relative">
-                  <div className="w-full h-96 bg-zinc-800 rounded-md overflow-hidden relative">
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <img 
-                        src="/images/pov-interview3.jpg" 
-                        alt="Interview video"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-0"></div>
-                    </div>
-                    
-                    {/* Video Controls */}
-                    <div className="absolute bottom-0 w-full p-2 bg-gradient-to-t from-black/70 to-transparent">
-                      <div className="flex items-center">
-                        <button className="text-white mr-4">
-                          <Play size={16} />
-                        </button>
-                        <button className="text-white mr-4">
-                          <Volume2 size={16} />
-                        </button>
-                        <div className="flex-1 mx-2">
-                          <div className="h-1 bg-zinc-600 rounded-full w-full">
-                            <div className="h-1 bg-red-500 rounded-full w-2/3 relative">
-                              <div className="absolute -right-1.5 -top-1 w-3 h-3 bg-white rounded-full"></div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-white text-xs">
-                          00:12 / 02:12
-                        </div>
-                        <div className="ml-2 flex">
-                          <button className="text-white mx-1">
-                            <SquareIcon size={14} />
-                          </button>
-                          <button className="text-white mx-1">
-                            <Maximize2 size={14} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 text-sm">
-                    <p className="mb-4">Can you describe your experience with building cloud-based, streaming microservices at scale? Please provide specific examples, including the technologies and architectures used.</p>
-                    
-                  </div>
+              <div className=" p-4 relative">
+                <TabsContent value="Interview" class="lg:max-h-[490px] md:overflow-y-scroll md:p-3 relative">
+                <div className="space-y-6">                
+                    <InterviewScore applicant={applicant} />
+                    <InterviewVideo applicant={applicant} />
+                </div>
                 </TabsContent>
                 
-                <TabsContent value="Proctoring Result" className="h-full m-0">
-                  <div className="w-full h-full flex items-center justify-center text-zinc-400">
-                    Proctoring Result content goes here
-                  </div>
-                </TabsContent>
-              
+                <TabsContent value="Proctoring Result" class="lg:max-h-[490px] md:overflow-y-scroll md:p-3 relative">
+                  <ProctoringResults applicant={applicant} />
+                </TabsContent> 
               </div>
-              
-              {/* Right sidebar */}
-              <div className="w-64 border-l border-zinc-800 hidden lg:flex lg:flex-col">
-                <div className="p-3 border-b border-zinc-800">
-                  <h4 className="font-medium text-sm">Knockout Questions</h4>
-                </div>
-                
-                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
-                  <div className="w-12 h-12 bg-zinc-800 rounded-md flex items-center justify-center mr-3">
-                    <PauseIcon size={16} />
-                  </div>
-                  <div className="flex flex-col justify-between">
-                    <div className="text-xs">Cloud based microservices</div>
-                    <div className="text-xs text-zinc-400">02:12 Min</div>
-                  </div>
-                </div>
-                
-                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
-                  <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden mr-3">
-                    <img src="https://placehold.co/48x48/374151/FFFFFF" alt="Interview thumbnail" />
-                  </div>
-                  <div className="flex flex-col justify-between">
-                    <div className="text-xs">How have you used KafkaStreams or Flink?</div>
-                    <div className="text-xs text-zinc-400">03:05 Min</div>
-                  </div>
-                </div>
-                
-                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
-                  <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden mr-3">
-                    <img src="https://placehold.co/48x48/374151/FFFFFF" alt="Interview thumbnail" />
-                  </div>
-                  <div className="flex flex-col justify-between">
-                    <div className="text-xs">How have you used Flink?</div>
-                    <div className="text-xs text-zinc-400">03:08 Min</div>
-                  </div>
-                </div>
-                
-                <div className="p-3 border-b border-zinc-800">
-                  <h4 className="font-medium text-sm">Why Bryan?</h4>
-                </div>
-                
-                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
-                  <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden mr-3">
-                    <img src="https://placehold.co/48x48/374151/FFFFFF" alt="Interview thumbnail" />
-                  </div>
-                  <div className="flex flex-col justify-between">
-                    <div className="text-xs">Why Bryan</div>
-                    <div className="text-xs text-zinc-400">02:21 Min</div>
-                  </div>
-                </div>
-                
-                <div className="p-3 border-b border-zinc-800">
-                  <h4 className="font-medium text-sm">Technical Interview</h4>
-                </div>
-                
-                <div className="border-b border-zinc-800 p-3 flex hover:bg-slate-800">
-                  <div className="w-12 h-12 bg-zinc-800 rounded-md overflow-hidden mr-3">
-                    <img src="https://placehold.co/48x48/374151/FFFFFF" alt="Interview thumbnail" />
-                  </div>
-                  <div className="flex flex-col justify-between">
-                    <div className="text-xs">React Interview</div>
-                    <div className="text-xs text-zinc-400">37:12 Min</div>
-                  </div>
-                </div>
-              </div>
+            
             </div>
           </Tabs>
         </div>
@@ -341,7 +236,7 @@ export default function InterviewPlatform() {
       {/* Bottom action bar */}
       <div className="h-16 border-t border-zinc-800 flex items-center px-4 justify-between">
         <div className="flex space-x-2">
-          <Button variant="outline" className="bg-zinc-800 border-none text-white flex items-center space-x-1 h-9">
+          <Button variant="destructive" className="border-none text-white flex items-center space-x-1 h-9">
             <span>Decline</span>
             <ChevronDown size={14} />
           </Button>
@@ -357,6 +252,105 @@ export default function InterviewPlatform() {
   );
 }
 
+function InterviewScore({ applicant }) {
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">Interview Performance</h3>
+        <div className="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full">
+          Overall Score: {applicant.interviewScore}/100
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-4">
+        {Object.entries(applicant.skillRatings).map(([skill, rating]) => (
+          <SkillRatingChart key={skill} skill={skill} rating={rating} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function SkillRatingChart({ skill, rating }) {
+  // Calculate percentage for the donut chart
+  const percentage = (rating / 10) * 100;
+  
+  // Define colors based on rating
+  let color = "text-red-500";
+  if (rating >= 8) {
+    color = "text-emerald-500";
+  } else if (rating >= 6) {
+    color = "text-amber-500";
+  }
+
+  return (
+    <Card className="p-4 flex flex-col items-center bg-transparent text-white">
+      <h4 className="font-medium mb-3">{skill}</h4>
+      <div className="relative w-14 h-14">
+        {/* Background circle */}
+        <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+          <circle
+            className="text-muted stroke-current"
+            strokeWidth="10"
+            cx="50"
+            cy="50"
+            r="40"
+            fill="transparent"
+          />
+          {/* Foreground circle */}
+          <circle
+            className={`${color} stroke-current`}
+            strokeWidth="10"
+            strokeLinecap="round"
+            cx="50"
+            cy="50"
+            r="40"
+            fill="transparent"
+            strokeDasharray={`${percentage * 2.51} 251`}
+          />
+        </svg>
+        {/* Rating text in the middle */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className={`${color} text-xl font-bold`}>{rating}</span>
+        </div>
+      </div>
+      <p className="mt-2 text-sm text-muted-foreground">
+        {rating >= 8 ? "Excellent" : rating >= 6 ? "Good" : "Needs Improvement"}
+      </p>
+    </Card>
+  )
+}
+
+function InterviewVideo() {
+    const playerRef = useRef(null)
+    const [muted, setMuted] = useState(false)
+  return (
+    <Card className="overflow-hidden">
+        <div className="aspect-video bg-black">
+          <ReactPlayer
+            ref={playerRef}
+            url="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+            width="100%"
+            height="100%"
+            muted={muted}
+            controls={true}
+            config={{
+              file: {
+                attributes: {
+                  style: { width: '100%', height: '100%' }
+                }
+              }
+            }}
+          />
+        </div>
+      <div className="p-4">
+        <p className="text-sm">
+          Watch Bryan's full interview here.
+        </p>
+      </div>
+    </Card>
+  )
+}
 
 
 
