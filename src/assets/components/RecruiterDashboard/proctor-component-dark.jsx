@@ -51,7 +51,7 @@ function ProctoringVideo({ applicant, onJumpToTimestamp }) {
   }
 
   return (
-    <Card className="overflow-hidden bg-primary-foreground">
+    <Card className="overflow-hidden bg-[#0D1117]">
       <div className="relative">
         <div className="aspect-video">
           <ReactPlayer
@@ -181,7 +181,7 @@ export function ProctoringResults({ applicant }) {
         onJumpToTimestamp={setJumpToTimestamp} 
       />
       
-      <Card className="p-6 bg-primary-foreground">
+      <Card className="p-6 bg-[#0D1117]">
         <h3 className="text-lg font-medium mb-4">Proctoring Results</h3>
         <div className="space-y-6">
           {/* Identity Verification */}

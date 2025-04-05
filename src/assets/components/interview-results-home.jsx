@@ -81,7 +81,7 @@ const InterviewResultDashboard = () => {
   };
 
   return (
-    <div className="bg-[#0e0e0e] border-[1px] border-white rounded-lg text-gray-200 p-4 w-full">
+    <div className="bg-[#0e0e0e] border-[1px] border-slate-400/50 rounded-lg text-gray-200 p-4 w-full">
       {/* Mobile-friendly Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-4">
         <h1 className="text-lg md:text-xl font-bold mb-4 md:mb-0">Your Job Post</h1>

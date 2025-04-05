@@ -83,7 +83,7 @@ export function JobList() {
           {filteredJobs.map((job) => (
             <Card
               key={job.id}
-              className="cursor-pointer transition-all bg-primary-foreground hover:border-primary hover:shadow-md rounded-lg"
+              className="cursor-pointer bg-primary-foreground hover:border-primary hover:shadow-md rounded-lg border-gray-500/25"
               onClick={() => handleJobClick(job.id)}
             >
               <CardHeader className="pb-2">

@@ -20,7 +20,7 @@ export default function JobPostingForm() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto bg-[#0e0e0e] text-white rounded-lg">
+    <Card className="w-full max-w-md mx-auto bg-[#0e0e0e] border-slate-400/50 text-white rounded-lg">
       <CardHeader>
         <CardTitle className="text-xl font-bold">Create Job Posting</CardTitle>
         <CardDescription>Fill out the details for your new job posting</CardDescription>
