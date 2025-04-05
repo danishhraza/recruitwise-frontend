@@ -5,6 +5,7 @@ import InterviewResultDashboard from "./interview-results-home";
 function MobileSnapScroll() {
     return (
         <div className="w-full bg-[#3c50e6] py-6 mt-20 rounded-md">
+            <h1 className="text-4xl font-bold mt-10 text-center">How it <i>works</i></h1>
             <div className="p-4 text-white flex flex-col justify-center items-center">
                 <div className="mb-8">
                     <h2 className="text-3xl font-bold my-8 text-center">Input Your Hiring Requirements</h2>
