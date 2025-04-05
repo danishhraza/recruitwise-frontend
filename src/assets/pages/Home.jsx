@@ -50,7 +50,7 @@ function Home() {
 
   return (
     <>
-      <div className="h-[35rem] md:h-[40rem] mx-[2rem] md:mx-[3rem] rounded-[15px]  md:mt-0 mt-10 justify-center flex flex-col relative overflow-hidden">
+      <div className=" h-[35rem] md:h-[40rem] mx-[2rem] md:mx-[3rem] rounded-[15px]  md:mt-0 mt-10 justify-center flex flex-col relative overflow-hidden">
         {/* Background image with blur */}
         <div 
           className="absolute inset-0 bg-cover bg-center"
@@ -64,8 +64,8 @@ function Home() {
         </div>
         <div className="w-full flex justify-center gap-5 mt-5 relative">
           <Button color="primary" variant="solid" onClick={() => navigate('/jobs')}>View Jobs</Button>
-          <Button onClick={() => openCallPage()} className="bg-white hover:bg-slate-200 w-[100px] outfit-400 py-1 px-2 rounded-[8px] hover:cursor-pointer">
-            Hire Talents
+          <Button onClick={() => openCallPage()} className="bg-white hover:bg-slate-200 w-[200px] outfit-400 py-1 px-2 rounded-[8px] hover:cursor-pointer">
+            Start Interview Practice
           </Button>
         </div>
       </div>

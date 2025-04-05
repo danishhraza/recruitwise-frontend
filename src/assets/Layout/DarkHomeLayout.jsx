@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { Outlet } from 'react-router-dom'
-import StickyNavbar from '../components/StickyNavbar'
-import ResendFooterWithLogo from '../components/Footer'
-import useGeneral from '../../hooks/useGeneral'
-import { toast, Toaster } from 'sonner'
+import React, { useEffect, useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import StickyNavbar from '../components/StickyNavbar';
+import ResendFooterWithLogo from '../components/Footer';
+import useGeneral from '../../hooks/useGeneral';
+import { toast, Toaster } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -11,25 +11,25 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter
-} from "../../components/ui/dialog"
-import { Button } from "../../components/ui/button"
-import { Input } from "../../components/ui/input"
-import axios from '../../api/axios'
+} from "../../components/ui/dialog";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import axios from '../../api/axios';
 
-export default function PublicLayout() {
-  const [loading, setLoading] = useState(false)
-  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false)
-  const [otpValues, setOtpValues] = useState(['', '', '', '', '', ''])
-  const [isVerifying, setIsVerifying] = useState(false)
-  const [isResending, setIsResending] = useState(false)
-  const { user,isLoggedIn,setUser } = useGeneral()
+export default function DarkHomeLayout() {
+  const [loading, setLoading] = useState(false);
+  const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+  const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const { user, isLoggedIn, setUser } = useGeneral();
   
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     setTimeout(() => {
-      setLoading(false)
-    }, 3000)
-  }, [])
+      setLoading(false);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     if (user?.Verified == false && isLoggedIn) {
@@ -40,81 +40,81 @@ export default function PublicLayout() {
           label: 'Verify',
           onClick: () => handleVerifyEmail()
         }
-      })
+      });
     }
-  }, [isLoggedIn, user])
+  }, [isLoggedIn, user]);
   
   const handleVerifyEmail = () => {
-    setIsVerificationModalOpen(true)
+    setIsVerificationModalOpen(true);
     // Also request a new OTP
-    handleResendOtp()
-  }
+    handleResendOtp();
+  };
 
   const handleOtpChange = (index, value) => {
     if (value.length > 1) {
-      value = value.slice(0, 1)
+      value = value.slice(0, 1);
     }
     
-    const newOtpValues = [...otpValues]
-    newOtpValues[index] = value
-    setOtpValues(newOtpValues)
+    const newOtpValues = [...otpValues];
+    newOtpValues[index] = value;
+    setOtpValues(newOtpValues);
     
     // Auto-focus next input
     if (value !== '' && index < 5) {
-      document.getElementById(`otp-input-${index + 1}`).focus()
+      document.getElementById(`otp-input-${index + 1}`).focus();
     }
-  }
+  };
 
   const handleKeyDown = (index, e) => {
     // Handle backspace to focus previous input
     if (e.key === 'Backspace' && index > 0 && !otpValues[index]) {
-      document.getElementById(`otp-input-${index - 1}`).focus()
+      document.getElementById(`otp-input-${index - 1}`).focus();
     }
-  }
+  };
   
   const handleVerifyOtp = async () => {
-    const otp = otpValues.join('')
+    const otp = otpValues.join('');
     if (otp.length !== 6) {
-      toast.error('Please enter a valid 6-digit OTP')
-      return
+      toast.error('Please enter a valid 6-digit OTP');
+      return;
     }
     
-    setIsVerifying(true)
+    setIsVerifying(true);
     try {
-      const response = await axios.post('/auth/verify-otp', { otp })
-      toast.success('Email verified successfully!')
-      const r = await axios.get('/auth/me')
-      setUser(r.data)
-      setIsVerificationModalOpen(false)
-      toast.dismiss('verification-toast')
+      const response = await axios.post('/auth/verify-otp', { otp });
+      toast.success('Email verified successfully!');
+      const r = await axios.get('/auth/me');
+      setUser(r.data);
+      setIsVerificationModalOpen(false);
+      toast.dismiss('verification-toast');
       // Refresh user data or update verification status
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to verify OTP')
+      toast.error(error.response?.data?.message || 'Failed to verify OTP');
     } finally {
-      setIsVerifying(false)
+      setIsVerifying(false);
     }
-  }
+  };
   
   const handleResendOtp = async () => {
-    setIsResending(true)
+    setIsResending(true);
     try {
-      await axios.get('/auth/request-otp',{withCredentials:true})
-      toast.info('A new verification code has been sent to your email')
+      await axios.get('/auth/request-otp', { withCredentials: true });
+      toast.info('A new verification code has been sent to your email');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to resend verification code')
+      toast.error(error.response?.data?.message || 'Failed to resend verification code');
     } finally {
-      setIsResending(false)
+      setIsResending(false);
     }
-  }
+  };
   
   return (
-    <div className='bg-background w-full scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 flex flex-col min-h-screen"'>
-      <StickyNavbar/>
+    <div className='bg-[#000] selection:bg-[#65b5bf59] selection:text-[#8de0eb] text-white w-full scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 flex flex-col min-h-screen'>
+      <StickyNavbar />
       <div className="w-full py-28 flex-grow">
-        <Outlet context={{loading}}/> {/* This will render the correct page */}
+        <Outlet context={{ loading }} /> {/* This will render the correct page */}
       </div>
-      <ResendFooterWithLogo/>
-      <Toaster richColors position="top-center"/> 
+      <ResendFooterWithLogo />
+      <Toaster richColors position="top-center" /> 
 
       <Dialog open={isVerificationModalOpen} onOpenChange={setIsVerificationModalOpen}>
         <DialogContent className="sm:max-w-md">
@@ -164,5 +164,5 @@ export default function PublicLayout() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

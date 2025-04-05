@@ -35,20 +35,6 @@ const InterviewResultDashboard = () => {
       proctoring: "100%",
     },
     {
-      id: 2,
-      name: "Niall K",
-      verified: false,
-      dateTaken: "Apr 08, 2023",
-      hardSkills: [
-        { name: "Java", level: "Mid-level" },
-        { name: "Spring boot", level: "Mid-level" },
-        { name: "Data structure", level: "Mid-level" },
-        { name: "SQL", level: "Junior" },
-      ],
-      softSkills: "Good",
-      proctoring: "100%",
-    },
-    {
       id: 3,
       name: "Shayan S",
       verified: false,
