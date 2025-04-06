@@ -58,7 +58,7 @@ function Home() {
         className="z-0"
       />
     </div>
-      <div className="h-[35rem] border-white/20 border shadow-lg backdrop-filter backdrop-blur-lg mx-[2rem] md:mx-[3rem] rounded-[15px] mt-10 justify-center flex flex-col relative overflow-hidden">
+      <div className="h-[35rem] border-white/20 border shadow-lg backdrop-filter backdrop-blur-lg mx-[1rem] md:mx-[3rem] rounded-[15px] mt-10 justify-center flex flex-col relative overflow-hidden">
         {/* <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${bannerImage})`, opacity: 0.9 }}
@@ -68,11 +68,11 @@ function Home() {
           <h1 className="outfit-600 text-center text-white text-4xl md:text-8xl">
             <span className="bg-gradient-to-r from-[#484cb2] text-transparent to-[rgb(64,64,246)] bg-clip-text">AI </span>Recruitment engine<br/> to hire top global talent
           </h1>
-          <p className="text-slate-100 mt-10 text-lg md:text-xl">Source, vet, and hire top talent in less than 24h</p>
+          <p className="text-slate-100 mt-10 text-lg md:mx-0 mx-6 md:text-xl">Source, vet, and hire top talent in less than 24h</p>
         </div>
-        <div className="w-full flex justify-center gap-5 mt-5 relative">
+        <div className="w-full flex justify-center gap-5 md:mt-5 mt-10 relative">
           <Button color="primary" variant="solid" onClick={() => navigate('/jobs')}>View Jobs</Button>
-          <Button onClick={() => openCallPage()} className="bg-white hover:bg-slate-200 w-[200px] outfit-400 py-1 px-2 rounded-[8px] hover:cursor-pointer">
+          <Button onClick={() => openCallPage()} className="bg-white hover:bg-slate-200 outfit-400 py-1 rounded-[8px] hover:cursor-pointer">
             Start Interview Practice
           </Button>
         </div>
