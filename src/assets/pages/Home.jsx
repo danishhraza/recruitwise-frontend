@@ -51,13 +51,14 @@ function Home() {
 
   return (
     <>
-    <div className="absolute top-0 h-screen w-full opacity-65">
-      {/* <img src={bannerImage} alt="" className="opacity-100"/> */}
+    <div className="absolute top-0 h-screen w-full">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#000] pointer-events-none"></div>
       <Spline
-        scene="https://prod.spline.design/mn2BmX-VXN0j9MpG/scene.splinecode" 
+        scene="https://prod.spline.design/mn2BmX-VXN0j9MpG/scene.splinecode"
+        className="z-0"
       />
     </div>
-      <div className="h-[35rem] bg-white/10 border-white/20 border shadow-lg backdrop-filter backdrop-blur-lg mx-[2rem] md:mx-[3rem] rounded-[15px] mt-10 justify-center flex flex-col relative overflow-hidden">
+      <div className="h-[35rem] border-white/20 border shadow-lg backdrop-filter backdrop-blur-lg mx-[2rem] md:mx-[3rem] rounded-[15px] mt-10 justify-center flex flex-col relative overflow-hidden">
         {/* <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${bannerImage})`, opacity: 0.9 }}
