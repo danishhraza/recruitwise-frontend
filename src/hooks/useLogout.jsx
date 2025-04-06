@@ -11,9 +11,10 @@ function useLogout(){
             setIsLoggedIn(false);
         }
         try{
-            const response = await axios('/auth/logout',{
+            const response = await axios.post('/auth/logout',{
                 withCredentials: true
             })
+            console.log(response.data)
         }catch(err){
             console.log(err)
         }
