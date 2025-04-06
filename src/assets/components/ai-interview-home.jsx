@@ -25,7 +25,7 @@ const VideoChat = () => {
   ]);
 
   return (
-    <div className="flex flex-col md:flex-row max-h-96 w-full md:w-[80%] border-[1px] border-white rounded-lg overflow-hidden">
+    <div className="flex flex-col md:flex-row max-h-96 w-full md:w-[80%] border-[1px] border-slate-400/50 rounded-lg overflow-hidden">
       {/* Video Feed - Full width on mobile, 2/3 on desktop */}
       <div className="w-full md:w-2/3 md:p-4 p-2 bg-gray-900 relative">
         <div className="h-64 md:h-full overflow-hidden relative rounded-lg">

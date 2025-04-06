@@ -112,7 +112,7 @@ export default function ApplicantProfilePage() {
                   </Button>
                   <Button variant="outline">Interview</Button>
                 </div>
-                <Button className="bg-emerald-600 hover:bg-emerald-700">Hire {applicant.name.split(" ")[0]}</Button>
+                <Button className="bg-emerald-600 text-white hover:bg-emerald-700">Hire {applicant.name.split(" ")[0]}</Button>
               </div>
             </div>
           </div>
@@ -238,8 +238,8 @@ function InterviewVideo() {
     const playerRef = useRef(null)
     const [muted, setMuted] = useState(false)
   return (
-    <Card className="overflow-hidden">
-        <div className="aspect-video bg-black">
+    <Card className="overflow-hidden bg-primary-foreground">
+        <div className="aspect-video">
           <ReactPlayer
             ref={playerRef}
             url="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
@@ -297,7 +297,7 @@ function SkillRatingChart({ skill, rating }) {
   }
 
   return (
-    <Card className="p-4 flex flex-col items-center">
+    <Card className="p-4 flex flex-col items-center bg-primary-foreground">
       <h4 className="font-medium mb-3">{skill}</h4>
       <div className="relative w-24 h-24">
         {/* Background circle */}

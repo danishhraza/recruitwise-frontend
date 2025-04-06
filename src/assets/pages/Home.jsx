@@ -8,6 +8,7 @@ import Profiles from "../components/ProfilesBanner";
 import InterviewPlatform from "../components/candidate-profile-home";
 import SnapScroll from "../components/SnapScroll"
 import MobileSnapScroll from "../components/MobileSnapScroll"
+import Spline from '@splinetool/react-spline';
 
 function Home() {
   const {loading} = useOutletContext();
@@ -50,17 +51,23 @@ function Home() {
 
   return (
     <>
-      <div className=" h-[35rem] md:h-[40rem] mx-[2rem] md:mx-[3rem] rounded-[15px]  md:mt-0 mt-10 justify-center flex flex-col relative overflow-hidden">
-        {/* Background image with blur */}
-        <div 
+    <div className="absolute top-0 h-screen w-full opacity-65">
+      {/* <img src={bannerImage} alt="" className="opacity-100"/> */}
+      <Spline
+        scene="https://prod.spline.design/mn2BmX-VXN0j9MpG/scene.splinecode" 
+      />
+    </div>
+      <div className="h-[35rem] bg-white/10 border-white/20 border shadow-lg backdrop-filter backdrop-blur-lg mx-[2rem] md:mx-[3rem] rounded-[15px] mt-10 justify-center flex flex-col relative overflow-hidden">
+        {/* <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${bannerImage})`, opacity: 0.6 }}
-        ></div>
+          style={{ backgroundImage: `url(${bannerImage})`, opacity: 0.9 }}
+        ></div> */}
+        
         <div className="text-center flex flex-col gap-6 relative"> 
           <h1 className="outfit-600 text-center text-white text-4xl md:text-8xl">
-            <span className="bg-gradient-to-r from-[#1f2154] text-transparent to-[#5656a7] bg-clip-text">AI Recruitment engine</span><br/> to hire top global talent
+            <span className="bg-gradient-to-r from-[#484cb2] text-transparent to-[rgb(64,64,246)] bg-clip-text">AI </span>Recruitment engine<br/> to hire top global talent
           </h1>
-          <p className="text-slate-300 mt-10 text-lg md:text-xl">Source, vet, and hire top talent in less than 24h</p>
+          <p className="text-slate-100 mt-10 text-lg md:text-xl">Source, vet, and hire top talent in less than 24h</p>
         </div>
         <div className="w-full flex justify-center gap-5 mt-5 relative">
           <Button color="primary" variant="solid" onClick={() => navigate('/jobs')}>View Jobs</Button>
@@ -68,6 +75,7 @@ function Home() {
             Start Interview Practice
           </Button>
         </div>
+  
       </div>
 
       <div>
@@ -91,7 +99,7 @@ function Home() {
         <div className="absolute h-full w-full">
           <div 
             className={`h-full w-full bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-[size:16px_16px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] transition-all duration-700 ${
-              isVisible ? 'opacity-100' : 'opacity-0'
+              isVisible ? 'opacity-40' : 'opacity-0'
             }`}
           ></div>
         </div>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, Play, PauseIcon, Volume2, SquareIcon, Maximize2, ChevronUp } from "lucide-react";
-import { ProctoringResults } from "../components/RecruiterDashboard/proctor-component"
+import { ProctoringResults } from "../components/RecruiterDashboard/proctor-component-dark"
 import { Card } from "../../components/ui/card"
 import ReactPlayer from "react-player"
 
@@ -61,7 +61,7 @@ export default function InterviewPlatform() {
 
   return (
     
-    <div className="flex flex-col text-white z-10 md:w-[55%] w-[90%] border bg-black rounded-t-[1rem] border-1 border-gray-400 rounded-lg">
+    <div className="flex flex-col text-white z-10 md:w-[55%] w-[90%] border bg-[#050505] rounded-t-[1rem] border-1 border-gray-400 rounded-lg">
 
       {/* Title bar with dots */}
       <div className="h-6 bg-white flex items-center px-3 rounded-t-[1rem]">
@@ -122,7 +122,7 @@ export default function InterviewPlatform() {
               <span>React, Node</span>
             </div>
             <div className="flex mt-3 gap-2">
-              <Badge className="bg-zinc-800 text-white text-xs border-none">AI Certified</Badge>
+              <Badge className="bg-zinc-800 text-white text-xs border-none">AWS Certified</Badge>
               <Badge className="bg-blue-900 text-white text-xs border-none">React</Badge>
             </div>
           </div>
@@ -284,7 +284,7 @@ function SkillRatingChart({ skill, rating }) {
   }
 
   return (
-    <Card className="p-4 flex flex-col items-center bg-transparent text-white">
+    <Card className="p-4 flex flex-col items-center bg-transparent border-white/40 text-white">
       <h4 className="font-medium mb-3">{skill}</h4>
       <div className="relative w-14 h-14">
         {/* Background circle */}
@@ -325,8 +325,8 @@ function InterviewVideo() {
     const playerRef = useRef(null)
     const [muted, setMuted] = useState(false)
   return (
-    <Card className="overflow-hidden">
-        <div className="aspect-video bg-black">
+    <Card className="overflow-hidden bg-[#0D1117]">
+        <div className="aspect-video">
           <ReactPlayer
             ref={playerRef}
             url="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
@@ -344,7 +344,7 @@ function InterviewVideo() {
           />
         </div>
       <div className="p-4">
-        <p className="text-sm">
+        <p className="text-sm text-white">
           Watch Bryan's full interview here.
         </p>
       </div>
