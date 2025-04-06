@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import Filters from '../components/Filters';
 import { useFilters } from '../Context/FiltersContext';
+import SearchBar from '../components/SearchBar';
+import { useSearchParams } from 'react-router-dom';
 
 // Mock job data
 const jobsData = [
@@ -163,63 +165,43 @@ const jobsData = [
 ];
 
 const JobListingPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+
   const [selectedJob, setSelectedJob] = useState(jobsData[0]);  
-  const {filters} = useFilters()
-  const {filteredJobs} = filters;
-  // const [filters, setFilters] = useState({
-  //   jobType: [],
-  //   employmentType: [],
-  //   experienceLevel: [],
-  //   timePosted: 'Anytime',
-  // });
+  const {filters,setFilters} = useFilters()
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const {searchQuery,filteredJobs} = filters;
+  const [searchInput, setSearchInput] = useState(searchParams.get('query') || '');
   const [showFilters, setShowFilters] = useState(false);
 
-  // Handle search input change
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
 
   // Handle job selection
   const handleJobSelect = (job) => {
     setSelectedJob(job);
   };
 
-  // Handle checkbox filter change
-  // const handleFilterChange = (category, value) => {
-  //   setFilters(prev => {
-  //     const newFilters = { ...prev };
-  //     if (newFilters[category].includes(value)) {
-  //       newFilters[category] = newFilters[category].filter(item => item !== value);
-  //     } else {
-  //       newFilters[category] = [...newFilters[category], value];
-  //     }
-  //     return newFilters;
-  //   });
-  // };
-
-  // Handle time posted filter change
-  // const handleTimePostedChange = (value) => {
-  //   setFilters(prev => ({ ...prev, timePosted: value }));
-  // };
-
-  // // Filter jobs based on search and filters
-  // const filteredJobs = jobsData
-  //   .filter(job => 
-  //     job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-  //     job.company.toLowerCase().includes(searchTerm.toLowerCase())
-  //   )
-  //   .filter(job => 
-  //     filters.jobType.length === 0 || filters.jobType.includes(job.employmentType)
-  //   )
-  //   .filter(job => 
-  //     filters.employmentType.length === 0 || filters.employmentType.includes(job.employmentType.split('-')[0].trim())
-  //   )
-  //   .filter(job => 
-  //     filters.experienceLevel.length === 0 || filters.experienceLevel.includes(job.experienceLevel)
-  //   )
-  //   // Sort by latest date
-  //   .sort((a, b) => new Date(b.postedDate) - new Date(a.postedDate));
+  function handleSearchChange(sQuery) {
+    // Update the filters state
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      searchQuery: sQuery,
+    }));    
+    // Update the URL parameters while preserving existing parameters
+    setSearchParams(prevParams => {
+      const jobType = prevParams.get("jobType") || "";
+      const currTime = prevParams.get("time") || "";
+      const currentExpLevel = prevParams.get("expLevel") || "";
+      const currentEType = prevParams.get("eType") || "";
+      const s = sQuery
+      return {
+        ...(sQuery ? { query: sQuery } : {}),
+        ...(jobType ? { jobType: jobType } : {}),
+        ...(currTime ? { time: currTime } : {}),
+        ...(currentEType ? { eType: currentEType } : {}),
+        ...(currentExpLevel ? { expLevel: currentExpLevel } : {})
+      };
+    });
+  }
 
   // Calculate days ago for posted date
   const getDaysAgo = (dateString) => {
@@ -236,15 +218,10 @@ const JobListingPage = () => {
       {/* Search Bar */}
       <div className="py-8 px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 border-b">
   <div className="flex flex-col sm:flex-row gap-4">
-    <div className="relative flex-1 max-w-4xl">
-      <Search className="absolute left-3 top-4 h-5 w-5 text-gray-400" />
-      <Input
-        className="pl-10 pr-4 py-6 w-full text-lg"
-        placeholder="Search jobs..."
-        value={searchTerm}
-        onChange={handleSearchChange}
+  <SearchBar 
+        initialSearchQuery={searchQuery} 
+        onSearch={handleSearchChange} 
       />
-    </div>
     <div className="flex gap-2 items-center">
       <Button 
         onClick={() => setShowFilters(true)}

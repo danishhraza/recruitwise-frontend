@@ -76,17 +76,19 @@ const handleJobTypeFilter = (jobType) => {
         const activeJobTypes = Object.keys(updatedJobTypes).filter(type => updatedJobTypes[type]);
 
         setSearchParams(prevParams => {
-            const currentQuery = prevParams.get("query") || "";
-            const currentEType = prevParams.get("eType") || "";
-            const currTime = prevParams.get("time") || "";
-
-            return {
-                ...(currentQuery ? { query: currentQuery } : {}),
-                ...(currentEType ? { eType: currentEType } : {}),
-                ...(currTime ? { time: currTime } : {}),
-                ...(activeJobTypes.length > 0 ? { jobType: activeJobTypes.join(",") } : {})
-            };
-        });
+          const currentQuery = prevParams.get("query") || "";
+          const currentEType = prevParams.get("eType") || "";
+          const currTime = prevParams.get("time") || "";
+          c
+      
+          return {
+              ...(currentQuery ? { query: currentQuery } : {}),
+              ...(currentEType ? { eType: currentEType } : {}),
+              ...(currTime ? { time: currTime } : {}),
+              ...(activeJobTypes.length > 0 ? { jobType: activeJobTypes.join(",") } : {}),
+              ...(currentExpLevel ? { expLevel: currentExpLevel } : {})
+          };
+      });
 
         return {
             ...prevFilters,
@@ -143,11 +145,12 @@ const handleEmploymentType = (employType) => {
             const currentQuery = prevParams.get("query") || "";
             const jobType = prevParams.get("jobType") || "";
             const currTime = prevParams.get("time") || "";
-
+            const currentExpLevel = prevParams.get("expLevel") || "";
             return {
                 ...(currentQuery ? { query: currentQuery } : {}),
                 ...(jobType ? { jobType: jobType } : {}),
                 ...(currTime ? { time: currTime } : {}),
+                ...(currentExpLevel ? { expLevel: currentExpLevel } : {}),
                 ...(activeEmployTypes.length > 0 ? { eType: activeEmployTypes.join(",") } : {})
             };
         });

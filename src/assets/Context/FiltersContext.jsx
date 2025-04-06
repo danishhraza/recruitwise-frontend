@@ -172,7 +172,6 @@ export function FiltersProvider({ children }) {
 
     const [filters, setFilters] = useState({
         searchQuery: '',
-        queryTags: [],
         selectedTime: 'Anytime',
         selectedTimeKey: ['all'],
         selectedLocations: [],
@@ -210,8 +209,14 @@ export function FiltersProvider({ children }) {
         const jobType = searchParams.get("jobType")?.split(",") || [];
         const eType = searchParams.get("eType")?.split(",") || [];
         const time = searchParams.get("time") || "Anytime";
+        const expLevel = searchParams.get("expLevel")?.split(",") || [];
 
         const selectedJobType = jobType.reduce((acc, curr) => {
+            acc[curr] = true;
+            return acc;
+        }, {});
+
+        const selectedExperienceLevel = expLevel.reduce((acc, curr) => {
             acc[curr] = true;
             return acc;
         }, {});
@@ -221,57 +226,57 @@ export function FiltersProvider({ children }) {
             return acc;
         }, {});
 
-        const queryTags = query ? [query] : [];
 
         setFilters(prev => ({
             ...prev,
-            queryTags,
             searchQuery: query,
             selectedJobType,
             selectedEmploymentType,
+            selectedExperienceLevel,
             selectedTime: time
         }));
     }, [searchParams]);
 
     useEffect(() => {
-        const filtered = jobs.filter(job => {
-          // Check if the job matches the search query
-          const matchesQuery = filters.queryTags.length === 0 ||
-            filters.queryTags.some(tag =>
-              job.title.toLowerCase().includes(tag.toLowerCase()) ||
-              job.company.toLowerCase().includes(tag.toLowerCase()) ||
-              job.description.toLowerCase().includes(tag.toLowerCase())
-            );
-          
-          // Check if the job matches the selected job type(s)
-          const matchesJobType = Object.keys(filters.selectedJobType).length === 0 || 
-            !Object.values(filters.selectedJobType).some(Boolean) ||
-            (job.employmentType && filters.selectedJobType[job.jobType]);
-          
-          // Check if the job matches the selected employment type(s)
-          const matchesEmploymentType = Object.keys(filters.selectedEmploymentType).length === 0 || 
-            !Object.values(filters.selectedEmploymentType).some(Boolean) ||
-            (job.employmentType && filters.selectedEmploymentType[job.employmentType]);
-          
-          // Check if the job matches the selected experience level(s)
-          const matchesExperienceLevel = Object.keys(filters.selectedExperienceLevel).length === 0 || 
-            !Object.values(filters.selectedExperienceLevel).some(Boolean) ||
-            (job.experienceLevel && filters.selectedExperienceLevel[job.experienceLevel]);
-      
-          return matchesQuery && matchesJobType && matchesEmploymentType && matchesExperienceLevel;
-        });
-      
-        // Update the filtered jobs in state
-        setFilters(prev => ({ ...prev, filteredJobs: filtered }));
-      }, [
-        // Only depend on the filter criteria, not the filtered results
-        filters.queryTags, 
-        filters.selectedJobType, 
-        filters.selectedEmploymentType, 
-        filters.selectedExperienceLevel,
-        // Include jobs as a dependency since it might change
-        jobs
-      ]);
+      const filtered = jobs.filter(job => {
+        // Check if the job matches the search query
+        const query = filters.searchQuery.toLowerCase().trim();
+        const matchesQuery = query === '' || 
+          (job.title && job.title.toLowerCase().includes(query)) || 
+          (job.company && job.company.toLowerCase().includes(query)) || 
+          (job.location && job.location.toLowerCase().includes(query));
+        
+        console.log(filters);
+        
+        // Check if the job matches the selected job type(s)
+        const matchesJobType = Object.keys(filters.selectedJobType).length === 0 || 
+          !Object.values(filters.selectedJobType).some(Boolean) ||
+          (job.jobType && filters.selectedJobType[job.jobType]);
+        
+        // Check if the job matches the selected employment type(s)
+        const matchesEmploymentType = Object.keys(filters.selectedEmploymentType).length === 0 || 
+          !Object.values(filters.selectedEmploymentType).some(Boolean) ||
+          (job.employmentType && filters.selectedEmploymentType[job.employmentType]);
+        
+        // Check if the job matches the selected experience level(s)
+        const matchesExperienceLevel = Object.keys(filters.selectedExperienceLevel).length === 0 || 
+          !Object.values(filters.selectedExperienceLevel).some(Boolean) ||
+          (job.experienceLevel && filters.selectedExperienceLevel[job.experienceLevel]);
+    
+        return matchesQuery && matchesJobType && matchesEmploymentType && matchesExperienceLevel;
+      });
+    
+      // Update the filtered jobs in state
+      setFilters(prev => ({ ...prev, filteredJobs: filtered }));
+    }, [
+      // Only depend on the filter criteria, not the filtered results
+      filters.searchQuery, 
+      filters.selectedJobType, 
+      filters.selectedEmploymentType, 
+      filters.selectedExperienceLevel,
+      // Include jobs as a dependency since it might change
+      jobs
+    ]);
 
     return (
         <FiltersContext.Provider value={{ filters, setFilters, setSearchParams, handleTagRemove }}>
