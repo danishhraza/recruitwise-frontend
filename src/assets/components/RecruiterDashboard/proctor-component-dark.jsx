@@ -80,7 +80,7 @@ function ProctoringVideo({ applicant, onJumpToTimestamp }) {
       </div>
       <div className="p-4">
         <div className="flex justify-between items-center">
-          <p className="text-sm">
+          <p className="text-sm text-gray-300">
             Watch full camera recording of the interview with proctoring data.
           </p>
           <p className="text-sm">{formatTime(playedSeconds)} / {formatTime(duration)}</p>
@@ -120,7 +120,7 @@ function IncidentButton({ time, onClick }) {
           <Button 
             variant="outline" 
             size="sm" 
-            className="ml-2 px-2 py-0 h-6 text-xs" 
+            className="ml-2 px-2 py-0 h-6 text-xs bg-black border-gray-200/25" 
             onClick={handleClick}
           >
             {time}
@@ -181,7 +181,7 @@ export function ProctoringResults({ applicant }) {
         onJumpToTimestamp={setJumpToTimestamp} 
       />
       
-      <Card className="p-6 bg-[#0D1117]">
+      <Card className="p-6 bg-[#0D1117] text-white">
         <h3 className="text-lg font-medium mb-4">Proctoring Results</h3>
         <div className="space-y-6">
           {/* Identity Verification */}
