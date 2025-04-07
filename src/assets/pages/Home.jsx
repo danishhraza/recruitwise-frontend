@@ -9,6 +9,7 @@ import InterviewPlatform from "../components/candidate-profile-home";
 import SnapScroll from "../components/SnapScroll"
 import MobileSnapScroll from "../components/MobileSnapScroll"
 import Spline from '@splinetool/react-spline';
+import FooterImageWithHoverEffect from "../components/FooterImageHoverEffect";
 
 function Home() {
   const {loading} = useOutletContext();
@@ -123,17 +124,7 @@ function Home() {
       </div>
       
 {/* Image above footer */}
-<div className="relative md:block hidden mt-28">
-  <div className="absolute bottom-[-200px] md:bottom-[-250px] lg:bottom-[-280px] left-0 w-full">
-    <div className="mx-auto px-8">
-      <img 
-        src="/images/footer.jpg" 
-        alt="Footer Logo" 
-        className="w-full object-contain mb-10" 
-      />
-    </div>
-  </div>
-</div>
+<FooterImageWithHoverEffect/>
 
   </>
   )

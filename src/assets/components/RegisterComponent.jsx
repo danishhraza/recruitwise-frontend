@@ -122,7 +122,7 @@ export default function RegisterComponent() {
   return (
     <div>
       <div className='flex flex-col gap-3 text-center'>
-        <h1 className='text-3xl font-outfit'>Create your account</h1>
+        <h1 className='text-3xl font-outfit text-foreground'>Create your account</h1>
 
         {step === 1 && (
           <form onSubmit={handleSubmit(onNextStep)} className='flex flex-col gap-3'>
@@ -165,7 +165,7 @@ export default function RegisterComponent() {
             {errors.email && <p className='text-red-500 text-xs'>{errors.email.message}</p>}
             
             <Button type='primary' htmlType='submit' className='w-80 mt-3'>Continue</Button>
-            <p className='text-[0.9rem]'>Already have an account? <Link className='text-blue-600' to={'/auth/login'}>Login</Link></p>
+            <p className='text-[0.9rem] text-muted-foreground'>Already have an account? <Link className='text-blue-600' to={'/auth/login'}>Login</Link></p>
           </form>
         )}
 

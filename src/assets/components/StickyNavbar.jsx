@@ -82,7 +82,7 @@ export default function StickyNavbar() {
       <Navbar className="border-[#ffffff1a] rounded-2xl max-w-screen-xl mx-auto text-white bg-[#00000066] backdrop-blur-xl px-6 py-4">
         <div className="flex items-center">
           {/* Logo section - left aligned */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 z-10">
             <Typography
               as="a"
               href="/"

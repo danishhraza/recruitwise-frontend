@@ -31,7 +31,7 @@ export default function LoginComponent() {
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3 text-center'>
-        <h1 className='text-3xl font-outfit'>Welcome Back</h1>
+        <h1 className='text-3xl font-outfit text-foreground'>Welcome Back</h1>
         
         <Controller
           name="email"
@@ -62,7 +62,7 @@ export default function LoginComponent() {
         />
         
         <Button htmlType='submit' type='primary' className='w-80 mt-3'>Sign In</Button>
-        <p className='text-[0.9rem]'>
+        <p className='text-[0.9rem] text-muted-foreground'>
           Don't have an account? <Link className='text-blue-600' to={'/auth/register'}>Sign Up</Link>
         </p>
       </form>
