@@ -141,11 +141,9 @@ export default function InterviewPlatform() {
             {!collapsedSections.hiringSignal && (
               <ul className="text-sm">
                 <li className="mb-2 flex">
-                  <span className="mr-2">•</span>
                   <span>Over 8 years of experience, 6 years w/ React</span>
                 </li>
                 <li className="flex">
-                  <span className="mr-2">•</span>
                   <span>He spent a significant amount of time as a university professor, which reflects his deep knowledge.</span>
                 </li>
               </ul>
@@ -256,8 +254,8 @@ function InterviewScore({ applicant }) {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Interview Performance</h3>
-        <div className="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full">
+        <h3 className="text-md md:text-lg font-semibold">Interview Performance</h3>
+        <div className="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full md:text-md text-[10px]">
           Overall Score: {applicant.interviewScore}/100
         </div>
       </div>
@@ -344,7 +342,7 @@ function InterviewVideo() {
           />
         </div>
       <div className="p-4">
-        <p className="text-sm text-white">
+        <p className="text-sm text-gray-300">
           Watch Bryan's full interview here.
         </p>
       </div>
