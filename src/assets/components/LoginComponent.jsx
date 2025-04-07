@@ -2,18 +2,19 @@ import { GoogleOutlined, LinkedinFilled, WindowsFilled } from '@ant-design/icons
 import { Button, Divider, Input, message } from 'antd'
 import { User2, Lock } from 'lucide-react'
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import axios from '../../api/axios'
 import useGeneral from '../../hooks/useGeneral'
 
 export default function LoginComponent() {
   const { control, handleSubmit } = useForm();
-  const from = location.state?.from?.pathname || "/";
-  const {isLoggedIn,setIsLoggedIn} = useGeneral()
+  const location = useLocation();
+  const from = location.state?.from || "/";
+  const {isLoggedIn,setIsLoggedIn,setUser} = useGeneral()
   const navigate = useNavigate();
-  const onSubmit = async (data) => {
-    console.log(data)
+  const onSubmit = async (data,event) => {
+    event.preventDefault();
     try {
       const response = await axios.post('/auth/login', {
         email: data.email,
@@ -21,13 +22,24 @@ export default function LoginComponent() {
       });
       message.success('Login successful!');
       setIsLoggedIn(true)
-      navigate(from,{replace:true});
+      await getUserData()
+      navigate(from, { replace: true });
     } catch (error) {
       message.error('Login failed. Please try again.');
       console.error(error);
     }
   };
 
+  async function getUserData() {
+    try {
+        const response = await axios.get('/auth/me', { withCredentials: true });
+        setUser(response.data);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        setUser(null);
+        setIsLoggedIn(false);
+    }
+  }
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-3 text-center'>

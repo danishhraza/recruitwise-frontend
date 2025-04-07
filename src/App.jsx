@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import Home from "./assets/pages/Home";
 import Room from "./assets/pages/Room";
 import { RoomProvider } from "./assets/Context/RoomContext";
@@ -22,17 +22,11 @@ import axios from "./api/axios";
 import useGeneral from "./hooks/useGeneral";
 import LoginPage from "./assets/pages/login-page";
 import RegisterPage from "./assets/pages/register-page";
+// import JobListingPage from "./assets/pages/ViewJobs";
+import JobDetailPage from "./assets/pages/JobDetailPage";
+import JobListing from "./assets/components/JobListingPage";
+import JobListingPage from "./assets/pages/ViewJobs";
 
-// Auth guard component to redirect logged in users
-const UnauthenticatedRoute = ({ children }) => {
-  const { isLoggedIn } = useGeneral();
-  
-  if (isLoggedIn) {
-    return <Navigate to="/" replace />;
-  }
-  
-  return children;
-};
 
 function App() {
     const {isLoggedIn,setIsLoggedIn,user,setUser} = useGeneral()
@@ -53,8 +47,28 @@ function App() {
     
       fetchData()
     
-    }  , [isLoggedIn]);
+    }  , []);
   
+
+    const UnauthenticatedRoute = ({ children }) => {
+      const { isLoggedIn } = useGeneral();
+      const navigate = useNavigate();
+      const location = useLocation();
+    
+      useEffect(() => {
+        if (isLoggedIn) {
+          const from = location.state?.from || "/";
+          navigate(from, { replace: true });
+        }
+      }, [isLoggedIn, navigate, location]);
+    
+      if (isLoggedIn) {
+        return null; // Prevent rendering while navigating
+      }
+    
+      return children;
+    };
+
   return (
     
     <SidebarProvider>
@@ -65,14 +79,19 @@ function App() {
         </Route>
 
         {/* Public Layout - For other public pages */}
+        // Routes structure
         <Route path="/" element={<PublicLayout />}>
           <Route path="/jobs" element={
             <FiltersProvider>
-              <ViewJobs />
+              <JobListingPage />
+            </FiltersProvider>
+          } />
+          <Route path="/jobs/:jobId" element={
+            <FiltersProvider>
+              <JobDetailPage />
             </FiltersProvider>
           } />
         </Route>
-
 
 
       <Route path="/" element={<OtherLayout />}>
@@ -87,18 +106,18 @@ function App() {
           <Route path="/auth" >
               <Route index element={<Navigate to="/auth/login" replace />} />
                 <Route path="login" element={
-                  <UnauthenticatedRoute>
+                   <UnauthenticatedRoute>
                     <LoginPage />
-                  </UnauthenticatedRoute>
+                   </UnauthenticatedRoute>
                 }/>
                 <Route path="register" element={
-                  <UnauthenticatedRoute>
+                   <UnauthenticatedRoute>
                     <RegisterPage/>
-                  </UnauthenticatedRoute>
+                   </UnauthenticatedRoute>
                 }/>
           </Route>
           
-            <Route path="/jobs/:id" element={<JobPage />} />
+            {/* <Route path="/jobs/:id" element={<JobPage />} /> */}
             <Route path="/recruiter-dashboard" element={<RecruiterDashboardPage />} />
             <Route path="/applicants/:id" element={<ApplicantProfilePage />} />
 

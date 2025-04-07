@@ -19,6 +19,8 @@ import Filters from '../components/Filters';
 import { useFilters } from '../Context/FiltersContext';
 import SearchBar from '../components/SearchBar';
 import { useSearchParams } from 'react-router-dom';
+import JobListing from '../components/JobListingPage';
+import JobApplicationDrawer from '../components/JobApplicationDrawer';
 
 // Mock job data
 const jobsData = [
@@ -171,14 +173,18 @@ const JobListingPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const {searchQuery,filteredJobs} = filters;
-  const [searchInput, setSearchInput] = useState(searchParams.get('query') || '');
   const [showFilters, setShowFilters] = useState(false);
-
+  const [isApplicationOpen, setIsApplicationOpen] = useState(false);
 
   // Handle job selection
   const handleJobSelect = (job) => {
     setSelectedJob(job);
   };
+
+  const openApplicationDrawer = () => {
+    setIsApplicationOpen(true);
+  };
+
 
   function handleSearchChange(sQuery) {
     // Update the filters state
@@ -214,7 +220,7 @@ const JobListingPage = () => {
 
   return (
     <ThemeProvider defaultTheme="dark">
-    <div className="flex bg-background flex-col h-full mx-0 xl:mx-20 2xl:mx-96">
+    <div className="hidden md:flex bg-background flex-col h-full mx-0 xl:mx-20 2xl:mx-96">
       {/* Search Bar */}
       <div className="py-8 px-4 sm:px-8 md:px-12 lg:px-16 xl:px-20 border-b">
   <div className="flex flex-col sm:flex-row gap-4">
@@ -265,7 +271,7 @@ const JobListingPage = () => {
                 <p className="text-gray-600">{selectedJob.location}</p>
                 <p className="text-gray-500">{selectedJob.salary}</p>
                 <div className="mt-4 flex gap-2">
-                  <Button className="flex items-center gap-2">
+                  <Button className="flex items-center gap-2" onClick={openApplicationDrawer}>
                     <ExternalLink className="w-4 h-4" />
                     Apply now
                   </Button>
@@ -357,6 +363,12 @@ const JobListingPage = () => {
         </div>
       </div>
     </div>
+    <JobListing openDrawer={setIsApplicationOpen}/>
+    <JobApplicationDrawer 
+        isOpen={isApplicationOpen} 
+        onClose={() => setIsApplicationOpen(false)} 
+        job={selectedJob}
+      />
     </ThemeProvider>
   );
 };
