@@ -86,7 +86,7 @@ export default function ApplicantProfilePage() {
             {/* Right column - Interview content */}
             <div className="lg:col-span-9 space-y-6">
               <Tabs defaultValue="scores" className="w-full" onValueChange={setActiveTab}>
-                <TabsList className="mb-4 w-full justify-start">
+                <TabsList className="mb-4 md:justify-start w-full bg-primary-foreground">
                   <TabsTrigger value="scores">Scores and Transcript</TabsTrigger>
                   <TabsTrigger value="proctoring">Proctoring Result</TabsTrigger>
                 </TabsList>
