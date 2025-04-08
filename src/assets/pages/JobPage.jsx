@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 
 import { ApplicantList } from "../components/RecruiterDashboard/applicant-list"
@@ -84,7 +84,7 @@ export default function JobPage() {
         <main className="container mx-auto p-4 md:p-6">
           <div className="mb-6 flex items-center">
             <Button variant="outline" size="sm" asChild className="mr-4">
-              <a href="/recruiter-dashboard">
+              <Link to="/recruiter-dashboard">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -100,7 +100,7 @@ export default function JobPage() {
                   <path d="m15 18-6-6 6-6" />
                 </svg>
                 Back
-              </a>
+              </Link>
             </Button>
             <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{job.title}</h1>
           </div>
@@ -121,7 +121,7 @@ export default function JobPage() {
               <JobDetails job={job} />
             </TabsContent>
             <TabsContent value="applicants">
-              <ApplicantList applicants={job.applicants || []} />
+              <ApplicantList applicants={job.applicants || []} jobId={jobId} />
             </TabsContent>
           </Tabs>
         </main>

@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table"
 import { getAllApplicants } from "../../../lib/applicant-data"
 
-export function ApplicantList({ applicants: propApplicants }) {
+export function ApplicantList({ applicants: propApplicants, jobId }) {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -28,7 +28,7 @@ export function ApplicantList({ applicants: propApplicants }) {
   })
 
   const handleApplicantClick = (applicantId) => {
-    navigate(`/applicants/${applicantId}`)
+    navigate(`/applicants/${applicantId}?jobId=${jobId}`)
   }
 
   if (applicants.length === 0) {

@@ -1,5 +1,5 @@
-import { useState, useRef } from "react"
-import { useParams } from "react-router-dom"
+import { useState, useRef} from "react"
+import { useParams, useLocation, Link  } from "react-router-dom"
 import { Star, ChevronDown, ExternalLink, Play, Volume2, Maximize2 } from "lucide-react"
 import { DashboardHeader } from "../components/RecruiterDashboard/header"
 import { DashboardSidebar } from "../components/RecruiterDashboard/sidebar"
@@ -16,8 +16,13 @@ import ReactPlayer from "react-player"
 
 export default function ApplicantProfilePage() {
   const { id } = useParams()
+  const location = useLocation()
   const applicant = getApplicantById(id)
   const [activeTab, setActiveTab] = useState("scores")
+
+    // Add this to extract the jobId from query params
+    const queryParams = new URLSearchParams(location.search)
+    const jobId = queryParams.get('jobId') || "job-1" // Fallback to job-1 if not specified
 
   if (!applicant) {
     return (
@@ -33,7 +38,7 @@ export default function ApplicantProfilePage() {
                 The applicant you're looking for doesn't exist or has been removed.
               </p>
               <Button asChild>
-                <a href="/">Return to Dashboard</a>
+                <Link to={`/recruiter-dashboard/${jobId}`}>Return to Dashboard</Link>
               </Button>
             </div>
           </main>
@@ -52,7 +57,7 @@ export default function ApplicantProfilePage() {
         <main className="container mx-auto p-4 md:p-6">
           <div className="mb-6 flex items-center">
             <Button variant="outline" size="sm" asChild className="mr-4 text-foreground">
-              <a href="/jobs/job-1">
+              <Link to={`/recruiter-dashboard/${jobId}`}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -68,7 +73,7 @@ export default function ApplicantProfilePage() {
                   <path d="m15 18-6-6 6-6" />
                 </svg>
                 Back to Job
-              </a>
+              </Link>
             </Button>
             <h1 className="text-2xl font-bold tracking-tight md:text-3xl text-primary">{applicant.name}</h1>
             {applicant.favorite && <Star className="ml-2 h-5 w-5 fill-yellow-400 text-yellow-400" />}
