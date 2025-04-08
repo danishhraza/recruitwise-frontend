@@ -4,7 +4,6 @@ import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-
 import Home from "./assets/pages/Home";
 import Room from "./assets/pages/Room";
 import { RoomProvider } from "./assets/Context/RoomContext";
-import ViewJobs from "./assets/pages/ViewJobs";
 import PublicLayout from "./assets/Layout/PublicLayout";
 import DarkHomeLayout from "./assets/Layout/DarkHomeLayout";
 import { FiltersProvider } from "./assets/Context/FiltersContext";
@@ -22,9 +21,7 @@ import axios from "./api/axios";
 import useGeneral from "./hooks/useGeneral";
 import LoginPage from "./assets/pages/login-page";
 import RegisterPage from "./assets/pages/register-page";
-// import JobListingPage from "./assets/pages/ViewJobs";
 import JobDetailPage from "./assets/pages/JobDetailPage";
-import JobListing from "./assets/components/JobListingPage";
 import JobListingPage from "./assets/pages/ViewJobs";
 import AddCompanyPage from "./assets/components/AddCompany";
 
@@ -121,6 +118,7 @@ function App() {
           
             {/* <Route path="/jobs/:id" element={<JobPage />} /> */}
             <Route path="/recruiter-dashboard" element={<RecruiterDashboardPage />} />
+            <Route path="/recruiter-dashboard/:id" element={<JobPage />} />
             <Route path="/applicants/:id" element={<ApplicantProfilePage />} />
 
             {/* User Dashboard Routes */}
