@@ -26,6 +26,7 @@ import RegisterPage from "./assets/pages/register-page";
 import JobDetailPage from "./assets/pages/JobDetailPage";
 import JobListing from "./assets/components/JobListingPage";
 import JobListingPage from "./assets/pages/ViewJobs";
+import AddCompanyPage from "./assets/components/AddCompany";
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
     
       return children;
     };
+  
 
   return (
     
@@ -127,8 +129,8 @@ function App() {
             <Route path="/user-dashboard/saved-jobs" element={<SavedJobsPage />} />
             <Route path="/user-dashboard/documents" element={<DocumentsPage />} />
          
+         <Route path="/add-company" element={<AddCompanyPage/>}/>  
       </Route>
-
 
     </Routes>
     </SidebarProvider>

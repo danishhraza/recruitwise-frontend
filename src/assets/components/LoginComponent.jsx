@@ -21,19 +21,19 @@ export default function LoginComponent() {
         password: data.password,
       });
       message.success('Login successful!');
-      setIsLoggedIn(true)
-      await getUserData()
-      navigate(from, { replace: true });
+     getUserData()
     } catch (error) {
       message.error('Login failed. Please try again.');
       console.error(error);
     }
   };
-
+  
   async function getUserData() {
     try {
-        const response = await axios.get('/auth/me', { withCredentials: true });
-        setUser(response.data);
+      const response = await axios.get('/auth/me', { withCredentials: true });
+      setIsLoggedIn(true);
+      setUser(response.data);
+      navigate(from, { replace: true });
     } catch (error) {
         console.error('Error fetching data:', error);
         setUser(null);
