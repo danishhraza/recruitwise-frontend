@@ -24,6 +24,8 @@ import RegisterPage from "./assets/pages/register-page";
 import JobDetailPage from "./assets/pages/JobDetailPage";
 import JobListingPage from "./assets/pages/ViewJobs";
 import AddCompanyPage from "./assets/components/AddCompany";
+import DashboardPage from "./assets/components/Dashboard";
+import DashboardLayout from "./assets/Layout/DashboardLayout";
 
 
 function App() {
@@ -115,7 +117,14 @@ function App() {
                    </UnauthenticatedRoute>
                 }/>
           </Route>
-          
+           {/* <Route path="/dashboard" element={<DashboardPage/>} />
+            <Route path="/dashboard/jobs" element={<ApplicationsPage />} /> */}
+
+            <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="jobs" element={<ApplicationsPage />} />
+             </Route>
+
             {/* <Route path="/jobs/:id" element={<JobPage />} /> */}
             <Route path="/recruiter-dashboard" element={<RecruiterDashboardPage />} />
             <Route path="/recruiter-dashboard/:id" element={<JobPage />} />
@@ -123,7 +132,6 @@ function App() {
 
             {/* User Dashboard Routes */}
             <Route path="/user-dashboard" element={<UserDashboardPage />} />
-            <Route path="/user-dashboard/applications" element={<ApplicationsPage />} />
             <Route path="/user-dashboard/saved-jobs" element={<SavedJobsPage />} />
             <Route path="/user-dashboard/documents" element={<DocumentsPage />} />
          

@@ -3,7 +3,7 @@ import { JobList } from "../components/RecruiterDashboard/job-list"
 import { DashboardSidebar } from "../components/RecruiterDashboard/sidebar"
 import { ThemeProvider } from "../components/theme-provider";
 
-export default function DashboardPage() {
+export default function RecruiterDashboardPage() {
   return (
     <ThemeProvider defaultTheme="dark">
     <div className="flex min-h-screen bg-background">

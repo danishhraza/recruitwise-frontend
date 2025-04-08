@@ -33,7 +33,7 @@ export function UserSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={isActive("/user-dashboard")}>
-              <Link to="/user-dashboard">
+              <Link to="/dashboard">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -55,7 +55,7 @@ export function UserSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={isActive("/user-dashboard")}>
-              <Link to="/jobs">
+              <Link to="jobs">
                   <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
