@@ -77,6 +77,9 @@ export default function StickyNavbar() {
     }
   };
 
+  // Determine if user is admin
+  const isAdmin = user && user.role === 'admin';
+  
   return (
     <div className="fixed top-5 left-0 right-0 px-4 z-20">
       <Navbar className="border-[#ffffff1a] rounded-2xl max-w-screen-xl mx-auto text-white bg-[#00000066] backdrop-blur-xl px-6 py-4">
@@ -96,24 +99,41 @@ export default function StickyNavbar() {
           {/* Navigation links - center aligned with flex-1 and justify-center */}
           <div className="flex-1 flex justify-center -ml-20">
             <div className="flex items-center gap-2">
-              <Link className="hidden lg:inline-block" to='/jobs'>
-                {!(user && user.role === 'recruiter') && (
-                  <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
-                    Apply as talent
-                  </Button>
-                )}
-              </Link>
+              {/* Only show "Apply as talent" when NOT admin */}
+              {!isAdmin && (
+                <Link className="hidden lg:inline-block" to='/jobs'>
+                  {!(user && user.role === 'recruiter') && (
+                    <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
+                      Apply as talent
+                    </Button>
+                  )}
+                </Link>
+              )}
+              
               {/* Divider line that fades at top and bottom, hidden when logged in */}
-              {!isLoggedIn && (
+              {!isLoggedIn && !isAdmin && (
                 <div className="hidden lg:block h-8 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent mx-1"></div>
               )}
-              <Link className="hidden lg:inline-block" to='/recruiter-dashboard'>
-                {!(user && user.role === 'candidate') && (
+              
+              {/* Only show "Post a Job" when NOT admin */}
+              {!isAdmin && (
+                <Link className="hidden lg:inline-block" to='/recruiter-dashboard'>
+                  {!(user && user.role === 'candidate') && (
+                    <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
+                      Post a Job
+                    </Button>
+                  )}
+                </Link>
+              )}
+              
+              {/* Show "Add Company" only when admin */}
+              {isAdmin && (
+                <Link className="hidden lg:inline-block" to='/add-company'>
                   <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
-                    Post a Job
+                    Add Company
                   </Button>
-                )}
-              </Link>
+                </Link>
+              )}
             </div>
           </div>
           
@@ -189,23 +209,38 @@ export default function StickyNavbar() {
         <Collapse open={openNav}>
           <NavList />
           <div className="flex flex-col justify-start items-center px-2 pb-3 gap-3">
-            <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/jobs'>
-              Apply as talent
-            </Link>
-            <Button 
-              className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-blue-700 text-white hover:bg-blue-800" 
-              onClick={()=>navigate('/recruiter-dashboard')}
-            >
-              Post a Job
-            </Button>
-            <Button 
-              variant="outline" 
-              size="md" 
-              className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-green-500 text-white hover:bg-green-700" 
-              onClick={()=>navigate('/auth/login')}
-            >
-              Login
-            </Button>
+            {/* Mobile menu items - also conditionally rendered based on role */}
+            {!isAdmin && (
+              <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/jobs'>
+                Apply as talent
+              </Link>
+            )}
+            
+            {!isAdmin && (
+              <Button 
+                className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-blue-700 text-white hover:bg-blue-800" 
+                onClick={()=>navigate('/recruiter-dashboard')}
+              >
+                Post a Job
+              </Button>
+            )}
+            
+            {isAdmin && (
+              <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/add-company'>
+                Add Company
+              </Link>
+            )}
+            
+            {!isLoggedIn && (
+              <Button 
+                variant="outline" 
+                size="md" 
+                className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-green-500 text-white hover:bg-green-700" 
+                onClick={()=>navigate('/auth/login')}
+              >
+                Login
+              </Button>
+            )}
           </div>
         </Collapse>
       </Navbar>
