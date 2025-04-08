@@ -26,8 +26,7 @@ import RegisterPage from "./assets/pages/register-page";
 import JobDetailPage from "./assets/pages/JobDetailPage";
 import JobListing from "./assets/components/JobListingPage";
 import JobListingPage from "./assets/pages/ViewJobs";
-import AddCompanyPage from "./assets/components/Add-company";
-import ProtectedAdminRoute from "./assets/components/ProctectedAdminRoute";
+import AddCompanyPage from "./assets/components/AddCompany";
 
 
 function App() {
