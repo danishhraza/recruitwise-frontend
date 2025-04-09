@@ -65,7 +65,7 @@ export default function JobPage() {
                 The job posting you're looking for doesn't exist or has been removed.
               </p>
               <Button asChild>
-                <a href="/recruiter-dashboard">Return to Dashboard</a>
+                <a href="/dashboard">Return to Dashboard</a>
               </Button>
             </div>
           </main>
@@ -84,7 +84,7 @@ export default function JobPage() {
         <main className="container mx-auto p-4 md:p-6">
           <div className="mb-6 flex items-center">
             <Button variant="outline" size="sm" asChild className="mr-4">
-              <Link to="/recruiter-dashboard">
+              <Link to="/dashboard">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"

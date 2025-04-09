@@ -39,7 +39,7 @@ export function JobList() {
   )
 
   const handleJobClick = (jobId) => {
-    navigate(`/recruiter-dashboard/${jobId}`)
+    navigate(`/dashboard/${jobId}`)
   }
 
   if (loading) {

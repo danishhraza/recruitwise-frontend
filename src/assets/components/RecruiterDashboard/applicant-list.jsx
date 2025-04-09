@@ -28,7 +28,7 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
   })
 
   const handleApplicantClick = (applicantId) => {
-    navigate(`/applicants/${applicantId}?jobId=${jobId}`)
+    navigate(`/dashboard/${jobId}/${applicantId}`);
   }
 
   if (applicants.length === 0) {

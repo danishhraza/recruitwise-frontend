@@ -15,14 +15,13 @@ import { ProctoringResults } from "../components/RecruiterDashboard/proctor-comp
 import ReactPlayer from "react-player"
 
 export default function ApplicantProfilePage() {
-  const { id } = useParams()
+
   const location = useLocation()
-  const applicant = getApplicantById(id)
   const [activeTab, setActiveTab] = useState("scores")
 
-    // Add this to extract the jobId from query params
-    const queryParams = new URLSearchParams(location.search)
-    const jobId = queryParams.get('jobId') || "job-1" // Fallback to job-1 if not specified
+  // NEW (using path params)
+  const { jobId, applicantId } = useParams()
+  const applicant = getApplicantById(applicantId)
 
   if (!applicant) {
     return (
@@ -38,7 +37,7 @@ export default function ApplicantProfilePage() {
                 The applicant you're looking for doesn't exist or has been removed.
               </p>
               <Button asChild>
-                <Link to={`/recruiter-dashboard/${jobId}`}>Return to Dashboard</Link>
+                <Link to={`/dashboard/${jobId}`}>Return to Dashboard</Link>
               </Button>
             </div>
           </main>
@@ -57,7 +56,7 @@ export default function ApplicantProfilePage() {
         <main className="container mx-auto p-4 md:p-6">
           <div className="mb-6 flex items-center">
             <Button variant="outline" size="sm" asChild className="mr-4 text-foreground">
-              <Link to={`/recruiter-dashboard/${jobId}`}>
+              <Link to={`/dashboard/${jobId}`}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"

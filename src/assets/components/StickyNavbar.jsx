@@ -77,8 +77,15 @@ export default function StickyNavbar() {
     }
   };
 
-  // Determine if user is admin
+  // Determine user roles
   const isAdmin = user && user.role === 'admin';
+  const isCandidate = user && user.role === 'candidate';
+  const isRecruiter = user && user.role === 'recruiter';
+  
+  // Determine which links to show based on auth state and role
+  const showApplyAsTalent = !isLoggedIn || isCandidate;
+  const showPostJob = !isLoggedIn || isRecruiter;
+  const showAddCompany = isAdmin;
   
   return (
     <div className="fixed top-5 left-0 right-0 px-4 z-20">
@@ -99,35 +106,31 @@ export default function StickyNavbar() {
           {/* Navigation links - center aligned with flex-1 and justify-center */}
           <div className="flex-1 flex justify-center -ml-20">
             <div className="flex items-center gap-2">
-              {/* Only show "Apply as talent" when NOT admin */}
-              {!isAdmin && (
+              {/* Apply as talent - shown when not logged in OR candidate */}
+              {!isAdmin && showApplyAsTalent && (
                 <Link className="hidden lg:inline-block" to='/jobs'>
-                  {!(user && user.role === 'recruiter') && (
-                    <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
-                      Apply as talent
-                    </Button>
-                  )}
+                  <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
+                    Apply as talent
+                  </Button>
                 </Link>
               )}
               
-              {/* Divider line that fades at top and bottom, hidden when logged in */}
-              {!isLoggedIn && !isAdmin && (
+              {/* Divider line that fades at top and bottom */}
+              {!isAdmin && showApplyAsTalent && showPostJob && (
                 <div className="hidden lg:block h-8 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent mx-1"></div>
               )}
               
-              {/* Only show "Post a Job" when NOT admin */}
-              {!isAdmin && (
-                <Link className="hidden lg:inline-block" to='/recruiter-dashboard'>
-                  {!(user && user.role === 'candidate') && (
-                    <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
-                      Post a Job
-                    </Button>
-                  )}
+              {/* Post a Job - shown when not logged in OR recruiter */}
+              {!isAdmin && showPostJob && (
+                <Link className="hidden lg:inline-block" to='/dashboard'>
+                  <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
+                    Post a Job
+                  </Button>
                 </Link>
               )}
               
               {/* Show "Add Company" only when admin */}
-              {isAdmin && (
+              {showAddCompany && (
                 <Link className="hidden lg:inline-block" to='/add-company'>
                   <Button variant="ghost" size="md" className="text-[#c5c5c5] border-none">
                     Add Company
@@ -168,9 +171,11 @@ export default function StickyNavbar() {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuGroup>
-                      <DropdownMenuItem className="mt-2 cursor-pointer">
-                        Profile
-                      </DropdownMenuItem>
+                      <Link to="/dashboard"> 
+                        <DropdownMenuItem className="mt-2 cursor-pointer">
+                          {isCandidate ? 'Profile' : 'Dashboard'}
+                        </DropdownMenuItem>
+                      </Link>
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator className="bg-[#ffffff2a] mx-1"/>
                     <DropdownMenuItem className="text-red-500 cursor-pointer" onClick={handleLogout}>
@@ -183,7 +188,7 @@ export default function StickyNavbar() {
               <Button 
                 variant="outline" 
                 size="md" 
-                className="hidden lg:inline-block border-none bg-green-500 text-white hover:bg-green-700" 
+                className="hidden lg:inline-block border-none bg-green-500 text-white hover:bg-green-700 hover:text-white transition-none" 
                 onClick={()=>navigate('/auth/login')}
               >
                 Login
@@ -210,32 +215,69 @@ export default function StickyNavbar() {
           <NavList />
           <div className="flex flex-col justify-start items-center px-2 pb-3 gap-3">
             {/* Mobile menu items - also conditionally rendered based on role */}
-            {!isAdmin && (
-              <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/jobs'>
-                Apply as talent
+
+              {/* Show profile/dashboard link in mobile view when logged in */}
+              {isLoggedIn && !isAdmin && (
+              <Link className="w-full" to='/dashboard'>
+                <Button 
+                  className="text-sm w-full text-center p-3 rounded-sm border-none hover:border-none bg-blue-700 text-white hover:bg-blue-800"
+                >
+                  {isCandidate ? 'Profile' : 'Dashboard'}
+                </Button>
+              </Link>
+            )}
+
+            {/* Apply as talent in mobile view */}
+            {!isAdmin && showApplyAsTalent && (
+              <Link className="w-full" to='/jobs'>
+                <Button 
+                  className="text-sm w-full border-none text-center p-3 rounded-sm hover:border-none bg-blue-700 text-white hover:bg-blue-800"
+                >
+                  Apply as talent
+                </Button>
               </Link>
             )}
             
-            {!isAdmin && (
+            {/* Post a Job in mobile view */}
+            {!isAdmin && showPostJob && (
+              <Link className="w-full" to='/dashboard'>
+                <Button 
+                  className="text-sm w-full text-center p-3 rounded-sm hover:border-none border-none bg-blue-700 text-white hover:bg-blue-800"
+                >
+                  Post a Job
+                </Button>
+              </Link>
+            )}
+            
+            {/* Add Company in mobile view */}
+            {showAddCompany && (
+              <Link className="w-full" to='/add-company'>
+                <Button 
+                  className="text-sm border-none w-full text-center p-3 rounded-sm hover:border-none bg-blue-700 text-white hover:bg-blue-800"
+                >
+                  Add Company
+                </Button>
+              </Link>
+            )}
+            
+            {/* Show logout button in mobile view when logged in */}
+            {isLoggedIn && (
               <Button 
-                className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-blue-700 text-white hover:bg-blue-800" 
-                onClick={()=>navigate('/recruiter-dashboard')}
+                variant="outline" 
+                size="md" 
+                className="text-sm w-full text-center p-3 rounded-sm hover:text-white border-none bg-red-500 text-white hover:bg-red-700" 
+                onClick={handleLogout}
               >
-                Post a Job
+                Log out
               </Button>
             )}
             
-            {isAdmin && (
-              <Link className="text-sm border-[1px] w-full text-center p-3 rounded-sm hover:bg-white hover:text-black" to='/add-company'>
-                Add Company
-              </Link>
-            )}
-            
+            {/* Login button in mobile view when not logged in */}
             {!isLoggedIn && (
               <Button 
                 variant="outline" 
                 size="md" 
-                className="text-sm border-[1px] w-full text-center p-3 rounded-sm border-none bg-green-500 text-white hover:bg-green-700" 
+                className="text-sm w-full text-center p-3 hover:text-white rounded-sm border-none bg-green-500 text-white hover:bg-green-700" 
                 onClick={()=>navigate('/auth/login')}
               >
                 Login
