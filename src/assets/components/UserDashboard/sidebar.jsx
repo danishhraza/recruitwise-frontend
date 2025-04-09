@@ -16,8 +16,8 @@ export function UserSidebar() {
   const location = useLocation()
 
   const isActive = (path) => {
-    if (path === "/user-dashboard" && location.pathname === "/user-dashboard") return true
-    if (path !== "/user-dashboard" && location.pathname === path) return true
+    if (path === "/dashboard" && location.pathname === "/dashboard") return true
+    if (path !== "/dashboard" && location.pathname === path) return true
     return false
   }
 
@@ -32,7 +32,7 @@ export function UserSidebar() {
       <SidebarContent className="p-2 text-foreground bg-background">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/user-dashboard")}>
+            <SidebarMenuButton asChild isActive={isActive("/dashboard")}>
               <Link to="/dashboard">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -54,8 +54,8 @@ export function UserSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/user-dashboard")}>
-              <Link to="jobs">
+            <SidebarMenuButton asChild isActive={isActive("/dashboard")}>
+              <Link to="/jobs">
                   <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -84,8 +84,8 @@ export function UserSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/user-dashboard/applications")}>
-              <Link to="/user-dashboard/applications">
+            <SidebarMenuButton asChild isActive={isActive("/dashboard/jobs")}>
+              <Link to="/dashboard/jobs">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -110,8 +110,8 @@ export function UserSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/user-dashboard/saved-jobs")}>
-              <Link to="/user-dashboard/saved-jobs">
+            <SidebarMenuButton asChild isActive={isActive("/dashboard/saved-jobs")}>
+              <Link to="/dashboard/saved-jobs">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -131,8 +131,8 @@ export function UserSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={isActive("/user-dashboard/documents")}>
-              <Link to="/user-dashboard/documents">
+            <SidebarMenuButton asChild isActive={isActive("/dashboard/documents")}>
+              <Link to="/dashboard/documents">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -158,7 +158,7 @@ export function UserSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link to="/user-dashboard/settings">
+              <Link to="/dashboard/settings">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"

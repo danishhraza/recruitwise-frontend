@@ -117,25 +117,23 @@ function App() {
                    </UnauthenticatedRoute>
                 }/>
           </Route>
-           {/* <Route path="/dashboard" element={<DashboardPage/>} />
-            <Route path="/dashboard/jobs" element={<ApplicationsPage />} /> */}
 
             <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardPage />} />
-                <Route path="jobs" element={<ApplicationsPage />} />
+                <Route path="/dashboard/jobs" element={<ApplicationsPage />} />
              </Route>
 
             {/* <Route path="/jobs/:id" element={<JobPage />} /> */}
-            <Route path="/recruiter-dashboard" element={<RecruiterDashboardPage />} />
-            <Route path="/recruiter-dashboard/:id" element={<JobPage />} />
-            <Route path="/applicants/:id" element={<ApplicantProfilePage />} />
+            <Route path="/dashboard" element={<RecruiterDashboardPage />} />
+            <Route path="/dashboard/:id" element={<JobPage />} />
+            <Route path="/dashboard/:jobId/:applicantId" element={<ApplicantProfilePage />} />
 
             {/* User Dashboard Routes */}
-            <Route path="/user-dashboard" element={<UserDashboardPage />} />
-            <Route path="/user-dashboard/saved-jobs" element={<SavedJobsPage />} />
-            <Route path="/user-dashboard/documents" element={<DocumentsPage />} />
+            <Route path="/dashboard" element={<UserDashboardPage />} />
+            <Route path="/dashboard/saved-jobs" element={<SavedJobsPage />} />
+            <Route path="/dashboard/documents" element={<DocumentsPage />} />
          
-         <Route path="/add-company" element={<AddCompanyPage/>}/>  
+            <Route path="/add-company" element={<AddCompanyPage/>}/>  
       </Route>
 
     </Routes>

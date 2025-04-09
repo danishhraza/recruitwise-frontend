@@ -35,7 +35,7 @@ export default function DashboardLayout() {
     }
   
     return (
-      <div className="dashboard-layout">
+      <div className="dashboard-layout selection:bg-[#65b5bf59] selection:text-[#8de0eb]">
           <Outlet /> 
       </div>
     );

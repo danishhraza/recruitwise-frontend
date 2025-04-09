@@ -108,7 +108,7 @@ export default function PublicLayout() {
   }
   
   return (
-    <div className='bg-background w-full scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-800 flex flex-col min-h-screen"'>
+    <div className='bg-background w-full scrollbar-thin selection:bg-[#65b5bf59] selection:text-[#8de0eb] scrollbar-thumb-gray-500 scrollbar-track-gray-800 flex flex-col min-h-screen"'>
       <StickyNavbar/>
       <div className="w-full py-28 flex-grow">
         <Outlet context={{loading}}/> {/* This will render the correct page */}

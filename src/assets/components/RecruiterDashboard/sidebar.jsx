@@ -32,7 +32,7 @@ export function DashboardSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={isActive("/")}>
-              <Link to="/recruiter-dashboard">
+              <Link to="/dashboard">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
