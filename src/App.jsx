@@ -26,6 +26,9 @@ import JobListingPage from "./assets/pages/ViewJobs";
 import AddCompanyPage from "./assets/components/AddCompany";
 import DashboardPage from "./assets/components/Dashboard";
 import DashboardLayout from "./assets/Layout/DashboardLayout";
+import ProtectedUserRoute from "./assets/Routes/ProtectedUserRoute";
+import ProtectedRecruiterRoute from "./assets/Routes/ProtectedRecruiterRoute";
+import ProtectedAdminRoute from "./assets/Routes/ProtectedAdminRoute";
 
 
 function App() {
@@ -120,20 +123,22 @@ function App() {
 
             <Route path="/dashboard" element={<DashboardLayout />}>
                 <Route index element={<DashboardPage />} />
-                <Route path="/dashboard/jobs" element={<ApplicationsPage />} />
+                {/* User Routes */}
+                <Route element={<ProtectedUserRoute />}>
+                  <Route path="jobs" element={<ApplicationsPage />} />
+                  <Route path="saved-jobs" element={<SavedJobsPage />} />
+                  <Route path="documents" element={<DocumentsPage />} />
+                </Route>
+                {/* Recruiter Routes */}
+                <Route element={<ProtectedRecruiterRoute />}>
+                  <Route path="/dashboard/:id" element={<JobPage />} />
+                  <Route path="/dashboard/:jobId/:applicantId" element={<ApplicantProfilePage />} />
+                </Route>
+             </Route>
+             <Route element={<ProtectedAdminRoute />}>
+             <Route path="/add-company" element={<AddCompanyPage />} />
              </Route>
 
-            {/* <Route path="/jobs/:id" element={<JobPage />} /> */}
-            <Route path="/dashboard" element={<RecruiterDashboardPage />} />
-            <Route path="/dashboard/:id" element={<JobPage />} />
-            <Route path="/dashboard/:jobId/:applicantId" element={<ApplicantProfilePage />} />
-
-            {/* User Dashboard Routes */}
-            <Route path="/dashboard" element={<UserDashboardPage />} />
-            <Route path="/dashboard/saved-jobs" element={<SavedJobsPage />} />
-            <Route path="/dashboard/documents" element={<DocumentsPage />} />
-         
-            <Route path="/add-company" element={<AddCompanyPage/>}/>  
       </Route>
 
     </Routes>
