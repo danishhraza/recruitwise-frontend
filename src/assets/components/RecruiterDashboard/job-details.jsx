@@ -11,10 +11,6 @@ export function JobDetails({ job }) {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <h3 className="mb-1 text-sm font-medium text-muted-foreground">Department</h3>
-              <p>{job.department}</p>
-            </div>
-            <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Location</h3>
               <p>{job.location}</p>
             </div>
@@ -24,15 +20,19 @@ export function JobDetails({ job }) {
             </div>
             <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Experience Level</h3>
-              <p>{job.experienceLevel}</p>
+              <p>{job.experience}</p>
+            </div>
+            <div>
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">Job Type</h3>
+              <p>{job.jobType}</p>
             </div>
             <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Salary Range</h3>
-              <p>{job.salaryRange}</p>
+              <p>${job.salary.toLocaleString()}</p>
             </div>
             <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Status</h3>
-              <Badge variant={job.status === "Active" ? "default" : "secondary"}>{job.status}</Badge>
+              <Badge variant={job.isActive ? "default" : "secondary"}>{job.isActive ? "Active" : "Closed"}</Badge>
             </div>
             <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Posted Date</h3>

@@ -7,7 +7,7 @@ import { JobDetails } from "../components/RecruiterDashboard//job-details"
 import { DashboardSidebar } from "../components/RecruiterDashboard//sidebar"
 import { Button } from "../../components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
-import { getJobById } from "../../lib/data"
+import { fetchJobById } from "../../lib/data"
 import { ThemeProvider } from "../components/theme-provider";
 
 export default function JobPage() {
@@ -19,7 +19,7 @@ export default function JobPage() {
   useEffect(() => {
     const fetchJob = async () => {
       try {
-        const jobData = await getJobById(jobId)
+        const jobData = await fetchJobById(jobId)
         setJob(jobData)
       } catch (error) {
         console.error("Failed to fetch job:", error)

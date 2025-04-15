@@ -12,7 +12,7 @@ import { getAllApplicants } from "../../../lib/applicant-data"
 export function ApplicantList({ applicants: propApplicants, jobId }) {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
+  const [interviewFilter, setInterviewFilter] = useState("all")
 
   // Use either provided applicants or fetch all applicants
   const applicants = propApplicants || getAllApplicants()
@@ -22,9 +22,9 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
       applicant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (applicant.email && applicant.email.toLowerCase().includes(searchQuery.toLowerCase()))
 
-    const matchesStatus = statusFilter === "all" || applicant.status === statusFilter
+    const matchesInterviewStatus = interviewFilter === "all" || applicant.interviewStatus === interviewFilter
 
-    return matchesSearch && matchesStatus
+    return matchesSearch && matchesInterviewStatus
   })
 
   const handleApplicantClick = (applicantId) => {
@@ -50,18 +50,15 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="max-w-xs"
           />
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select value={interviewFilter} onValueChange={setInterviewFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder="Filter by interview status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="all">All Interviews</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="screening">Screening</SelectItem>
-              <SelectItem value="interview">Interview</SelectItem>
-              <SelectItem value="assessment">Assessment</SelectItem>
-              <SelectItem value="hired">Hired</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="terminated">Terminated</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -73,9 +70,8 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Interview Status</TableHead>
               <TableHead className="hidden md:table-cell">Applied Date</TableHead>
-              <TableHead className="hidden md:table-cell">Interview</TableHead>
               <TableHead>Score</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -83,7 +79,7 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
           <TableBody>
             {filteredApplicants.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   No applicants found.
                 </TableCell>
               </TableRow>
@@ -97,27 +93,13 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
                   <TableCell>
                     <div>
                       <div className="font-medium">{applicant.name}</div>
-                      <div className="text-sm text-muted-foreground">{applicant.role}</div>
+                      <div className="text-sm text-muted-foreground">{applicant.email}</div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <ApplicantStatusBadge status={applicant.status} />
+                    <InterviewStatusBadge status={applicant.interviewStatus} />
                   </TableCell>
                   <TableCell className="hidden md:table-cell">{applicant.appliedDate}</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <Badge
-                      variant={
-                        applicant.interviewStatus === "completed"
-                          ? "success"
-                          : applicant.interviewStatus === "scheduled"
-                            ? "outline"
-                            : "secondary"
-                      }
-                      className="capitalize"
-                    >
-                      {applicant.interviewStatus || "Not scheduled"}
-                    </Badge>
-                  </TableCell>
                   <TableCell>
                     <div className="flex items-center">
                       <span
@@ -168,7 +150,7 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Schedule Interview</DropdownMenuItem>
                         <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Send Email</DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Update Status</DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Update Interview Status</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -182,20 +164,16 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
   )
 }
 
-function ApplicantStatusBadge({ status }) {
+function InterviewStatusBadge({ status }) {
   const getVariant = () => {
+    if (!status) return "secondary";
+    
     switch (status.toLowerCase()) {
       case "pending":
         return "secondary"
-      case "screening":
-        return "outline"
-      case "interview":
-        return "default"
-      case "assessment":
-        return "default"
-      case "hired":
-        return "success"
-      case "rejected":
+      case "completed":
+        return "primary"
+      case "terminated":
         return "destructive"
       default:
         return "secondary"
@@ -204,8 +182,7 @@ function ApplicantStatusBadge({ status }) {
 
   return (
     <Badge variant={getVariant()} className="capitalize">
-      {status}
+      {status || "Not Scheduled"}
     </Badge>
   )
 }
-

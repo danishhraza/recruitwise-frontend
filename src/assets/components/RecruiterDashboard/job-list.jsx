@@ -1,5 +1,3 @@
-"use client"
-
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 
@@ -8,7 +6,7 @@ import { Button } from "../../../components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card"
 import { Input } from "../../../components/ui/input"
 import { Skeleton } from "../../../components/ui/skeleton"
-import { getAllJobs } from "../../../lib/data"
+import { fetchAllJobs } from "../../../lib/data"
 
 export function JobList() {
   const navigate = useNavigate()
@@ -19,7 +17,7 @@ export function JobList() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const jobsData = await getAllJobs()
+        const jobsData = await fetchAllJobs()
         setJobs(jobsData)
       } catch (error) {
         console.error("Failed to fetch jobs:", error)
@@ -34,7 +32,6 @@ export function JobList() {
   const filteredJobs = jobs.filter(
     (job) =>
       job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
       job.location.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
@@ -61,7 +58,7 @@ export function JobList() {
     <div>
       <div className="mb-6 flex w-full items-center space-x-2">
         <Input
-          placeholder="Search jobs by title, department, or location..."
+          placeholder="Search jobs by title, or location..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="max-w-md"
@@ -94,27 +91,6 @@ export function JobList() {
               </CardHeader>
               <CardContent className="pb-2">
                 <div className="mb-4 space-y-2 text-sm">
-                  <div className="flex items-center text-muted-foreground">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="mr-1 h-4 w-4"
-                    >
-                      <path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16" />
-                      <path d="M1 21h22" />
-                      <path d="M7 10.5V13" />
-                      <path d="M17 10.5V13" />
-                      <path d="M12 10.5V13" />
-                    </svg>
-                    {job.department}
-                  </div>
                   <div className="flex items-center text-muted-foreground">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
