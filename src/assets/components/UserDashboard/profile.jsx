@@ -10,9 +10,9 @@ export function UserProfile() {
   const userData = getUserData()
 
   return (
-    <div className="grid gap-6 md:grid-cols-12">
+    <div className="grid gap-6 md:grid-cols-2">
       {/* Left column - Profile card */}
-      <div className="md:col-span-4 space-y-6">
+      <div className="space-y-6">
         <Card className="bg-primary-foreground rounded-lg">
           <CardHeader className="relative pb-0">
             <div className="absolute right-4 top-4">
@@ -97,15 +97,8 @@ export function UserProfile() {
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between border-t pt-4">
-            <div className="grid grid-cols-3 w-full gap-2 text-center">
-              <div className="flex flex-col">
-                <div className="flex items-center justify-center mb-1">
-                  <Calendar className="h-4 w-4 text-primary" />
-                </div>
-                <div className="text-xl font-bold">{userData.stats.upcomingAssessments}</div>
-                <div className="text-xs text-muted-foreground">Assessments</div>
-              </div>
+          <CardFooter className="border-t pt-4">
+            <div className="w-full flex justify-center gap-6 text-center">
               <div className="flex flex-col">
                 <div className="flex items-center justify-center mb-1">
                   <Briefcase className="h-4 w-4 text-primary" />
@@ -123,8 +116,11 @@ export function UserProfile() {
             </div>
           </CardFooter>
         </Card>
+      </div>
 
-        <Card className="bg-primary-foreground rounded-md">
+    <div className="space-y-6 md:flex md:flex-col md:justify-start">
+      
+      <Card className="bg-primary-foreground rounded-md">
           <CardHeader>
             <CardTitle className="text-lg">Skills</CardTitle>
           </CardHeader>
@@ -137,11 +133,10 @@ export function UserProfile() {
               ))}
             </div>
           </CardContent>
-        </Card>
-      </div>
+      </Card>
 
-      {/* Right column - About, Education, Experience */}
-      <div className="md:col-span-8 space-y-6">
+        {/* Right column - About, Education, Experience */}
+
         <Card className="bg-primary-foreground rounded-md">
           <CardHeader>
             <CardTitle className="text-lg">About</CardTitle>
@@ -151,90 +146,8 @@ export function UserProfile() {
           </CardContent>
         </Card>
 
-        <Card className="bg-primary-foreground rounded-md">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Education</CardTitle>
-            <Button variant="ghost" size="sm">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-1 h-4 w-4"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-              Add
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {userData.education.map((edu, index) => (
-                <div key={index} className="border-b pb-4 last:border-0 last:pb-0">
-                  <div className="flex justify-between">
-                    <div>
-                      <h4 className="font-medium">{edu.degree}</h4>
-                      <p className="text-sm">{edu.institution}</p>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {edu.startDate} - {edu.endDate || "Present"}
-                    </div>
-                  </div>
-                  {edu.description && <p className="mt-2 text-sm text-muted-foreground">{edu.description}</p>}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-primary-foreground rounded-md">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg">Experience</CardTitle>
-            <Button variant="ghost" size="sm">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mr-1 h-4 w-4"
-              >
-                <path d="M5 12h14" />
-                <path d="M12 5v14" />
-              </svg>
-              Add
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {userData.experience.map((exp, index) => (
-                <div key={index} className="border-b pb-4 last:border-0 last:pb-0">
-                  <div className="flex justify-between">
-                    <div>
-                      <h4 className="font-medium">{exp.title}</h4>
-                      <p className="text-sm">{exp.company}</p>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {exp.startDate} - {exp.endDate || "Present"}
-                    </div>
-                  </div>
-                  {exp.description && <p className="mt-2 text-sm text-muted-foreground">{exp.description}</p>}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
+
     </div>
   )
 }

@@ -27,6 +27,7 @@ export function UserDashboardHeader() {
         message.success('Logout successful!');
         setIsLoggedIn(false)
         setUser(null)
+        navigate("/auth/login")
       } catch (error) {
         console.error('Logout failed:', error);
       }
@@ -37,25 +38,8 @@ export function UserDashboardHeader() {
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6 text-muted-foreground">
       <SidebarTrigger />
 
-      <div className="hidden w-full max-w-sm md:flex">
-        <div className="relative w-full">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search jobs..."
-            className="w-full rounded-lg bg-background pl-8 md:w-[300px] lg:w-[400px]"
-          />
-        </div>
-      </div>
-
       <div className="ml-auto flex items-center gap-2">
         <ModeToggle className="md:hidden" />
-        <Button variant="outline" size="icon" className="relative">
-          <Bell className="h-4 w-4" />
-          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
-            2
-          </span>
-        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

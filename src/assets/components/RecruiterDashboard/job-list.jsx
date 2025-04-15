@@ -86,7 +86,7 @@ export function JobList() {
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <CardTitle className="line-clamp-2 text-xl">{job.title}</CardTitle>
-                  <Badge variant={job.status === "Active" ? "default" : "secondary"}>{job.status}</Badge>
+                  <Badge variant={job.isActive ? "default" : "secondary"}>{job.isActive ? "Active" : "Closed"}</Badge>
                 </div>
               </CardHeader>
               <CardContent className="pb-2">
