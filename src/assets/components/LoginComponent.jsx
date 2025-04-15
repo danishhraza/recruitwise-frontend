@@ -13,6 +13,8 @@ export default function LoginComponent() {
   const from = location.state?.from || "/";
   const {isLoggedIn,setIsLoggedIn,setUser} = useGeneral()
   const navigate = useNavigate();
+
+
   const onSubmit = async (data,event) => {
     event.preventDefault();
     try {
@@ -27,7 +29,22 @@ export default function LoginComponent() {
       console.error(error);
     }
   };
-  
+
+  const handleGoogleLogin = async () => {
+    try {
+      // For OAuth, you typically redirect to the provider's auth page rather than making a direct POST
+      // This assumes your backend has a proper endpoint that initiates OAuth flow
+      window.location.href = `${axios.defaults.baseURL}/auth/google`;
+      // Alternatively, if your backend expects a direct POST:
+      // const response = await axios.post('/auth/google', {});
+      // message.success('Login successful!');
+      // getUserData();
+    } catch (error) {
+      message.error('Google login failed. Please try again.');
+      console.error(error);
+    }
+  };
+
   async function getUserData() {
     try {
       const response = await axios.get('/auth/me', { withCredentials: true });
@@ -78,9 +95,11 @@ export default function LoginComponent() {
           Don't have an account? <Link className='text-blue-600' to={'/auth/register'}>Sign Up</Link>
         </p>
       </form>
-      <Divider style={{ borderColor: 'grey', color: 'white' }}>OR</Divider>
+      <Divider style={{ borderColor: 'grey', color: 'white' }}><span className='text-muted-foreground'>OR</span></Divider>
       <div className='flex flex-col gap-3'>
-        <Button type='primary' className='w-80' icon={<GoogleOutlined />}>Google</Button>
+
+      <Button onClick={handleGoogleLogin} type='primary' className='w-80' icon={<GoogleOutlined />}>Google</Button>
+
         <Button type='primary' className='w-80' icon={<LinkedinFilled />}>LinkedIn</Button>
         <Button type='primary' className='w-80' icon={<WindowsFilled />}>Outlook</Button>
       </div>
