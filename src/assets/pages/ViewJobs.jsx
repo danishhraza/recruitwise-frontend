@@ -33,7 +33,6 @@ const jobsData = [
     salary: '$120,000 - $150,000',
     experienceLevel: 'Senior',
     employmentType: 'Full-time',
-    department: 'Engineering',
     status: 'Active',
     applicationDeadline: '2023-04-25',
     description: 'We are looking for a Senior Frontend Developer to join our team. You will be responsible for building and maintaining our web applications.',
@@ -61,7 +60,6 @@ const jobsData = [
     salary: '$90,000 - $120,000',
     experienceLevel: 'Mid-level',
     employmentType: 'Full-time',
-    department: 'Design',
     status: 'Active',
     applicationDeadline: '2023-04-20',
     description: 'We are looking for a UI/UX Developer to join our creative team. You will be responsible for designing and implementing user interfaces for our clients.',
@@ -89,7 +87,6 @@ const jobsData = [
     salary: '$110,000 - $140,000',
     experienceLevel: 'Senior',
     employmentType: 'Full-time',
-    department: 'Engineering',
     status: 'Active',
     applicationDeadline: '2023-04-15',
     description: 'We are seeking a Full Stack Engineer to join our growing team. You will work on both frontend and backend development for our main product.',
@@ -117,7 +114,6 @@ const jobsData = [
     salary: '$85,000 - $110,000',
     experienceLevel: 'Junior',
     employmentType: 'Full-time',
-    department: 'Engineering',
     status: 'Active',
     applicationDeadline: '2023-04-10',
     description: 'We are looking for a Frontend Developer to help build and maintain our e-commerce platform.',
@@ -145,7 +141,6 @@ const jobsData = [
     salary: '$100,000 - $130,000',
     experienceLevel: 'Mid-level',
     employmentType: 'Full-time',
-    department: 'Engineering',
     status: 'Active',
     applicationDeadline: '2023-04-20',
     description: 'We are looking for a React Developer to join our financial technology team. You will be responsible for developing user interfaces for our financial products.',
@@ -287,10 +282,6 @@ const JobListingPage = () => {
                 <CardContent className="pt-6">
                   <h3 className="text-xl font-semibold mb-4">Job Information</h3>
                   <div className="grid grid-cols-2 gap-y-4">
-                    <div>
-                      <p className="text-gray-500">Department</p>
-                      <p>{selectedJob.department}</p>
-                    </div>
                     <div>
                       <p className="text-gray-500">Location</p>
                       <p>{selectedJob.location}</p>

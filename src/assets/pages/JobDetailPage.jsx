@@ -76,10 +76,6 @@ const JobDetailPage = () => {
               <h3 className="text-xl font-semibold mb-4">Job Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4">
                 <div>
-                  <p className="text-gray-500">Department</p>
-                  <p>{job.department}</p>
-                </div>
-                <div>
                   <p className="text-gray-500">Location</p>
                   <p>{job.location}</p>
                 </div>
