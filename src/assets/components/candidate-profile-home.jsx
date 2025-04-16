@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { ChevronDown, Play, PauseIcon, Volume2, SquareIcon, Maximize2, ChevronUp } from "lucide-react";
-import { ProctoringResults } from "../components/RecruiterDashboard/proctor-component-dark"
+import { ProctoringResults } from "./RecruiterDashboard/proctor-component-home"
 import { Card } from "../../components/ui/card"
 import ReactPlayer from "react-player"
 
@@ -117,10 +117,6 @@ export default function InterviewPlatform() {
               <span className="text-zinc-400">Location</span>
               <span>Boca Raton, FL • USA</span>
             </div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-zinc-400">Skills</span>
-              <span>React, Node</span>
-            </div>
             <div className="flex mt-3 gap-2">
               <Badge className="bg-zinc-800 text-white text-xs border-none">AWS Certified</Badge>
               <Badge className="bg-blue-900 text-white text-xs border-none">React</Badge>
@@ -128,7 +124,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Strong Hiring Signal section */}
-          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-slate-800">
+          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-[#151B23]">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer" 
               onClick={() => toggleSection('hiringSignal')}
@@ -151,7 +147,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Contact info section */}
-          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-slate-800">
+          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-[#151B23]">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer"
               onClick={() => toggleSection('contactInfo')}
@@ -170,7 +166,7 @@ export default function InterviewPlatform() {
           </div>
           
           {/* Collapsible Links section */}
-          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-slate-800">
+          <div className="border-t hidden md:block border-zinc-800 p-3 hover:bg-[#151B23]">
             <div 
               className="flex justify-between items-center mb-2 cursor-pointer"
               onClick={() => toggleSection('links')}
@@ -196,7 +192,7 @@ export default function InterviewPlatform() {
           {/* Tabs */}
           <Tabs defaultValue="Interview" className="w-full" onValueChange={setActiveTab}>
             <div className="border-b-2 border-blue-800">
-              <TabsList className="h-12 rounded-none bg-transparent">
+              <TabsList className="h-12 rounded-none bg-transparent px-0">
                 <TabsTrigger 
                   value="Interview"
                   className={`px-3 md:px-6 rounded-none h-12 text-xs md:text-sm border-b-2 data-[state=active]:border-white border-transparent ${activeTab === "Interview" ? "text-white" : "text-zinc-400"}`}
@@ -239,7 +235,7 @@ export default function InterviewPlatform() {
             <ChevronDown size={14} />
           </Button>
           <Button variant="outline" className="text-white border-zinc-600 bg-transparent h-9">
-            Interview
+            Final Interview
           </Button>
         </div>
         <Button className="bg-emerald-500 hover:bg-emerald-600 text-white h-9">

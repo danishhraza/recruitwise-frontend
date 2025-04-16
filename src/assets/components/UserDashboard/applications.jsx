@@ -44,10 +44,8 @@ export function UserApplications() {
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="applied">Applied</SelectItem>
-              <SelectItem value="assessment">Assessment</SelectItem>
-              <SelectItem value="interview">Interview</SelectItem>
-              <SelectItem value="offer">Offer</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
+              <SelectItem value="interview-pending">Interview Pending</SelectItem>
+              <SelectItem value="interview-completed">Interview Completed</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -71,7 +69,6 @@ export function UserApplications() {
                 <TableHead>Company</TableHead>
                 <TableHead className="hidden md:table-cell">Applied Date</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="hidden md:table-cell">Next Step</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -86,16 +83,6 @@ export function UserApplications() {
                   <TableCell className="hidden md:table-cell">{application.appliedDate}</TableCell>
                   <TableCell>
                     <ApplicationStatusBadge status={application.status} />
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {application.nextStep ? (
-                      <div>
-                        <div>{application.nextStep}</div>
-                        <div className="text-sm text-muted-foreground">{application.nextStepDate}</div>
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground">-</span>
-                    )}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm">
@@ -117,14 +104,10 @@ function ApplicationStatusBadge({ status }) {
     switch (status) {
       case "applied":
         return "secondary"
-      case "assessment":
-        return "outline"
-      case "interview":
+      case "interview-pending":
+        return "primary"
+      case "intervie-completed":
         return "default"
-      case "offer":
-        return "success"
-      case "rejected":
-        return "destructive"
       default:
         return "secondary"
     }
@@ -134,14 +117,10 @@ function ApplicationStatusBadge({ status }) {
     switch (status) {
       case "applied":
         return "Applied"
-      case "assessment":
-        return "Assessment"
-      case "interview":
-        return "Interview"
-      case "offer":
-        return "Offer"
-      case "rejected":
-        return "Rejected"
+      case "interview-pending":
+        return "Interview Pending"
+      case "interview-completed":
+        return "Interview Completed"
       default:
         return status
     }

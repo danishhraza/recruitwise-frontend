@@ -240,7 +240,7 @@ export function ProctoringResults({ applicant }) {
           {/* Candidate Missing */}
           <div>
             <div className="flex justify-between mb-2">
-              <span>Candidate Missing From Camera</span>
+              <span>Missing From Camera</span>
               <Badge variant="outline" className="bg-red-500/10 text-red-500">
                 {violations.missing.length} incident
               </Badge>

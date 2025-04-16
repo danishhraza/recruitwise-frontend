@@ -40,7 +40,7 @@ function App() {
           const response = await axios.get('/auth/me',{withCredentials:true});
           setIsLoggedIn(true)
           setUser(response.data)
-          console.log(response.data)
+          console.log("/auth/me returns ", response)
       } catch (error) {
           console.error('Error fetching data:', error);
           setUser(null)

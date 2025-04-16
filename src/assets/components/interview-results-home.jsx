@@ -26,40 +26,24 @@ const InterviewResultDashboard = () => {
       name: "Michael B",
       verified: true,
       dateTaken: "May 08, 2023",
-      hardSkills: [
-        { name: "React", level: "Senior" },
-        { name: "Javascript", level: "Junior" },
-        { name: "Html", level: "Mid-level" },
-      ],
-      softSkills: "Average",
-      proctoring: "100%",
+      interviewStatus: "Completed",
+      score: "80",
+    },
+    {
+      id: 2,
+      name: "Danish R",
+      verified: false,
+      dateTaken: "Jan 29, 2023",
+      interviewStatus: "Terminated",
+      score: "0",
     },
     {
       id: 3,
       name: "Shayan S",
       verified: false,
       dateTaken: "Feb 08, 2023",
-      hardSkills: [
-        { name: "ReactJS", level: "Junior" },
-        { name: "Javascript", level: "Mid-level" },
-        { name: "Redux", level: "Not experienced" },
-      ],
-      softSkills: "Average",
-      proctoring: "92%",
-    },
-    {
-      id: 4,
-      name: "Danish R",
-      verified: false,
-      dateTaken: "Jan 29, 2023",
-      hardSkills: [
-        { name: "React", level: "Senior" },
-        { name: "Javascript", level: "Senior" },
-        { name: "Bootstrap", level: "Senior" },
-        { name: "MongoDB", level: "Senior" },
-      ],
-      softSkills: "Excellent",
-      proctoring: "98%",
+      interviewStatus: "Pending",
+      score: "",
     },
   ]);
 
@@ -76,7 +60,7 @@ const InterviewResultDashboard = () => {
       case "Not experienced":
         return "bg-red-600 hover:bg-red-700";
       default:
-        return "bg-slate-600 hover:bg-slate-700";
+        return "bg-slate-600 hover:bg-[#151B23]";
     }
   };
 
@@ -103,13 +87,13 @@ const InterviewResultDashboard = () => {
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
           <Input
             placeholder="Search"
-            className="pl-8 bg-gray-800 border-gray-700"
+            className="pl-8 bg-[#0e0e0e] border-gray-700"
           />
         </div>
         <div className="flex space-x-2">
           <Button
             variant="outline"
-            className="bg-gray-800 border-gray-700 flex items-center"
+            className="bg-[#0e0e0e] border-gray-700 flex items-center"
           >
             <Filter size={16} className="mr-2" />
             <span>Filters</span>
@@ -131,13 +115,12 @@ const InterviewResultDashboard = () => {
       {/* Table */}
       <div className="rounded-md border border-gray-700 overflow-x-auto">
         <Table>
-          <TableHeader className="bg-gray-800">
-            <TableRow>
+          <TableHeader>
+            <TableRow className="hover:bg-[#151B23]">
               <TableHead className="text-gray-300">Name</TableHead>
               <TableHead className="text-gray-300 hidden md:table-cell">Date</TableHead>
-              <TableHead className="text-gray-300">Skills</TableHead>
-              <TableHead className="text-gray-300 hidden md:table-cell">Soft Skills</TableHead>
-              <TableHead className="text-gray-300">Proctoring</TableHead>
+              <TableHead className="text-gray-300">Interview Status</TableHead>
+              <TableHead className="text-gray-300">Score</TableHead>
               <TableHead className="w-10"></TableHead>
             </TableRow>
           </TableHeader>
@@ -145,27 +128,19 @@ const InterviewResultDashboard = () => {
             {candidates.map((candidate) => (
               <TableRow
                 key={candidate.id}
-                className="border-t border-gray-700 hover:bg-gray-800"
+                className="border-t border-gray-700 hover:bg-[#151B23]"
               >
                 <TableCell className="font-medium">{candidate.name}</TableCell>
                 <TableCell className="hidden md:table-cell">{candidate.dateTaken}</TableCell>
                 <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {candidate.hardSkills.map((skill, idx) => (
-                      <Badge
-                        key={idx}
-                        className={`${getBadgeColor(skill.level)} text-xs font-normal`}
-                      >
-                        {skill.name}
-                      </Badge>
-                    ))}
-                  </div>
+                  {candidate.interviewStatus}
                 </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {candidate.softSkills}
-                </TableCell>
-                <TableCell>{candidate.proctoring}</TableCell>
-                <TableCell>
+                <TableCell className={candidate.score >= 80 ? "text-green-500" : (candidate.score < 50 ? "text-red-500" : "text-yellow-500")}>
+  <span className={candidate.score >= 80 ? "text-green-500" : (candidate.score < 50 ? "text-red-500" : "text-yellow-500")}>
+    {candidate.score}
+  </span>
+</TableCell>
+                <TableCell className='hidden md:table-cell'>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -175,7 +150,7 @@ const InterviewResultDashboard = () => {
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-gray-800 text-gray-200 border-gray-700">
+                    <DropdownMenuContent align="end" className="bg-[#0e0e0e] text-gray-200 border-gray-700">
                       <DropdownMenuItem>View details</DropdownMenuItem>
                       <DropdownMenuItem>Export results</DropdownMenuItem>
                       <DropdownMenuItem>Archive</DropdownMenuItem>
