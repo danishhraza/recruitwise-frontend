@@ -8,15 +8,14 @@ export default function ResendFooterWithLogo() {
           {/* Column 1: Address and Socials */}
           <div className="space-y-6">
             <div>
-              <p className="text-gray-400 text-sm">2261 Market Street #5039</p>
-              <p className="text-gray-400 text-sm">San Francisco, CA 94114</p>
+              <p className="text-gray-400 text-sm">IBA Karachi, 75270</p>
+              <p className="text-gray-400 text-sm">Pakistan</p>
             </div>
             
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <span className="text-gray-400 text-sm">Backed by</span>
-                <span className="bg-gray-800 p-1 text-white text-xs">Y</span>
-                <span className="text-gray-400 text-sm">Combinator</span>
+                <span className="bg-gray-800 p-1 text-white text-xs">Folio3</span>
               </div>
               
               <div className="flex space-x-3">
@@ -32,7 +31,7 @@ export default function ResendFooterWithLogo() {
           </div>
           
           {/* Other columns remain the same */}
-          <div>
+          {/* <div>
             <h3 className="font-medium text-white mb-4">Documentation</h3>
             <ul className="space-y-3">
               <li><a href="#" className="text-gray-400 hover:text-white text-sm">Getting Started</a></li>
@@ -41,9 +40,9 @@ export default function ResendFooterWithLogo() {
               <li><a href="#" className="text-gray-400 hover:text-white text-sm">Examples</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white text-sm">SDKs</a></li>
             </ul>
-          </div>
+          </div> */}
           
-          <div>
+          {/* <div>
             <h3 className="font-medium text-white mb-4">Company</h3>
             <ul className="space-y-3">
               <li><a href="#" className="text-gray-400 hover:text-white text-sm">About</a></li>
@@ -53,7 +52,7 @@ export default function ResendFooterWithLogo() {
               <li><a href="#" className="text-gray-400 hover:text-white text-sm">Customers</a></li>
               <li><a href="#" className="text-gray-400 hover:text-white text-sm">Philosophy</a></li>
             </ul>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

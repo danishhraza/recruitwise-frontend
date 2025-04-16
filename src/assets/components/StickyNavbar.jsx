@@ -144,8 +144,8 @@ export default function StickyNavbar() {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <div className="relative">
-                <DropdownMenu modal={false}>
-                  <DropdownMenuTrigger asChild>
+                <DropdownMenu modal={false} >
+                  <DropdownMenuTrigger asChild >
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src="/placeholder.svg" alt="User" />
@@ -156,7 +156,7 @@ export default function StickyNavbar() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent 
-                    className="w-56 text-gray-200 bg-black border-[#ffffff1a] p-3" 
+                    className="w-56 text-gray-200 bg-[#010409b3] backdrop-blur-md  border-[#ffffff1a] p-3" 
                     align="end" 
                     forceMount
                     sideOffset={5}

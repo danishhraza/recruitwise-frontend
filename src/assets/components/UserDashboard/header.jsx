@@ -17,9 +17,11 @@ import { ModeToggle } from "../mode-toggle"
 import axios from "../../../api/axios";
 import { message } from 'antd'
 import useGeneral from "../../../hooks/useGeneral";
+import { useNavigate } from "react-router-dom";
 
 export function UserDashboardHeader() {
   const {isLoggedIn, user, setIsLoggedIn, setUser} = useGeneral();
+  const navigate = useNavigate();
 
     const handleLogout = async () => {
       try {
