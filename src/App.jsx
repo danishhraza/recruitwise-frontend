@@ -9,13 +9,9 @@ import DarkHomeLayout from "./assets/Layout/DarkHomeLayout";
 import { FiltersProvider } from "./assets/Context/FiltersContext";
 import OtherLayout from "./assets/Layout/OtherLayout";
 import RegisterComponent from "./assets/components/RegisterComponent";
-import RecruiterDashboardPage from "./assets/pages/RecruiterDashboardPage"
 import JobPage from "./assets/pages/JobPage"
 import { SidebarProvider } from "./components/ui/sidebar"
-import UserDashboardPage from "./assets/pages/UserDashboardPage"
 import ApplicationsPage from "./assets/pages/ApplicationsPage"
-import SavedJobsPage from "./assets/pages/SavedJobsPage"
-import DocumentsPage from "./assets/pages/DocumentsPage"
 import ApplicantProfilePage from "./assets/pages/ApplicantProfilePage"
 import axios from "./api/axios";
 import useGeneral from "./hooks/useGeneral";
@@ -126,8 +122,6 @@ function App() {
                 {/* User Routes */}
                 <Route element={<ProtectedUserRoute />}>
                   <Route path="jobs" element={<ApplicationsPage />} />
-                  <Route path="saved-jobs" element={<SavedJobsPage />} />
-                  <Route path="documents" element={<DocumentsPage />} />
                 </Route>
                 {/* Recruiter Routes */}
                 <Route element={<ProtectedRecruiterRoute />}>

@@ -47,7 +47,7 @@ export function UserDashboardHeader() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user.profilePicture} alt={user.name} />
+                <AvatarImage src={user.avatarUrl} alt={user.name} />
                 <AvatarFallback>{user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}</AvatarFallback>
               </Avatar>
             </Button>
