@@ -13,9 +13,8 @@ import JobApplicationDrawer from '../components/JobApplicationDrawer';
 import { fetchAllJobs, fetchJobById } from '../../lib/data'; // Import functions from data.js
 
 const JobListingPage = () => {
-  const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
-  const { filters, setFilters } = useFilters();
+  const { filters, setFilters,setJobs,Jobs } = useFilters();
   const [searchParams, setSearchParams] = useSearchParams();
   const { searchQuery, filteredJobs } = filters;
   const [showFilters, setShowFilters] = useState(false);
@@ -27,6 +26,7 @@ const JobListingPage = () => {
     const loadJobs = async () => {
       try {
         const jobsData = await fetchAllJobs();
+        console.log(jobsData)
         setJobs(jobsData);
         
         // Set initial selected job

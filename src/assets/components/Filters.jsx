@@ -16,8 +16,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 export default function Filters({open,onClose}) {
     const {
-        locations,
-        dummy,
         filters,
         setFilters
     } = useFilters();
@@ -79,7 +77,7 @@ const handleJobTypeFilter = (jobType) => {
           const currentQuery = prevParams.get("query") || "";
           const currentEType = prevParams.get("eType") || "";
           const currTime = prevParams.get("time") || "";
-          c
+          const currentExpLevel = prevParams.get("expLevel") || "";
       
           return {
               ...(currentQuery ? { query: currentQuery } : {}),
