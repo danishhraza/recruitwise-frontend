@@ -5,11 +5,6 @@ import { ThemeProvider } from "../components/theme-provider";
 
 export default function RecruiterDashboardPage() {
   return (
-    <ThemeProvider defaultTheme="dark">
-    <div className="flex min-h-screen bg-background">
-      <DashboardSidebar />
-      <div className="flex-1">
-        <DashboardHeader />
         <main className="container mx-auto p-4 md:p-6">
           <div className="mb-8">
             <h1 className="text-3xl font-bold tracking-tight text-primary">Job Postings</h1>
@@ -17,9 +12,6 @@ export default function RecruiterDashboardPage() {
           </div>
           <JobList />
         </main>
-      </div>
-    </div>
-    </ThemeProvider>
   )
 }
 

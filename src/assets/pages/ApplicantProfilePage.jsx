@@ -25,11 +25,7 @@ export default function ApplicantProfilePage() {
 
   if (!applicant) {
     return (
-      <ThemeProvider defaultTheme="dark">
-      <div className="flex min-h-screen bg-background">
-        <DashboardSidebar />
-        <div className="flex-1">
-          <DashboardHeader />
+
           <main className="container mx-auto p-4 md:p-6">
             <div className="flex flex-col items-center justify-center space-y-4 py-12">
               <h2 className="text-2xl font-bold">Applicant not found</h2>
@@ -41,18 +37,11 @@ export default function ApplicantProfilePage() {
               </Button>
             </div>
           </main>
-        </div>
-      </div>
-      </ThemeProvider>
+
     )
   }
 
   return (
-    <ThemeProvider defaultTheme="dark">
-    <div className="flex min-h-screen bg-background">
-      <DashboardSidebar />
-      <div className="flex-1">
-        <DashboardHeader />
         <main className="container mx-auto p-4 md:p-6">
           <div className="mb-6 flex items-center">
             <Button variant="outline" size="sm" asChild className="mr-4 text-foreground">
@@ -121,9 +110,6 @@ export default function ApplicantProfilePage() {
             </div>
           </div>
         </main>
-      </div>
-    </div>
-    </ThemeProvider>
   )
 }
 

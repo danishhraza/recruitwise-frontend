@@ -16,6 +16,7 @@ import ApplicantProfilePage from "./assets/pages/ApplicantProfilePage"
 import axios from "./api/axios";
 import useGeneral from "./hooks/useGeneral";
 import LoginPage from "./assets/pages/login-page";
+import RecruiterLoginPage from "./assets/pages/recruiter-login-page";
 import RegisterPage from "./assets/pages/register-page";
 import JobDetailPage from "./assets/pages/JobDetailPage";
 import JobListingPage from "./assets/pages/ViewJobs";
@@ -25,6 +26,7 @@ import DashboardLayout from "./assets/Layout/DashboardLayout";
 import ProtectedUserRoute from "./assets/Routes/ProtectedUserRoute";
 import ProtectedRecruiterRoute from "./assets/Routes/ProtectedRecruiterRoute";
 import ProtectedAdminRoute from "./assets/Routes/ProtectedAdminRoute";
+import ManageRecruiters  from "./assets/components/RecruiterDashboard/manage-recruiters";
 
 
 function App() {
@@ -115,6 +117,11 @@ function App() {
                     <RegisterPage/>
                    </UnauthenticatedRoute>
                 }/>
+                  <Route path="recruiter-login" element={
+                   <UnauthenticatedRoute>
+                    <RecruiterLoginPage/>
+                   </UnauthenticatedRoute>
+                }/>
           </Route>
 
             <Route path="/dashboard" element={<DashboardLayout />}>
@@ -127,6 +134,7 @@ function App() {
                 <Route element={<ProtectedRecruiterRoute />}>
                   <Route path="/dashboard/:id" element={<JobPage />} />
                   <Route path="/dashboard/:jobId/:applicantId" element={<ApplicantProfilePage />} />
+                  <Route path="/dashboard/manage-recruiters" element={<ManageRecruiters />} />
                 </Route>
              </Route>
              <Route element={<ProtectedAdminRoute />}>
