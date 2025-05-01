@@ -33,11 +33,7 @@ export default function JobPage() {
 
   if (loading) {
     return (
-      <ThemeProvider defaultTheme="dark">
-      <div className="flex min-h-screen bg-background">
-        <DashboardSidebar />
-        <div className="flex-1">
-          <DashboardHeader />
+
           <main className="container mx-auto p-4 md:p-6">
             <div className="flex animate-pulse flex-col space-y-4">
               <div className="h-8 w-1/3 rounded-md bg-muted"></div>
@@ -45,19 +41,12 @@ export default function JobPage() {
               <div className="h-64 rounded-md bg-muted"></div>
             </div>
           </main>
-        </div>
-      </div>
-      </ThemeProvider>
+
     )
   }
 
   if (!job) {
     return (
-      <ThemeProvider defaultTheme="dark">
-      <div className="flex min-h-screen bg-background">
-        <DashboardSidebar />
-        <div className="flex-1">
-          <DashboardHeader />
           <main className="container mx-auto p-4 md:p-6">
             <div className="flex flex-col items-center justify-center space-y-4 py-12">
               <h2 className="text-2xl font-bold">Job not found</h2>
@@ -69,18 +58,11 @@ export default function JobPage() {
               </Button>
             </div>
           </main>
-        </div>
-      </div>
-      </ThemeProvider>
     )
   }
 
   return (
-    <ThemeProvider defaultTheme="dark">
-    <div className="flex min-h-screen bg-background text-foreground">
-      <DashboardSidebar />
-      <div className="flex-1">
-        <DashboardHeader />
+
         <main className="container mx-auto p-4 md:p-6">
           <div className="mb-6 flex items-center">
             <Button variant="outline" size="sm" asChild className="mr-4">
@@ -125,9 +107,7 @@ export default function JobPage() {
             </TabsContent>
           </Tabs>
         </main>
-      </div>
-    </div>
-    </ThemeProvider>
+
   )
 }
 

@@ -2,6 +2,12 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import useGeneral from "../../hooks/useGeneral";
 import { useEffect, useState } from "react";
 import axios from "../../api/axios";
+import { DashboardHeader } from "../components/RecruiterDashboard/header"
+import { DashboardSidebar } from "../components/RecruiterDashboard/sidebar"
+import { ThemeProvider } from "../components/theme-provider";
+import { UserSidebar } from "../components/UserDashboard/sidebar";
+import { UserDashboardHeader } from "../components/UserDashboard/header";
+import { Toaster } from "sonner";
 
 // DashboardLayout.js
 export default function DashboardLayout() {
@@ -36,7 +42,19 @@ export default function DashboardLayout() {
   
     return (
       <div className="dashboard-layout selection:bg-[#65b5bf59] selection:text-[#8de0eb]">
+      <ThemeProvider defaultTheme="dark">
+      <div className="flex min-h-screen bg-background">
+       {user?.role == "candidate" ? <UserSidebar/>: <DashboardSidebar />}
+        <div className="flex-1">
+          {user?.role == "candidate" ? <UserDashboardHeader/>:<DashboardHeader />}
           <Outlet /> 
+          
+          </div>
+          </div>
+          </ThemeProvider>
+          <Toaster richColors position="top-center" />
+           
+          
       </div>
     );
   }

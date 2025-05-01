@@ -26,7 +26,7 @@ export function DashboardHeader() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('/auth/logout');
+      const response = await axios.post('/recruiter/logout');
       message.success('Logout successful!');
       setIsLoggedIn(false)
       setUser(null)
@@ -49,15 +49,23 @@ export function DashboardHeader() {
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-8 w-8">
                 <AvatarImage src="/placeholder.svg" alt="User" />
-                <AvatarFallback>{user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U'}</AvatarFallback>
+                                        <AvatarFallback>
+                                          {(user.name || (user.recruiter && user.recruiter.name)) 
+                                            ? (user.name || user.recruiter.name).split(' ')
+                                                .map(n => n[0])
+                                                .join('')
+                                                .toUpperCase()
+                                                .slice(0, 2) 
+                                            : 'U'}
+                                        </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{user.name}</p>
-                <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                <p className="text-sm font-medium leading-none">{user.name || user.recruiter.name}</p>
+                <p className="text-xs leading-none text-muted-foreground">{user.email || user.recruiter.email}</p>
                 <p className="text-xs leading-none text-primary">{user.role}</p>
               </div>
             </DropdownMenuLabel>

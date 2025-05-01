@@ -45,6 +45,11 @@ export default function LoginComponent() {
     }
   };
 
+  const navigateToRecruiterLogin = () => {
+    navigate('/auth/recruiter-login');
+  };
+
+
   async function getUserData() {
     try {
       const response = await axios.get('/auth/me', { withCredentials: true });
@@ -96,13 +101,19 @@ export default function LoginComponent() {
         </p>
       </form>
       <Divider style={{ borderColor: 'grey', color: 'white' }}><span className='text-muted-foreground'>OR</span></Divider>
+
       <div className='flex flex-col gap-3'>
-
-      <Button onClick={handleGoogleLogin} type='primary' className='w-80' icon={<GoogleOutlined />}>Google</Button>
-
+        <Button onClick={handleGoogleLogin} type='primary' className='w-80' icon={<GoogleOutlined />}>Google</Button>
         <Button type='primary' className='w-80' icon={<LinkedinFilled />}>LinkedIn</Button>
         <Button type='primary' className='w-80' icon={<WindowsFilled />}>Outlook</Button>
       </div>
+
+      <div className="mt-6 text-center">
+        <p className='text-muted-foreground cursor-pointer hover:text-blue-600' onClick={navigateToRecruiterLogin}>
+          Are you a recruiter? Log In here
+        </p>
+      </div>
+
     </div>
   );
 }
