@@ -1,49 +1,182 @@
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
+import { useForm, Controller } from "react-hook-form"
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import "../../../styles/datepicker-custom.css" // Add custom datepicker styles
 
 import { Badge } from "../../../components/ui/badge"
 import { Button } from "../../../components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../../../components/ui/card"
 import { Input } from "../../../components/ui/input"
 import { Skeleton } from "../../../components/ui/skeleton"
-import { fetchAllJobs } from "../../../lib/data"
+import { 
+  Sheet, 
+  SheetContent, 
+  SheetDescription, 
+  SheetHeader, 
+  SheetTitle, 
+  SheetFooter,
+  SheetClose
+} from "../../../components/ui/sheet"
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "../../../components/ui/select"
+import { Textarea } from "../../../components/ui/textarea"
+import { Label } from "../../../components/ui/label"
+import { 
+  Form, 
+  FormControl, 
+  FormDescription, 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormMessage 
+} from "../../../components/ui/form"
+import { format } from "date-fns"
+import { Plus } from "lucide-react"
+import { cn } from "../../../lib/utils"
+import axios from "../../../api/axios"
+import { toast } from "sonner"
 
 export function JobList() {
   const navigate = useNavigate()
   const [jobs, setJobs] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const [open, setOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState("basic")
+  const [customQuestions, setCustomQuestions] = useState([])
+  const [jobToDelete, setJobToDelete] = useState(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  // Custom questions handling
+  const addCustomQuestion = () => {
+    setCustomQuestions([...customQuestions, ""]);
+    // Also update the form value
+    const currentQuestions = form.getValues("customQuestions") || [];
+    form.setValue("customQuestions", [...currentQuestions, ""]);
+  };
+
+  const updateCustomQuestion = (index, value) => {
+    const updatedQuestions = [...customQuestions];
+    updatedQuestions[index] = value;
+    setCustomQuestions(updatedQuestions);
+    
+    // Update the form value
+    form.setValue("customQuestions", updatedQuestions);
+  };
+
+  const removeCustomQuestion = (index) => {
+    const updatedQuestions = customQuestions.filter((_, i) => i !== index);
+    setCustomQuestions(updatedQuestions);
+    
+    // Update the form value
+    form.setValue("customQuestions", updatedQuestions);
+  };
+
+  async function fetchJobs() {
+    setLoading(true)
+    try {
+      const response = await axios.get("/jobs")
+      setJobs(response.data)
+    } catch (error) {
+      console.error("Failed to fetch jobs:", error)
+      toast.error("Failed to fetch jobs")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const jobsData = await fetchAllJobs()
-        setJobs(jobsData)
-      } catch (error) {
-        console.error("Failed to fetch jobs:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchJobs()
   }, [])
 
+  const form = useForm({
+    defaultValues: {
+      title: "",
+      description: "",
+      customQuestions: [],
+      deadline: new Date(),
+      salary: 0,
+      jobType: "",
+      skills: [],
+      experience: "",
+      employmentType: "",
+      requirements: "",
+      location: "",
+      coverLetterRequired: false
+    }
+  })
+
+  const onSubmit = async (data) => {
+    try {
+      // Format the data to match the required payload structure
+      const formattedData = {
+        ...data,
+        deadline: data.deadline.toISOString(),
+        // Ensure jobType and employmentType match expected values
+        jobType: data.jobType.toLowerCase(),
+        employmentType: data.employmentType.toLowerCase(),
+        // Only include customQuestions if there are any
+        ...(data.customQuestions.length > 0 ? { customQuestions: data.customQuestions } : {})
+      };
+      
+      await axios.post("/jobs/create", formattedData, {withCredentials: true})
+      setOpen(false)
+      fetchJobs() // Refresh the job list
+      toast.success("Job created successfully!")
+      form.reset()
+    } catch (error) {
+      console.error("Failed to create job:", error)
+      toast.error("Failed to create job. Please try again.")
+    }
+  }
+
   const filteredJobs = jobs.filter(
     (job) =>
-      job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      job.location.toLowerCase().includes(searchQuery.toLowerCase()),
+      job.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      job.location?.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
   const handleJobClick = (jobId) => {
     navigate(`/dashboard/${jobId}`)
   }
 
+  const handleDeleteClick = (e, job) => {
+    e.stopPropagation() // Prevent card click from triggering
+    setJobToDelete(job)
+    setShowDeleteDialog(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!jobToDelete) return
+
+    try {
+      await axios.delete(`/jobs/${jobToDelete._id}`, { withCredentials: true })
+      setShowDeleteDialog(false)
+      setJobToDelete(null)
+      toast.success("Job deleted successfully")
+      fetchJobs() // Refresh the job list
+    } catch (error) {
+      console.error("Failed to delete job:", error)
+      toast.error("Failed to delete job")
+    }
+  }
+
+  const jobTypes = ["Full-time", "Part-time", "Contract", "Temporary", "Internship"]
+  const employmentTypes = ["Onsite", "Remote", "Hybrid"]
+
   if (loading) {
     return (
       <div>
-        <div className="mb-4 flex w-full items-center space-x-2">
-          <Skeleton className="h-10 w-full" />
+        <div className="mb-4 flex w-full items-center justify-between space-x-2">
+          <Skeleton className="h-10 w-full max-w-md" />
+          <Skeleton className="h-10 w-32" />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
@@ -56,13 +189,16 @@ export function JobList() {
 
   return (
     <div>
-      <div className="mb-6 flex w-full items-center space-x-2">
+      <div className="mb-6 flex w-full items-center justify-between">
         <Input
           placeholder="Search jobs by title, or location..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="max-w-md"
         />
+        <Button onClick={() => setOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Post Job
+        </Button>
       </div>
 
       {filteredJobs.length === 0 ? (
@@ -73,16 +209,38 @@ export function JobList() {
               ? `No jobs match your search for "${searchQuery}"`
               : "You haven't created any job postings yet."}
           </p>
-          <Button>Create New Job</Button>
+          <Button onClick={() => setOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" /> Create New Job
+          </Button>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredJobs.map((job) => (
             <Card
-              key={job.id}
-              className="cursor-pointer bg-primary-foreground hover:border-primary hover:shadow-md rounded-lg border-gray-500/25"
-              onClick={() => handleJobClick(job.id)}
+              key={job._id}
+              className="cursor-pointer rounded-lg border-gray-500/25 bg-primary-foreground hover:border-primary hover:shadow-md relative"
+              onClick={() => handleJobClick(job._id)}
             >
+              <div 
+                className="absolute top-2 right-2 z-10 rounded-full bg-gray-200 dark:bg-gray-700 p-1 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600"
+                onClick={(e) => handleDeleteClick(e, job)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4"
+                >
+                  <path d="M18 6 6 18" />
+                  <path d="m6 6 12 12" />
+                </svg>
+              </div>
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <CardTitle className="line-clamp-2 text-xl">{job.title}</CardTitle>
@@ -127,9 +285,104 @@ export function JobList() {
                       <line x1="8" x2="8" y1="2" y2="6" />
                       <line x1="3" x2="21" y1="10" y2="10" />
                     </svg>
-                    Posted: {job.postedDate}
+                    Posted: {new Date(job.createdAt).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center text-muted-foreground">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-1 h-4 w-4"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    Deadline: {new Date(job.deadline).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center text-muted-foreground">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-1 h-4 w-4"
+                    >
+                      <path d="M20 7h-9" />
+                      <path d="M14 17H5" />
+                      <circle cx="17" cy="17" r="3" />
+                      <circle cx="7" cy="7" r="3" />
+                    </svg>
+                    {job.jobType.charAt(0).toUpperCase() + job.jobType.slice(1)} • {job.employmentType.charAt(0).toUpperCase() + job.employmentType.slice(1)}
+                  </div>
+                  <div className="flex items-center text-muted-foreground">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-1 h-4 w-4"
+                    >
+                      <path d="M12 2v2" />
+                      <path d="M12 20v2" />
+                      <path d="m4.93 4.93 1.41 1.41" />
+                      <path d="m17.66 17.66 1.41 1.41" />
+                      <path d="M2 12h2" />
+                      <path d="M20 12h2" />
+                      <path d="m6.34 17.66-1.41 1.41" />
+                      <path d="m19.07 4.93-1.41 1.41" />
+                    </svg>
+                    {job.experience}
+                  </div>
+                  <div className="flex items-center text-muted-foreground">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mr-1 h-4 w-4"
+                    >
+                      <path d="M8 21s1-1 4-1 4 1 4 1" />
+                      <path d="M12 3v2" />
+                      <path d="M20 20a8 8 0 1 0-16 0" />
+                      <path d="M12 10a3 3 0 1 0 0 5" />
+                    </svg>
+                    Salary: {new Intl.NumberFormat('en-US', { 
+                      style: 'currency', 
+                      currency: 'USD',
+                      minimumFractionDigits: 0
+                    }).format(job.salary)}
                   </div>
                 </div>
+                {job.skills && job.skills.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-3">
+                    {job.skills.map((skill, index) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {skill}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
                 <div className="text-sm text-muted-foreground">{job.applicants?.length || 0} applicants</div>
@@ -141,7 +394,399 @@ export function JobList() {
           ))}
         </div>
       )}
+
+      {/* Job Creation Drawer */}
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+          <SheetHeader className="mb-6">
+            <SheetTitle>Post a New Job</SheetTitle>
+            <SheetDescription>
+              Fill in the details below to create a new job posting.
+            </SheetDescription>
+          </SheetHeader>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {currentPage === "basic" ? (
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Job Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. Senior Frontend Developer" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Job Description</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="Describe the job role, responsibilities, and requirements" 
+                            className="min-h-24"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="salary"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Salary</FormLabel>
+                          <FormControl>
+                            <Input 
+                              type="number" 
+                              placeholder="Annual salary" 
+                              {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Location</FormLabel>
+                          <FormControl>
+                            <Input placeholder="e.g. New York, NY" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="jobType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Job Type</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select job type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {jobTypes.map((type) => (
+                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="employmentType"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Employment Type</FormLabel>
+                          <Select 
+                            onValueChange={field.onChange} 
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {employmentTypes.map((type) => (
+                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="experience"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Experience Required</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. 3+ years of JavaScript experience" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="skills"
+                    render={({ field: { onChange, ...field } }) => {
+                      const [skillsInput, setSkillsInput] = useState(field.value?.join(", ") || "")
+                      
+                      return (
+                        <FormItem>
+                          <FormLabel>Required Skills</FormLabel>
+                          <FormControl>
+                            <Input 
+                              placeholder="e.g. React, TypeScript, Node.js (comma separated)" 
+                              {...field}
+                              value={skillsInput}
+                              onChange={(e) => {
+                                const value = e.target.value
+                                setSkillsInput(value)
+                                
+                                // Only update the form value on blur or when component unmounts
+                                // This allows normal typing behavior while editing
+                              }}
+                              onBlur={() => {
+                                // Convert the comma-separated string to an array when focus leaves the input
+                                const skillsArray = skillsInput
+                                  .split(',')
+                                  .map(skill => skill.trim())
+                                  .filter(Boolean)
+                                
+                                onChange(skillsArray)
+                              }}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Enter skills separated by commas
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )
+                    }}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="requirements"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Requirements</FormLabel>
+                        <FormControl>
+                          <Textarea 
+                            placeholder="List specific requirements for the position" 
+                            className="min-h-20"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="deadline"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Application Deadline</FormLabel>
+                        <FormControl>
+                          <Controller
+                            control={form.control}
+                            name="deadline"
+                            render={({ field }) => (
+                              <DatePicker
+                                selected={field.value ? new Date(field.value) : null}
+                                onChange={(date) => field.onChange(date)}
+                                dateFormat="MMMM d, yyyy"
+                                minDate={new Date()}
+                                placeholderText="Select deadline date"
+                                className="datepicker-input w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                calendarClassName="datepicker-calendar"
+                                popperClassName="datepicker-popper"
+                                wrapperClassName="datepicker-wrapper w-full"
+                                showPopperArrow={false}
+                              />
+                            )}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          Select the application deadline date
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="coverLetterRequired"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormControl>
+                          <input
+                            type="checkbox"
+                            checked={field.value}
+                            onChange={field.onChange}
+                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Require Cover Letter</FormLabel>
+                          <FormDescription>
+                            Require applicants to submit a cover letter with their application
+                          </FormDescription>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="mt-6 flex justify-end">
+                    <Button 
+                      type="button" 
+                      variant="secondary"
+                      onClick={() => setCurrentPage("questions")}
+                    >
+                      Add Custom Questions
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-lg font-medium">Custom Questions</h3>
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm"
+                        onClick={addCustomQuestion}
+                      >
+                        <Plus className="h-4 w-4 mr-1" /> Add Question
+                      </Button>
+                    </div>
+                    
+                    <FormField
+                      control={form.control}
+                      name="customQuestions"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormDescription>
+                            Add custom questions for applicants to answer. Leave empty if no custom questions are needed.
+                          </FormDescription>
+                          <div className="space-y-3">
+                            {customQuestions.map((_, index) => (
+                              <div key={index} className="flex gap-2">
+                                <Input
+                                  placeholder={`Question ${index + 1}`}
+                                  value={customQuestions[index]}
+                                  onChange={(e) => updateCustomQuestion(index, e.target.value)}
+                                  className="flex-1"
+                                />
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="icon"
+                                  onClick={() => removeCustomQuestion(index)}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="h-4 w-4"
+                                  >
+                                    <path d="M3 6h18" />
+                                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                                  </svg>
+                                </Button>
+                              </div>
+                            ))}
+                            {customQuestions.length === 0 && (
+                              <div className="p-4 border border-dashed rounded-md text-center text-muted-foreground">
+                                No custom questions added. Click "Add Question" to add one.
+                              </div>
+                            )}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="mt-6 flex justify-between">
+                    <Button 
+                      type="button" 
+                      variant="secondary"
+                      onClick={() => setCurrentPage("basic")}
+                    >
+                      Back to Details
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <SheetFooter className="mt-6 flex-col sm:flex-row gap-4">
+                <SheetClose asChild>
+                  <Button type="button" variant="outline">Cancel</Button>
+                </SheetClose>
+                <Button type="submit">Create Job</Button>
+              </SheetFooter>
+            </form>
+          </Form>
+        </SheetContent>
+      </Sheet>
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50">
+          <div className="bg-background p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h3 className="text-lg font-medium mb-4">Confirm Delete</h3>
+            <p className="mb-6">
+              Are you sure you want to delete the job posting "{jobToDelete?.title}"? This action cannot be undone.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteDialog(false)
+                  setJobToDelete(null)
+                }}
+              >
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDelete}>
+                Yes, Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-
