@@ -68,7 +68,6 @@ function Room() {
         } catch (error) {
             console.error('Error fetching room data:', error);
             toast.error("Failed to fetch room data. Redirecting to home...");
-            navigate('/');
         }
     }
 

@@ -1,7 +1,11 @@
+import { useParams } from "react-router-dom";
 import { Badge } from "../../../components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
+import { useEffect } from "react";
+import axios from "../../../api/axios";
 
-export function JobDetails({ job }) {
+export function JobDetails({job}) {
+
   return (
     <div className="space-y-6">
       <Card className="rounded-md bg-primary-foreground">
@@ -36,11 +40,11 @@ export function JobDetails({ job }) {
             </div>
             <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Posted Date</h3>
-              <p>{job.postedDate}</p>
+              <p>{job.createdAt}</p>
             </div>
             <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Application Deadline</h3>
-              <p>{job.applicationDeadline}</p>
+              <p>{job.deadline}</p>
             </div>
           </div>
         </CardContent>
@@ -56,31 +60,26 @@ export function JobDetails({ job }) {
           </div>
         </CardContent>
       </Card>
-
       <Card className="rounded-md bg-primary-foreground">
         <CardHeader>
           <CardTitle>Requirements</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="prose max-w-none dark:prose-invert">
-            <ul className="list-disc pl-5">
-              {job.requirements.map((requirement, index) => (
-                <li key={index}>{requirement}</li>
-              ))}
-            </ul>
+            <p>{job.requirements}</p>
           </div>
         </CardContent>
       </Card>
 
       <Card className="rounded-md bg-primary-foreground">
         <CardHeader>
-          <CardTitle>Responsibilities</CardTitle>
+          <CardTitle>Skills</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="prose max-w-none dark:prose-invert">
             <ul className="list-disc pl-5">
-              {job.responsibilities.map((responsibility, index) => (
-                <li key={index}>{responsibility}</li>
+              {job?.skills?.map((requirement, index) => (
+                <li key={index}>{requirement}</li>
               ))}
             </ul>
           </div>

@@ -2,44 +2,104 @@ import { useEffect, useState } from "react"
 import { Search } from "lucide-react"
 
 import { Badge } from "../../../components/ui/badge"
-import { Button } from "../../../components/ui/button"
-import { Card } from "../../../components/ui/card"
 import { Input } from "../../../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table"
-import { getUserApplications } from "../../../lib/user-data"
+import { Card } from "../../../components/ui/card"
 import axios from "../../../api/axios"
 
 export function UserApplications() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const applications = getUserApplications()
+  const [applications, setApplications] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [companyNames, setCompanyNames] = useState({}) // Store company names by ID
 
-  const filteredApplications = applications.filter((application) => {
-    const matchesSearch =
-      application.jobTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      application.company.toLowerCase().includes(searchQuery.toLowerCase())
+  // Format the date to be more readable
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
 
-    const matchesStatus = statusFilter === "all" || application.status === statusFilter
+  // Fetch company details by ID
+  const fetchCompanyDetails = async (companyId) => {
+    try {
+      const response = await axios.get(`/company/${companyId}`, { withCredentials: true });
+      if (response.data && response.data.name) {
+        setCompanyNames(prev => ({
+          ...prev,
+          [companyId]: response.data.name
+        }));
+      }
+    } catch (error) {
+      console.error(`Error fetching company details for ID ${companyId}:`, error);
+      // Set a placeholder in case of error
+      setCompanyNames(prev => ({
+        ...prev,
+        [companyId]: 'Unknown Company'
+      }));
+    }
+  };
 
-    return matchesSearch && matchesStatus
-  })
-
+  // Fetch applications from the API
   async function fetchApplications() {
     try {
-      const response = await axios.get('/jobs/me',{withCredentials:true})
+      setLoading(true);
+      const response = await axios.get('/jobs/me', { withCredentials: true })
       console.log("Fetched applications:", response.data)
-
+      setApplications(response.data);
+      
+      // Fetch company details for each unique company ID
+      const uniqueCompanyIds = [...new Set(
+        response.data
+          .map(app => app.job.company)
+          .filter(id => id && typeof id === 'string')
+      )];
+      
+      // Fetch company details for each unique company ID
+      uniqueCompanyIds.forEach(companyId => {
+        fetchCompanyDetails(companyId);
+      });
+      
+      setError(null)
     } catch (error) {
       console.error("Error fetching applications:", error)
+      setError("Failed to load applications. Please try again later.")
+    } finally {
+      setLoading(false)
     }
   }
 
   useEffect(() => {
     fetchApplications()
   }, [])
-  
+
+  // Get company name for a job
+  const getCompanyName = (job) => {
+    if (job.company && companyNames[job.company]) {
+      return companyNames[job.company];
+    }
+    return job.location || 'Unknown Company';
+  };
+
+  // Filter applications based on search query and status filter
+  const filteredApplications = applications.filter((application) => {
+    const companyName = getCompanyName(application.job);
     
+    const matchesSearch =
+      application.job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      companyName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus = statusFilter === "all" || application.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+  
   return (
     <div className="space-y-4">
       <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">
@@ -59,15 +119,26 @@ export function UserApplications() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="applied">Applied</SelectItem>
-              <SelectItem value="interview-pending">Interview Pending</SelectItem>
-              <SelectItem value="interview-completed">Interview Completed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="reviewed">Reviewed</SelectItem>
+              <SelectItem value="shortlisted">Shortlisted</SelectItem>
+              <SelectItem value="interviewed">Interviewed</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+              <SelectItem value="hired">Hired</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      {filteredApplications.length === 0 ? (
+      {loading ? (
+        <Card className="flex flex-col items-center justify-center p-8 text-center">
+          <p>Loading applications...</p>
+        </Card>
+      ) : error ? (
+        <Card className="flex flex-col items-center justify-center p-8 text-center">
+          <p className="text-red-500">{error}</p>
+        </Card>
+      ) : filteredApplications.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-8 text-center">
           <h3 className="mb-2 text-xl font-medium">No applications found</h3>
           <p className="text-muted-foreground">
@@ -85,28 +156,26 @@ export function UserApplications() {
                 <TableHead>Company</TableHead>
                 <TableHead className="hidden md:table-cell">Applied Date</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredApplications.map((application) => (
-                <TableRow key={application.id}>
-                  <TableCell>
-                    <div className="font-medium">{application.jobTitle}</div>
-                    <div className="text-sm text-muted-foreground md:hidden">{application.company}</div>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">{application.company}</TableCell>
-                  <TableCell className="hidden md:table-cell">{application.appliedDate}</TableCell>
-                  <TableCell>
-                    <ApplicationStatusBadge status={application.status} />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm">
-                      View
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {filteredApplications.map((application) => {
+                const companyName = getCompanyName(application.job);
+                
+                return (
+                  <TableRow key={application._id}>
+                    <TableCell>
+                      <div className="font-medium">{application.job.title}</div>
+                      <div className="text-sm text-muted-foreground md:hidden">{companyName}</div>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">{companyName}</TableCell>
+                    <TableCell className="hidden md:table-cell">{formatDate(application.createdAt)}</TableCell>
+                    <TableCell>
+                      <ApplicationStatusBadge status={application.status} />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </div>
@@ -118,28 +187,26 @@ export function UserApplications() {
 function ApplicationStatusBadge({ status }) {
   const getVariant = () => {
     switch (status) {
-      case "applied":
+      case "pending":
         return "secondary"
-      case "interview-pending":
-        return "primary"
-      case "intervie-completed":
+      case "reviewed":
         return "default"
+      case "shortlisted":
+        return "primary"
+      case "interviewed":
+        return "success"
+      case "rejected":
+        return "destructive"
+      case "hired":
+        return "success"
       default:
         return "secondary"
     }
   }
 
   const getLabel = () => {
-    switch (status) {
-      case "applied":
-        return "Applied"
-      case "interview-pending":
-        return "Interview Pending"
-      case "interview-completed":
-        return "Interview Completed"
-      default:
-        return status
-    }
+    // Capitalize first letter
+    return status.charAt(0).toUpperCase() + status.slice(1);
   }
 
   return (
@@ -148,4 +215,3 @@ function ApplicationStatusBadge({ status }) {
     </Badge>
   )
 }
-

@@ -171,7 +171,7 @@ export function JobList() {
   }
 
   const jobTypes = ["Full-Time", "Part-Time", "Contract", "Temporary", "Internship"]
-  const employmentTypes = ["Onsite", "Remote", "Hybrid"]
+  const employmentTypes = ["OnSite", "Remote", "Hybrid"]
 
   if (loading) {
     return (
@@ -219,9 +219,9 @@ export function JobList() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filteredJobs.map((job) => (
             <Card
-              key={job._id}
+              key={job.id}
               className="cursor-pointer rounded-lg border-gray-500/25 bg-primary-foreground hover:border-primary hover:shadow-md relative"
-              onClick={() => handleJobClick(job._id)}
+              onClick={() => handleJobClick(job.id)}
             >
               <div 
                 className="absolute top-2 right-2 z-10 rounded-full bg-gray-200 dark:bg-gray-700 p-1 cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600"
@@ -387,7 +387,6 @@ export function JobList() {
                 )}
               </CardContent>
               <CardFooter className="flex justify-between border-t pt-4">
-                <div className="text-sm text-muted-foreground">{job.applicants?.length || 0} applicants</div>
                 <Button variant="ghost" size="sm">
                   View Details
                 </Button>

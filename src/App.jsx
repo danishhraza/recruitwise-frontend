@@ -132,7 +132,7 @@ function App() {
                       </Route>
                       {/* Recruiter Routes */}
                       <Route element={<ProtectedRecruiterRoute />}>
-                        <Route path="/dashboard/:id" element={<JobPage />} />
+                        <Route path="/dashboard/:jobId" element={<JobPage />} />
                         <Route path="/dashboard/:jobId/:applicantId" element={<ApplicantProfilePage />} />
                         <Route path="/dashboard/manage-recruiters" element={<ManageRecruiters />} />
                       </Route>

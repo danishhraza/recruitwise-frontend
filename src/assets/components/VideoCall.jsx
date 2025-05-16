@@ -562,56 +562,95 @@ const startUserAudioRecording = useCallback(() => {
     }
   }, [screenStream, deviceStates.screen, setDeviceStates, setScreenStream]);
 
-  const handleEndCall = useCallback(() => {
-    if (endCallConfirm) {
-      toast.info("Ending interview...", { duration: 3000 });
-      // Stop local tracks
-      if (micStream) micStream.getTracks().forEach(track => track.stop());
-      if (cameraStream) cameraStream.getTracks().forEach(track => track.stop());
-      if (screenStream) screenStream.getTracks().forEach(track => track.stop());
-
-      // Stop recorders
-      stopUserAudioRecording();
-      if (videoMediaRecorderRef.current?.state === "recording") videoMediaRecorderRef.current.stop();
-      if (screenMediaRecorderRef.current?.state === "recording") screenMediaRecorderRef.current.stop();
-      
-      if (socket && socket.connected) {
-        socket.emit('endInterview', { interviewId: roomId });
-      }
-      setStage('ended'); // Or navigate('/interview-ended');
-    } else {
-      setEndCallConfirm(true);
-      setTimeout(() => setEndCallConfirm(false), 3000);
-    }
-  }, [endCallConfirm, micStream, cameraStream, screenStream, socket, roomId, stopUserAudioRecording, setStage]);
+const handleEndCall = useCallback(() => {
+  console.log("handleEndCall triggered, endCallConfirm:", endCallConfirm);
   
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-        console.log("VideoCall component unmounting. Cleaning up streams and recorders.");
-        // Stop all local media tracks
-        if (micStream) micStream.getTracks().forEach(track => track.stop());
-        if (cameraStream) cameraStream.getTracks().forEach(track => track.stop());
-        if (screenStream) screenStream.getTracks().forEach(track => track.stop());
+  if (endCallConfirm) {
+    toast.info("Ending interview...", { duration: 3000 });
+    
+    try {
+      // Stop local tracks with error handling
+      if (micStream) {
+        console.log("Stopping mic tracks");
+        micStream.getTracks().forEach(track => track.stop());
+      }
+      
+      if (cameraStream) {
+        console.log("Stopping camera tracks");
+        cameraStream.getTracks().forEach(track => track.stop());
+      }
+      
+      if (screenStream) {
+        console.log("Stopping screen tracks");
+        screenStream.getTracks().forEach(track => track.stop());
+      }
 
-        // Stop any active recorders
-        if (audioMediaRecorderRef.current?.state === "recording") audioMediaRecorderRef.current.stop();
-        if (videoMediaRecorderRef.current?.state === "recording") videoMediaRecorderRef.current.stop();
-        if (screenMediaRecorderRef.current?.state === "recording") screenMediaRecorderRef.current.stop();
-        
-        // Close audio context if exists
-        if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-          audioContextRef.current.close();
+      // Stop recorders with error handling
+      if (typeof stopUserAudioRecording === 'function') {
+        console.log("Stopping audio recording");
+        stopUserAudioRecording();
+      } else {
+        console.warn("stopUserAudioRecording is not a function");
+      }
+      
+      if (videoMediaRecorderRef.current?.state === "recording") {
+        console.log("Stopping video recording");
+        videoMediaRecorderRef.current.stop();
+      }
+      
+      if (screenMediaRecorderRef.current?.state === "recording") {
+        console.log("Stopping screen recording");
+        screenMediaRecorderRef.current.stop();
+      }
+      
+      // Socket communication with error handling
+      if (socket) {
+        if (socket.connected) {
+          console.log("Emitting endInterview event for room:", roomId);
+          socket.emit('endInterview', { interviewId: roomId });
+        } else {
+          console.warn("Socket is not connected");
+          // Fallback behavior if socket isn't connected
+          setStage('ended');
         }
-        
-        // Clear buffer timer if active
-        if (bufferingTimerRef.current) {
-          clearTimeout(bufferingTimerRef.current);
-        }
-        
-        toast.dismiss(); // Clear all toasts
-    };
-  }, [micStream, cameraStream, screenStream]);
+      } else {
+        console.warn("Socket is not initialized");
+        // Fallback behavior if socket isn't initialized
+        setStage('ended');
+      }
+      
+      // Always set stage to ended as fallback
+      console.log("Setting stage to ended");
+      setStage('ended');
+      
+    } catch (error) {
+      console.error("Error in handleEndCall:", error);
+      toast.error("Error ending call. Please try again.");
+      // Still attempt to end the call despite errors
+      setStage('ended');
+    }
+  } else {
+    console.log("Setting endCallConfirm to true");
+    setEndCallConfirm(true);
+    toast.info("Click again to confirm ending the call", { duration: 3000 });
+    
+    setTimeout(() => {
+      console.log("Resetting endCallConfirm to false");
+      setEndCallConfirm(false);
+    }, 3000);
+  }
+}, [
+  endCallConfirm, 
+  micStream, 
+  cameraStream, 
+  screenStream, 
+  socket, 
+  roomId, 
+  stopUserAudioRecording, 
+  setStage,
+  videoMediaRecorderRef,
+  screenMediaRecorderRef
+]);
 
   return (
     <div className="flex w-full mx-auto h-screen rounded-lg overflow-hidden border bg-[#0f0f0f] border-gray-700 shadow-md">
@@ -783,14 +822,21 @@ const startUserAudioRecording = useCallback(() => {
               
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant={endCallConfirm ? "destructive" : "default"} size="icon" 
-                          className={`rounded-full w-12 h-12 border-0 text-white
-                                    ${endCallConfirm ? 'bg-red-700 hover:bg-red-800' : 'bg-red-600 hover:bg-red-500'}`}
-                          onClick={handleEndCall}>
+                  <Button 
+                    variant={endCallConfirm ? "destructive" : "default"} 
+                    size="icon" 
+                    className={`rounded-full w-12 h-12 border-0 text-white
+                              ${endCallConfirm ? 'bg-red-700 hover:bg-red-800' : 'bg-red-600 hover:bg-red-500'}`}
+                    onClick={handleEndCall}
+                    disabled={false} // Make sure it's not disabled
+                  >
                     <PhoneOff className="h-6 w-6" />
+                    {endCallConfirm && <span className="sr-only">Confirm End Call</span>}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent><p>{endCallConfirm ? 'Confirm End Call' : 'End Call'}</p></TooltipContent>
+                <TooltipContent>
+                  <p>{endCallConfirm ? 'Confirm End Call' : 'End Call'}</p>
+                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
