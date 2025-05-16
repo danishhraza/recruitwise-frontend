@@ -8,7 +8,6 @@ import PublicLayout from "./assets/Layout/PublicLayout";
 import DarkHomeLayout from "./assets/Layout/DarkHomeLayout";
 import { FiltersProvider } from "./assets/Context/FiltersContext";
 import OtherLayout from "./assets/Layout/OtherLayout";
-import RegisterComponent from "./assets/components/RegisterComponent";
 import JobPage from "./assets/pages/JobPage"
 import { SidebarProvider } from "./components/ui/sidebar"
 import ApplicationsPage from "./assets/pages/ApplicationsPage"
@@ -27,6 +26,8 @@ import ProtectedUserRoute from "./assets/Routes/ProtectedUserRoute";
 import ProtectedRecruiterRoute from "./assets/Routes/ProtectedRecruiterRoute";
 import ProtectedAdminRoute from "./assets/Routes/ProtectedAdminRoute";
 import ManageRecruiters  from "./assets/components/RecruiterDashboard/manage-recruiters";
+import { ThemeProvider } from "@/assets/components/theme-provider";
+import AccessibilityFloatButton, { AccessibilityProvider } from "@/assets/components/AccessibilityFloatButton";
 
 
 function App() {
@@ -72,80 +73,82 @@ function App() {
   
 
   return (
-    
-    <SidebarProvider>
-    <Routes>
-        {/* Dark Home Layout - Only for the home page */}
-        <Route path="/" element={<DarkHomeLayout />}>
-          <Route index element={<Home />} />
-        </Route>
+    <ThemeProvider defaultTheme="dark">
+      <AccessibilityProvider>
+        <SidebarProvider>
+          <Routes>
+              {/* Dark Home Layout - Only for the home page */}
+              <Route path="/" element={<DarkHomeLayout />}>
+                <Route index element={<Home />} />
+              </Route>
 
-        {/* Public Layout - For other public pages */}
-        // Routes structure
-        <Route path="/" element={<PublicLayout />}>
-          <Route path="/jobs" element={
-            <FiltersProvider>
-              <JobListingPage />
-            </FiltersProvider>
-          } />
-          <Route path="/jobs/:jobId" element={
-            <FiltersProvider>
-              <JobDetailPage />
-            </FiltersProvider>
-          } />
-        </Route>
+              {/* Public Layout - For other public pages */}
+              <Route path="/" element={<PublicLayout />}>
+                <Route path="/jobs" element={
+                  <FiltersProvider>
+                    <JobListingPage />
+                  </FiltersProvider>
+                } />
+                <Route path="/jobs/:jobId" element={
+                  <FiltersProvider>
+                    <JobDetailPage />
+                  </FiltersProvider>
+                } />
+              </Route>
 
-
-      <Route path="/" element={<OtherLayout />}>
-          <Route 
-              path="/room/:roomid" 
-              element={
-                <RoomProvider>
-                  <Room />
-                </RoomProvider>
-              }
-          />
-          <Route path="/auth" >
-              <Route index element={<Navigate to="/auth/login" replace />} />
-                <Route path="login" element={
-                   <UnauthenticatedRoute>
-                    <LoginPage />
-                   </UnauthenticatedRoute>
-                }/>
-                <Route path="register" element={
-                   <UnauthenticatedRoute>
-                    <RegisterPage/>
-                   </UnauthenticatedRoute>
-                }/>
-                  <Route path="recruiter-login" element={
-                   <UnauthenticatedRoute>
-                    <RecruiterLoginPage/>
-                   </UnauthenticatedRoute>
-                }/>
-          </Route>
-
-            <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<DashboardPage />} />
-                {/* User Routes */}
-                <Route element={<ProtectedUserRoute />}>
-                  <Route path="jobs" element={<ApplicationsPage />} />
+            <Route path="/" element={<OtherLayout />}>
+                <Route 
+                    path="/interview/:roomid" 
+                    element={
+                      <RoomProvider>
+                        <Room />
+                      </RoomProvider>
+                    }
+                />
+                <Route path="/auth" >
+                    <Route index element={<Navigate to="/auth/login" replace />} />
+                      <Route path="login" element={
+                         <UnauthenticatedRoute>
+                          <LoginPage />
+                         </UnauthenticatedRoute>
+                      }/>
+                      <Route path="register" element={
+                         <UnauthenticatedRoute>
+                          <RegisterPage/>
+                         </UnauthenticatedRoute>
+                      }/>
+                        <Route path="recruiter-login" element={
+                         <UnauthenticatedRoute>
+                          <RecruiterLoginPage/>
+                         </UnauthenticatedRoute>
+                      }/>
                 </Route>
-                {/* Recruiter Routes */}
-                <Route element={<ProtectedRecruiterRoute />}>
-                  <Route path="/dashboard/:id" element={<JobPage />} />
-                  <Route path="/dashboard/:jobId/:applicantId" element={<ApplicantProfilePage />} />
-                  <Route path="/dashboard/manage-recruiters" element={<ManageRecruiters />} />
-                </Route>
-             </Route>
-             <Route element={<ProtectedAdminRoute />}>
-             <Route path="/add-company" element={<AddCompanyPage />} />
-             </Route>
 
-      </Route>
+                  <Route path="/dashboard" element={<DashboardLayout />}>
+                      <Route index element={<DashboardPage />} />
+                      {/* User Routes */}
+                      <Route element={<ProtectedUserRoute />}>
+                        <Route path="jobs" element={<ApplicationsPage />} />
+                      </Route>
+                      {/* Recruiter Routes */}
+                      <Route element={<ProtectedRecruiterRoute />}>
+                        <Route path="/dashboard/:id" element={<JobPage />} />
+                        <Route path="/dashboard/:jobId/:applicantId" element={<ApplicantProfilePage />} />
+                        <Route path="/dashboard/manage-recruiters" element={<ManageRecruiters />} />
+                      </Route>
+                   </Route>
+                   <Route element={<ProtectedAdminRoute />}>
+                   <Route path="/add-company" element={<AddCompanyPage />} />
+                   </Route>
 
-    </Routes>
-    </SidebarProvider>
-    
+            </Route>
+
+          </Routes>
+          {/* Accessibility Float Button */}
+          <AccessibilityFloatButton />
+        </SidebarProvider>
+      </AccessibilityProvider>
+    </ThemeProvider>
   );
 }
 

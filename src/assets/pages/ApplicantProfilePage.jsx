@@ -10,7 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/ta
 import { Avatar, AvatarFallback } from "../../components/ui/avatar"
 import { Progress } from "../../components/ui/progress"
 import { getApplicantById } from "../../lib/applicant-data"
-import { ThemeProvider } from "../components/theme-provider";
 import { ProctoringResults } from "../components/RecruiterDashboard/proctor-component"
 import ReactPlayer from "react-player"
 

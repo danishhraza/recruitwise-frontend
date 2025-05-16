@@ -1,8 +1,4 @@
-import { DashboardHeader } from "../components/RecruiterDashboard/header"
 import { JobList } from "../components/RecruiterDashboard/job-list"
-import { DashboardSidebar } from "../components/RecruiterDashboard/sidebar"
-import { ThemeProvider } from "../components/theme-provider";
-
 export default function RecruiterDashboardPage() {
   return (
         <main className="container mx-auto p-4 md:p-6">

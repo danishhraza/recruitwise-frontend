@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Search } from "lucide-react"
 
 import { Badge } from "../../../components/ui/badge"
@@ -8,6 +8,7 @@ import { Input } from "../../../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table"
 import { getUserApplications } from "../../../lib/user-data"
+import axios from "../../../api/axios"
 
 export function UserApplications() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -24,6 +25,21 @@ export function UserApplications() {
     return matchesSearch && matchesStatus
   })
 
+  async function fetchApplications() {
+    try {
+      const response = await axios.get('/jobs/me',{withCredentials:true})
+      console.log("Fetched applications:", response.data)
+
+    } catch (error) {
+      console.error("Error fetching applications:", error)
+    }
+  }
+
+  useEffect(() => {
+    fetchApplications()
+  }, [])
+  
+    
   return (
     <div className="space-y-4">
       <div className="flex flex-col space-y-2 md:flex-row md:items-center md:justify-between md:space-y-0">

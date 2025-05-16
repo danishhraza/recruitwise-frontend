@@ -175,7 +175,7 @@ return (
       <div>
         <h3 className="font-medium mb-3">Job Type</h3>
         <div className="grid grid-cols-2 gap-2">
-          {['Full-time', 'Part-time', 'Internship', 'Contract', 'Temporary'].map((type) => (
+          {['Full-Time', 'Part-Time', 'Internship', 'Contract', 'Temporary'].map((type) => (
             <div key={type} className="flex items-center space-x-2">
               <Checkbox 
                 id={`job-type-${type}`} 

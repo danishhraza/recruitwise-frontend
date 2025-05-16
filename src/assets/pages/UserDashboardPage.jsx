@@ -1,7 +1,4 @@
-import { UserDashboardHeader } from "../components/UserDashboard/header"
 import { UserProfile } from "../components/UserDashboard/profile"
-import { UserSidebar } from "../components/UserDashboard/sidebar"
-import { ThemeProvider } from "../components/theme-provider";
 
 export default function UserDashboardPage() {
   return (

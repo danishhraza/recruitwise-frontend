@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import axios from "../../api/axios";
 import { DashboardHeader } from "../components/RecruiterDashboard/header"
 import { DashboardSidebar } from "../components/RecruiterDashboard/sidebar"
-import { ThemeProvider } from "../components/theme-provider";
 import { UserSidebar } from "../components/UserDashboard/sidebar";
 import { UserDashboardHeader } from "../components/UserDashboard/header";
 import { Toaster } from "sonner";
@@ -42,7 +41,6 @@ export default function DashboardLayout() {
   
     return (
       <div className="dashboard-layout selection:bg-[#65b5bf59] selection:text-[#8de0eb]">
-      <ThemeProvider defaultTheme="dark">
       <div className="flex min-h-screen bg-background">
        {user?.role == "candidate" ? <UserSidebar/>: <DashboardSidebar />}
         <div className="flex-1">
@@ -51,11 +49,8 @@ export default function DashboardLayout() {
           
           </div>
           </div>
-          </ThemeProvider>
           <Toaster richColors position="top-center" />
-           
-          
-      </div>
+                 </div>
     );
   }
   

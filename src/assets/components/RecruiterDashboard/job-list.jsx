@@ -82,7 +82,8 @@ export function JobList() {
   async function fetchJobs() {
     setLoading(true)
     try {
-      const response = await axios.get("/jobs")
+      const response = await axios.get("/recruiter/my-jobs", { withCredentials: true })
+      console.log("Jobs fetched:", response.data)
       setJobs(response.data)
     } catch (error) {
       console.error("Failed to fetch jobs:", error)
@@ -120,13 +121,14 @@ export function JobList() {
         ...data,
         deadline: data.deadline.toISOString(),
         // Ensure jobType and employmentType match expected values
-        jobType: data.jobType.toLowerCase(),
-        employmentType: data.employmentType.toLowerCase(),
+        jobType: data.jobType,
+        employmentType: data.employmentType,
         // Only include customQuestions if there are any
         ...(data.customQuestions.length > 0 ? { customQuestions: data.customQuestions } : {})
       };
       
       await axios.post("/jobs/create", formattedData, {withCredentials: true})
+      console.log(formattedData)
       setOpen(false)
       fetchJobs() // Refresh the job list
       toast.success("Job created successfully!")
@@ -168,7 +170,7 @@ export function JobList() {
     }
   }
 
-  const jobTypes = ["Full-time", "Part-time", "Contract", "Temporary", "Internship"]
+  const jobTypes = ["Full-Time", "Part-Time", "Contract", "Temporary", "Internship"]
   const employmentTypes = ["Onsite", "Remote", "Hybrid"]
 
   if (loading) {

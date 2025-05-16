@@ -8,7 +8,6 @@ import { DashboardSidebar } from "../components/RecruiterDashboard//sidebar"
 import { Button } from "../../components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
 import { fetchJobById } from "../../lib/data"
-import { ThemeProvider } from "../components/theme-provider";
 
 export default function JobPage() {
   const params = useParams()

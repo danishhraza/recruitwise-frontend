@@ -1,7 +1,4 @@
 import { UserApplications } from "../components/UserDashboard/applications"
-import { UserDashboardHeader } from "../components/UserDashboard/header"
-import { UserSidebar } from "../components/UserDashboard/sidebar"
-import { ThemeProvider } from "../components/theme-provider";
 
 export default function ApplicationsPage() {
   return (

@@ -9,6 +9,7 @@ function OtherLayout () {
         <Outlet/>
      <Toaster expand richColors position="top-center"/>
     </div>
+
   )
 };
 

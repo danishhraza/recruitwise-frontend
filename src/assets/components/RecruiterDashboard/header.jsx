@@ -26,7 +26,7 @@ export function DashboardHeader() {
 
   const handleLogout = async () => {
     try {
-      const response = await axios.post('/recruiter/logout');
+      const response = await axios.post('/auth/logout');
       message.success('Logout successful!');
       setIsLoggedIn(false)
       setUser(null)

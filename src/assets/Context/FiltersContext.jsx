@@ -87,7 +87,7 @@ export function FiltersProvider({ children }) {
         // Check if the job matches the selected job type(s)
         const matchesJobType = Object.keys(filters.selectedJobType).length === 0 || 
           !Object.values(filters.selectedJobType).some(Boolean) ||
-          (job.jobType && filters.selectedJobType[job.jobType.toLowerCase()]);
+          (job.jobType && filters.selectedJobType[job.jobType]);
         
         // Check if the job matches the selected employment type(s)
         const matchesEmploymentType = Object.keys(filters.selectedEmploymentType).length === 0 || 

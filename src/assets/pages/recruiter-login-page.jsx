@@ -1,10 +1,8 @@
 import { GalleryVerticalEnd } from "lucide-react"
-import { ThemeProvider } from "../components/theme-provider";
 import RecruiterLoginComponent from "../components/RecruiterLogin";
 
 export default function RecruiterLoginPage() {
   return (
-    <ThemeProvider defaultTheme="dark">
     <div className="grid h-screen lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
@@ -29,6 +27,5 @@ export default function RecruiterLoginPage() {
         />
       </div>
     </div>
-    </ThemeProvider>
   )
 }

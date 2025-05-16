@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ThemeProvider } from "./theme-provider";
 import { ModeToggle } from "./mode-toggle";
 import Filters from './Filters';
 import { useFilters } from '../Context/FiltersContext';
