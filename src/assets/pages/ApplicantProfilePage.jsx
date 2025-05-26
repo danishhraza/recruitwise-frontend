@@ -20,7 +20,37 @@ export default function ApplicantProfilePage() {
 
   // NEW (using path params)
   const { jobId, applicantId } = useParams()
-  const applicant = getApplicantById(applicantId)
+
+  const applicant =   {
+      id: applicantId,
+      name: "Muhammad Humayun Raza",
+      favorite: true,
+      role: "Data Scientist",
+      experience: 8,
+      location: "Karachi,Pakistan",
+      skills: ["Python", "pyTorch"],
+      certifications: [
+        { name: "pyTorch", primary: true },
+        { name: "Python", primary: true },
+      ],
+      hiringSignals: [
+        "Candidate did not complete their interview",
+      ],
+      email: "azraelcsofficial@gmail.com",
+      links: [
+        { type: "Resume", url: "https://recruitwisebucket.s3.eu-north-1.amazonaws.com/resumes/6825ba7cb1443a4188b2cb7e-68tplk.pdf" },
+        { type: "GitHub", url: "#" },
+        { type: "Portfolio", url: "#" },
+      ],
+      interviewImage:
+        "https://recruitwise-frontend.vercel.app/images/pov-interview5.jpg",
+      interviewScore: 2,
+      skillRatings: {
+        Python: 3,
+        pyTorch: 2,
+        "Communication Skills": 3
+      }
+    }
 
   if (!applicant) {
     return (
@@ -63,7 +93,7 @@ export default function ApplicantProfilePage() {
               </Link>
             </Button>
             <h1 className="text-2xl font-bold tracking-tight md:text-3xl text-primary">{applicant.name}</h1>
-            {applicant.favorite && <Star className="ml-2 h-5 w-5 fill-yellow-400 text-yellow-400" />}
+            {applicant.favorite}
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 text-foreground">
@@ -163,7 +193,7 @@ function HiringSignal({ applicant }) {
   return (
     <div className="space-y-3 bg-primary-foreground p-4 rounded-lg shadow-md">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Strong Hiring Signal</h3>
+        <h3 className="text-lg font-semibold">AI Remarks</h3>
         <ChevronDown className="h-4 w-4" />
       </div>
       <ul className="space-y-2 list-disc pl-5">
@@ -225,13 +255,13 @@ function Links({ applicant }) {
 
 function InterviewVideo() {
     const playerRef = useRef(null)
-    const [muted, setMuted] = useState(false)
+    const [muted, setMuted] = useState(true)
   return (
     <Card className="overflow-hidden bg-primary-foreground">
         <div className="aspect-video">
           <ReactPlayer
             ref={playerRef}
-            url="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+            url="https://recruitwisebucket.s3.eu-north-1.amazonaws.com/screen-recording/anvie+-+Made+with+Clipchamp.mp4"
             width="100%"
             height="100%"
             muted={muted}
@@ -247,7 +277,7 @@ function InterviewVideo() {
         </div>
       <div className="p-4">
         <p className="text-sm">
-          Watch Bryan's full interview here.
+          Watch Humayun's full interview here.
         </p>
       </div>
     </Card>
@@ -260,7 +290,7 @@ function InterviewScore({ applicant }) {
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Interview Performance</h3>
         <div className="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full">
-          Overall Score: {applicant.interviewScore}/100
+          Overall Score: {applicant.interviewScore}/10
         </div>
       </div>
       
@@ -317,7 +347,7 @@ function SkillRatingChart({ skill, rating }) {
         </div>
       </div>
       <p className="mt-2 text-sm text-muted-foreground">
-        {rating >= 8 ? "Excellent" : rating >= 6 ? "Good" : "Needs Improvement"}
+        {rating >= 8 ? "Excellent" : rating >= 6 ? "Good" : "Not enough data to evaluate"}
       </p>
     </Card>
   )

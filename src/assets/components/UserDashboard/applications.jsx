@@ -80,12 +80,15 @@ export function UserApplications() {
   }, [])
 
   // Get company name for a job
-  const getCompanyName = (job) => {
-    if (job.company && companyNames[job.company]) {
-      return companyNames[job.company];
-    }
-    return job.location || 'Unknown Company';
-  };
+// Get company name for a job
+const getCompanyName = (job) => {
+  if (!job) return 'Unknown Company';
+  
+  if (job.company && companyNames[job.company]) {
+    return companyNames[job.company];
+  }
+  return job.location || 'Unknown Company';
+};
 
   // Filter applications based on search query and status filter
   const filteredApplications = applications.filter((application) => {

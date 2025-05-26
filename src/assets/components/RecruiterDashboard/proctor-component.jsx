@@ -16,7 +16,7 @@ function ProctoringVideo({ applicant, onJumpToTimestamp }) {
   const playerRef = useRef(null)
   const [playing, setPlaying] = useState(false)
   const [volume, setVolume] = useState(0.8)
-  const [muted, setMuted] = useState(false)
+  const [muted, setMuted] = useState(true)
   const [playedSeconds, setPlayedSeconds] = useState(0)
   const [duration, setDuration] = useState(0)
 
@@ -56,7 +56,7 @@ function ProctoringVideo({ applicant, onJumpToTimestamp }) {
         <div className="aspect-video">
           <ReactPlayer
             ref={playerRef}
-            url="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+            url="https://recruitwisebucket.s3.eu-north-1.amazonaws.com/webcam/WIN_20250516_23_35_59_Pro.mp4"
             width="100%"
             height="100%"
             playing={playing}
@@ -150,16 +150,12 @@ export function ProctoringResults({ applicant }) {
   // Proctoring violation data
   const violations = {
     cellPhone: [
-      { timestamp: "00:45" },
-      { timestamp: "01:23" }
+      { timestamp: "00:59" }
     ],
     lookingAway: [
-      { timestamp: "00:12" },
-      { timestamp: "00:58" },
-      { timestamp: "01:45" }
-    ],
-    missing: [
-      { timestamp: "01:05" }
+      { timestamp: "00:37" },
+      { timestamp: "00:46" },
+      { timestamp: "00:52" },
     ]
   }
   
@@ -238,7 +234,7 @@ export function ProctoringResults({ applicant }) {
           </div>
           
           {/* Candidate Missing */}
-          <div>
+          {/* <div>
             <div className="flex justify-between mb-2">
               <span>Candidate Missing From Camera</span>
               <Badge variant="outline" className="bg-red-500/10 text-red-500">
@@ -256,7 +252,7 @@ export function ProctoringResults({ applicant }) {
                 />
               ))}
             </div>
-          </div>
+          </div> */}
           
           {/* Browser Focus */}
           <div>

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Badge } from "../../../components/ui/badge"
 import { Button } from "../../../components/ui/button"
@@ -9,13 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table"
 import { getAllApplicants } from "../../../lib/applicant-data"
 
-export function ApplicantList({ applicants: propApplicants, jobId }) {
+export function ApplicantList({ applicants, jobId }) {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("")
   const [interviewFilter, setInterviewFilter] = useState("all")
 
-  // Use either provided applicants or fetch all applicants
-  const applicants = propApplicants || getAllApplicants()
+  useEffect(() => {
+    console.log("Applicants:", applicants)
+  }, [applicants])
 
   const filteredApplicants = applicants.filter((applicant) => {
     const matchesSearch =
@@ -27,8 +28,8 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
     return matchesSearch && matchesInterviewStatus
   })
 
-  const handleApplicantClick = (applicantId) => {
-    navigate(`/dashboard/${jobId}/${applicantId}`);
+  const handleApplicantClick = (applicant) => {
+    navigate(`/dashboard/${jobId}/${applicant}`);
   }
 
   if (applicants.length === 0) {
@@ -111,7 +112,7 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
                               : "text-red-600 dark:text-red-400"
                         }`}
                       >
-                        {applicant.score}
+                        2
                       </span>
                       <span className="text-xs text-muted-foreground">/10</span>
                     </div>
@@ -143,7 +144,7 @@ export function ApplicantList({ applicants: propApplicants, jobId }) {
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation()
-                            handleApplicantClick(applicant.id)
+                            handleApplicantClick(applicant)
                           }}
                         >
                           View Profile

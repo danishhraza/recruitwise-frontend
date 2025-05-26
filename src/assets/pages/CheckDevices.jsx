@@ -76,54 +76,97 @@ function CheckDevices({ roomId, socket }) {
         };
     }, []);
 
-    const startCamera = async () => {
-      try {
-          if (cameraStream) {
-              cameraStream.getTracks().forEach(track => track.stop());
-          }
+const startCamera = async () => {
+  // Ensure a video device is selected
+  if (!selectedVideo || !selectedVideo.key) {
+    console.log("No video device selected yet.");
+    return;
+  }
 
-          // Ensure a video device is selected
-          if (!selectedVideo || !selectedVideo.key) {
-              console.log("No video device selected yet.");
-              return;
-          }
-
-          const stream = await navigator.mediaDevices.getUserMedia({
-              video: {
-                  deviceId: selectedVideo.key ? { exact: selectedVideo.key } : undefined,
-              }
-          });
-
-          setCameraStream(stream);
-          if (videoRef.current) {
-              videoRef.current.srcObject = stream;
-          }
-          setDeviceStates(prev => ({ ...prev, camera: true }));
-
-      } catch (err) {
-          console.error("Error accessing camera:", err);
-          setDeviceStates(prev => ({ ...prev, camera: false }));
-          toast.error("Failed to access camera. Please check permissions.");
+  try {
+    console.log(`Starting camera with device ID: ${selectedVideo.key}`);
+    
+    // Stop any existing streams first
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+    }
+    
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        deviceId: { exact: selectedVideo.key }
       }
-    };
+    });
+    
+    // Set the camera stream in context
+    setCameraStream(stream);
+    
+    // Update device state
+    setDeviceStates(prev => ({ ...prev, camera: true }));
+    
+    // Connect to video element if available
+    if (videoRef.current) {
+      console.log("Setting video source to new camera stream");
+      videoRef.current.srcObject = stream;
+    } else {
+      console.warn("Video element reference not available yet");
+    }
+  } catch (err) {
+    console.error("Error starting camera:", err);
+    
+    // Try with less strict constraints
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: { ideal: selectedVideo.key }
+        }
+      });
+      
+      setCameraStream(stream);
+      setDeviceStates(prev => ({ ...prev, camera: true }));
+      
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (retryErr) {
+      console.error("Failed to access camera:", retryErr);
+      setCameraStream(null);
+      setDeviceStates(prev => ({ ...prev, camera: false }));
+      toast.error("Failed to access camera. Please check permissions or try another camera.");
+    }
+  }
+};
 
     // Restart camera when selected video device changes
-    useEffect(() => {
-        if (selectedVideo?.key) {
-            startCamera();
-        }
-        
-        // Cleanup function
-        return () => {
-            if (cameraStream) {
-                cameraStream.getTracks().forEach(track => track.stop());
-                if (videoRef.current) {
-                    videoRef.current.srcObject = null;
-                }
-                setCameraStream(null);
-            }
-        };
-    }, [selectedVideo]);
+useEffect(() => {
+  if (selectedVideo?.key) {
+    startCamera();
+  }
+  
+  // Cleanup function
+  return () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+      setCameraStream(null);
+    }
+  };
+}, [selectedVideo]);
+
+useEffect(() => {
+  // This effect runs whenever cameraStream changes or videoRef.current becomes available
+  if (cameraStream && videoRef.current) {
+    console.log("Connecting camera stream to video element reference");
+    videoRef.current.srcObject = cameraStream;
+    
+    // Sometimes the video doesn't play automatically
+    videoRef.current.play().catch(err => {
+      console.warn("Error auto-playing video:", err);
+    });
+  }
+}, [cameraStream]);
+
 
     // Device enumeration and initialization
     useEffect(() => {
@@ -135,29 +178,36 @@ function CheckDevices({ roomId, socket }) {
 
           try {
               // Request permissions first to ensure labels are available
-              await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-                .catch(err => {
-                    console.warn("Initial permission request failed or was denied:", err.name);
-                    if (err.name === 'NotAllowedError' || err.name === 'NotFoundError') {
-                        toast.error("Device permissions denied or no devices found. Please allow access and ensure devices are connected.", { duration: 5000 });
-                        setDeviceStates(prev => ({ ...prev, microphone: false, camera: false }));
-                    }
-                });
+await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+      .catch(err => {
+        console.warn("Initial permission request failed or was denied:", err.name);
+        if (err.name === 'NotAllowedError' || err.name === 'NotFoundError') {
+          toast.error("Device permissions denied or no devices found. Please allow access and ensure devices are connected.", { duration: 5000 });
+          setDeviceStates(prev => ({ ...prev, microphone: false, camera: false }));
+        }
+      });
 
-              const devices = await navigator.mediaDevices.enumerateDevices();
+    const devices = await navigator.mediaDevices.enumerateDevices();
 
-              // Handle video devices
-              const videos = devices
-                  .filter((device) => device.kind === "videoinput")
-                  .map((device) => ({ key: device.deviceId, label: device.label || `Camera ${videoInputDevices.length + 1}` }));
-                  
-              setVideoInputDevices(videos);
+    // Handle video devices
+    const videos = devices
+      .filter((device) => device.kind === "videoinput")
+      .map((device) => ({ key: device.deviceId, label: device.label || `Camera ${videoInputDevices.length + 1}` }));
+          
+    setVideoInputDevices(videos);
               
-              if (videos.length > 0 && (!selectedVideo || !selectedVideo.key)) {
-                  setSelectedVideo(videos[0]);
-              } else if (videos.length === 0) {
-                  setDeviceStates(prev => ({ ...prev, camera: false }));
-              }
+      if (videos.length > 0 && (!selectedVideo || !selectedVideo.key)) {
+  setSelectedVideo(videos[0]);
+  // Call startCamera directly after a short timeout to ensure DOM is ready
+  setTimeout(() => {
+    if (videos[0].key) {
+      console.log("Initializing default camera after permissions check");
+      startCamera();
+    }
+  }, 100);
+} else if (videos.length === 0) {
+  setDeviceStates(prev => ({ ...prev, camera: false }));
+}
 
               // Handle audio input devices
               const microphones = devices
@@ -484,13 +534,79 @@ function CheckDevices({ roomId, socket }) {
       }
   }
 
-  function handleVideoClick(e){
-      const selected = videoInputDevices.find(device => device.key === e.key);
-      if (selected) {
-        console.log("Selected Video:", selected);
-        setSelectedVideo(selected);
-      }
+function handleVideoClick(e) {
+  const selected = videoInputDevices.find(device => device.key === e.key);
+  if (selected) {
+    console.log("Selected Video:", selected);
+    
+    // Stop any existing camera stream first
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+    }
+    
+    // Update the selected video
+    setSelectedVideo(selected);
+    
   }
+}
+
+// async function initializeCamera(deviceId) {
+//   try {
+//     console.log(`Initializing camera with device ID: ${deviceId}`);
+    
+//     const stream = await navigator.mediaDevices.getUserMedia({
+//       video: {
+//         deviceId: deviceId ? { exact: deviceId } : undefined,
+//       }
+//     });
+    
+//     // Verify stream has active video tracks
+//     const videoTracks = stream.getVideoTracks();
+//     if (videoTracks.length === 0) {
+//       throw new Error("No video tracks found in the stream");
+//     }
+    
+//     console.log("Camera initialized successfully with device:", videoTracks[0].label);
+    
+//     // Update the camera stream in context
+//     setCameraStream(stream);
+    
+//     // Set device state to true
+//     setDeviceStates(prev => ({ ...prev, camera: true }));
+    
+//     // Update video preview
+//     if (videoRef.current) {
+//       videoRef.current.srcObject = stream;
+//     }
+    
+//   } catch (err) {
+//     console.error(`Error initializing camera with device ID ${deviceId}:`, err);
+    
+//     // Try with less strict constraints
+//     try {
+//       console.log("Retrying with less strict constraints...");
+//       const stream = await navigator.mediaDevices.getUserMedia({
+//         video: {
+//           deviceId: deviceId ? { ideal: deviceId } : undefined,
+//         }
+//       });
+      
+//       console.log("Camera initialized with less strict constraints");
+//       setCameraStream(stream);
+//       setDeviceStates(prev => ({ ...prev, camera: true }));
+      
+//       if (videoRef.current) {
+//         videoRef.current.srcObject = stream;
+//       }
+      
+//     } catch (retryErr) {
+//       console.error("Second attempt failed:", retryErr);
+//       setCameraStream(null);
+//       setDeviceStates(prev => ({ ...prev, camera: false }));
+//       toast.error("Failed to access camera. Please check permissions or try another camera.");
+//     }
+//   }
+// }
 
   // Handle bypass toggle change
   const handleBypassToggleChange = (checked) => {

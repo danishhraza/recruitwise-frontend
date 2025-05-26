@@ -19,16 +19,12 @@ import {
 } from "@/components/ui/tooltip"; // Assuming this path is correct
 import { Button } from "@/components/ui/button"; // Assuming this path is correct
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { Howl } from 'howler';
 
 const AUDIO_MIME_TYPE = 'audio/webm; codecs=opus'; // Standardize for client recording
 const VIDEO_MIME_TYPE = 'video/webm'; // Standardize for client recording
 
 function VideoCall({ roomId, socket }) {
   const {
-    selectedMic, // Not directly used in this version, micStream is key
-    selectedVideo, // Not directly used, cameraStream is key
     micStream,
     cameraStream,
     deviceStates,
@@ -38,7 +34,6 @@ function VideoCall({ roomId, socket }) {
     setStage
   } = useRoom();
 
-  const navigate = useNavigate();
 
   // --- State for Flow Control & Data ---
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
@@ -267,11 +262,84 @@ function VideoCall({ roomId, socket }) {
     };
   }, [socket, deviceStates.microphone, interviewSessionActive]); 
 
+  // Add this function to extract and process audio from video streams
+const processVideoWithAudio = useCallback((stream, isScreenShare = false) => {
+  if (!stream || !socket || !socket.connected || !interviewSessionActive) return;
+  
+  console.log(`Setting up MediaRecorder for ${isScreenShare ? 'screen' : 'video'} with audio`);
+  
+  // Get video dimensions and type for metadata
+  const videoTrack = stream.getVideoTracks()[0];
+  const settings = videoTrack.getSettings();
+  const hasAudioTracks = stream.getAudioTracks().length > 0;
+  
+  const metadata = {
+    width: settings.width || (isScreenShare ? 1920 : 640),
+    height: settings.height || (isScreenShare ? 1080 : 480),
+    mimeType: VIDEO_MIME_TYPE,
+    hasAudio: hasAudioTracks
+  };
+  
+  // Send initial metadata with first chunk
+  let metadataSent = false;
+  
+  // Create a media recorder for the stream
+  const recorder = new MediaRecorder(stream, { mimeType: VIDEO_MIME_TYPE });
+  if (isScreenShare) {
+    screenMediaRecorderRef.current = recorder;
+  } else {
+    videoMediaRecorderRef.current = recorder;
+  }
+  
+  recorder.ondataavailable = (event) => {
+    if (event.data.size > 0 && socket && socket.connected) {
+      event.data.arrayBuffer().then(videoBuffer => {
+        // Create a data object to send
+        const dataToSend = {
+          interviewId: roomId,
+          videoChunk: videoBuffer
+        };
+        
+        // Add metadata on first chunk
+        if (!metadataSent) {
+          dataToSend.metadata = metadata;
+          metadataSent = true;
+          console.log(`Sent ${isScreenShare ? 'screen share' : 'video'} metadata:`, metadata);
+        }
+        
+        // Set isScreenShare flag if needed
+        if (isScreenShare) {
+          dataToSend.isScreenShare = true;
+        }
+        
+        // If the stream has audio tracks, extract the audio and send it along
+        // Note: In a real implementation, you'd need to extract the audio portion
+        // This is a simplification that sends the whole buffer as both video and audio
+        if (hasAudioTracks) {
+          // In a real implementation, you would separate audio from video here
+          // For now, we're demonstrating the concept
+          dataToSend.audioChunk = videoBuffer;
+        }
+        
+        // Send the data
+        socket.emit('videoStream', dataToSend);
+      }).catch(err => {
+        console.error(`Error converting ${isScreenShare ? 'screen share' : 'video'} blob to ArrayBuffer:`, err);
+      });
+    }
+  };
+  
+  recorder.start(1000);
+  return recorder;
+}, [socket, interviewSessionActive, roomId]);
+
+
+
   // --- Effect to Start Interview on Server ---
   useEffect(() => {
     if (socket && socket.connected && roomId && !interviewSessionActive) {
       console.log("Attempting to start interview on server...");
-      toast.info("Initializing interview session...", { id: 'start-interview-toast', duration: Infinity });
+      toast.info("Initializing interview session, please wait!", { id: 'start-interview-toast', duration: Infinity });
       
       socket.emit('startInterview', roomId, (response) => { // roomId is the interviewId
         toast.dismiss('start-interview-toast');
@@ -283,13 +351,74 @@ function VideoCall({ roomId, socket }) {
         } else {
           const errorMsg = response?.message || 'Unknown error from server.';
           console.error('Failed to start interview session:', errorMsg, response);
-          toast.error(`Interview Start Failed: ${errorMsg}`, { duration: 10000 });
+          // toast.error(`Interview Start Failed: ${errorMsg}`, { duration: 10000 });
           setInterviewSessionActive(false);
           // Consider navigating away or offering a retry mechanism
         }
       });
     }
   }, [socket, roomId, interviewSessionActive]);
+
+
+// --- Video & Screen Recording for S3 (Upload Only) ---
+useEffect(() => {
+  if (!socket || !socket.connected || !interviewSessionActive) {
+    // Stop recorders if session becomes inactive
+    if (videoMediaRecorderRef.current && videoMediaRecorderRef.current.state === "recording") videoMediaRecorderRef.current.stop();
+    if (screenMediaRecorderRef.current && screenMediaRecorderRef.current.state === "recording") screenMediaRecorderRef.current.stop();
+    videoMediaRecorderRef.current = null;
+    screenMediaRecorderRef.current = null;
+    return;
+  }
+
+  // Video Stream for S3
+  if (cameraStream && deviceStates.camera && !videoMediaRecorderRef.current) {
+    console.log("Starting video stream for S3 upload");
+    
+    // Create a combined stream with audio if microphone is enabled
+    if (micStream && deviceStates.microphone) {
+      console.log("Creating combined video+audio stream for recording");
+      
+      // Get all tracks from both streams
+      const combinedTracks = [
+        ...cameraStream.getVideoTracks(),
+        ...micStream.getAudioTracks()
+      ];
+      
+      // Create a new MediaStream with both audio and video
+      const combinedStream = new MediaStream(combinedTracks);
+      
+      // Start recording with the combined stream
+      processVideoWithAudio(combinedStream, false);
+    } else {
+      // Just video without audio
+      processVideoWithAudio(cameraStream, false);
+    }
+  } else if ((!cameraStream || !deviceStates.camera) && videoMediaRecorderRef.current) {
+    if(videoMediaRecorderRef.current.state === "recording") videoMediaRecorderRef.current.stop();
+    videoMediaRecorderRef.current = null;
+  }
+
+  // Screen Stream for S3 - Screen share often already includes audio
+  if (screenStream && deviceStates.screen && !screenMediaRecorderRef.current) {
+    console.log("Starting screen stream for S3 upload");
+    processVideoWithAudio(screenStream, true);
+  } else if ((!screenStream || !deviceStates.screen) && screenMediaRecorderRef.current) {
+    if(screenMediaRecorderRef.current.state === "recording") screenMediaRecorderRef.current.stop();
+    screenMediaRecorderRef.current = null;
+  }
+}, [
+  socket, 
+  interviewSessionActive, 
+  cameraStream, 
+  screenStream, 
+  micStream,
+  deviceStates.camera, 
+  deviceStates.screen,
+  deviceStates.microphone,
+  roomId,
+  processVideoWithAudio
+]);
 
   // --- Improved User Audio Recording ---
 const startUserAudioRecording = useCallback(() => {
@@ -494,15 +623,43 @@ const startUserAudioRecording = useCallback(() => {
   }, [socket, interviewSessionActive, cameraStream, screenStream, deviceStates.camera, deviceStates.screen, roomId]);
 
   // --- User Video Display ---
-  useEffect(() => {
-    if (userVideoRef.current) {
-      if (deviceStates.camera && cameraStream) {
+useEffect(() => {
+  console.log("VideoCall: Camera stream update detected", {
+    hasStream: !!cameraStream,
+    deviceState: deviceStates.camera,
+    streamTracks: cameraStream ? cameraStream.getTracks().map(t => ({
+      kind: t.kind,
+      label: t.label,
+      enabled: t.enabled,
+      readyState: t.readyState
+    })) : []
+  });
+
+  if (userVideoRef.current) {
+    if (deviceStates.camera && cameraStream) {
+      const videoTracks = cameraStream.getVideoTracks();
+      
+      if (videoTracks.length > 0) {
+        // Ensure tracks are enabled
+        videoTracks.forEach(track => {
+          if (!track.enabled) {
+            console.log("Enabling previously disabled video track");
+            track.enabled = true;
+          }
+        });
+        
         userVideoRef.current.srcObject = cameraStream;
+        console.log("Applied camera stream to video element");
       } else {
+        console.warn("Camera stream exists but has no video tracks");
         userVideoRef.current.srcObject = null;
       }
+    } else {
+      userVideoRef.current.srcObject = null;
+      console.log("Removed camera stream from video element");
     }
-  }, [deviceStates.camera, cameraStream]);
+  }
+}, [deviceStates.camera, cameraStream]);
 
   // --- Device State Toasts ---
   useEffect(() => {
@@ -546,7 +703,7 @@ const startUserAudioRecording = useCallback(() => {
       toast.success("Screen sharing stopped");
     } else {
       try {
-        const newScreenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+        const newScreenStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
         setScreenStream(newScreenStream);
         setDeviceStates(prev => ({ ...prev, screen: true }));
         newScreenStream.getVideoTracks()[0].onended = () => {
