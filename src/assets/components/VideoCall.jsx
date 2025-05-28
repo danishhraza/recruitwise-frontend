@@ -27,9 +27,11 @@ function VideoCall({ roomId, socket }) {
   const {
     micStream,
     cameraStream,
+    setCameraStream,
     deviceStates,
     setDeviceStates,
     setScreenStream,
+    selectedVideo,
     screenStream,
     setStage
   } = useRoom();
@@ -38,13 +40,17 @@ function VideoCall({ roomId, socket }) {
   // --- State for Flow Control & Data ---
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
   const [canUserSpeak, setCanUserSpeak] = useState(false);
-  const [interviewSessionActive, setInterviewSessionActive] = useState(false); // Server confirmed session
+  const [interviewSessionActive, setInterviewSessionActive] = useState(false); // Server confirmed session-
   const [currentAiText, setCurrentAiText] = useState("");
   const [currentUserTranscript, setCurrentUserTranscript] = useState("");
   const [liveTranscript, setLiveTranscript] = useState([]);
   const [endCallConfirm, setEndCallConfirm] = useState(false);
 
-  // --- Audio Buffer Management State ---
+  // --- State for Camera Device Management ---
+  const [localCameraStream, setLocalCameraStream] = useState(null);
+  const videoRef = useRef(null);
+
+// --- Audio Buffer Management State ---
   const [audioBufferStatus, setAudioBufferStatus] = useState({ 
     buffering: false, 
     progress: 0,
@@ -58,7 +64,6 @@ function VideoCall({ roomId, socket }) {
   const screenMediaRecorderRef = useRef(null);
   
   // --- Refs ---
-  const userVideoRef = useRef(null);
   const audioContextRef = useRef(null);
   const audioBuffersRef = useRef([]);
   const isPlayingAudioRef = useRef(false);
@@ -622,44 +627,59 @@ const startUserAudioRecording = useCallback(() => {
     }
   }, [socket, interviewSessionActive, cameraStream, screenStream, deviceStates.camera, deviceStates.screen, roomId]);
 
-  // --- User Video Display ---
 useEffect(() => {
-  console.log("VideoCall: Camera stream update detected", {
-    hasStream: !!cameraStream,
-    deviceState: deviceStates.camera,
-    streamTracks: cameraStream ? cameraStream.getTracks().map(t => ({
-      kind: t.kind,
-      label: t.label,
-      enabled: t.enabled,
-      readyState: t.readyState
-    })) : []
-  });
+  let activeStream;
+  let retryCount = 0;
+  const MAX_RETRIES = 10;
 
-  if (userVideoRef.current) {
-    if (deviceStates.camera && cameraStream) {
-      const videoTracks = cameraStream.getVideoTracks();
-      
-      if (videoTracks.length > 0) {
-        // Ensure tracks are enabled
-        videoTracks.forEach(track => {
-          if (!track.enabled) {
-            console.log("Enabling previously disabled video track");
-            track.enabled = true;
-          }
-        });
-        
-        userVideoRef.current.srcObject = cameraStream;
-        console.log("Applied camera stream to video element");
-      } else {
-        console.warn("Camera stream exists but has no video tracks");
-        userVideoRef.current.srcObject = null;
-      }
+  const bindStreamToVideo = (stream) => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.play().catch(err => console.warn("Video play error:", err));
+      console.log("✅ Bound camera stream to video element.");
+    } else if (retryCount < MAX_RETRIES) {
+      retryCount++;
+      requestAnimationFrame(() => bindStreamToVideo(stream));
     } else {
-      userVideoRef.current.srcObject = null;
-      console.log("Removed camera stream from video element");
+      console.warn("❌ Failed to bind camera stream: videoRef never became available.");
     }
-  }
-}, [deviceStates.camera, cameraStream]);
+  };
+
+  const startCameraWithSelectedDevice = async () => {
+    if (!selectedVideo?.key) return;
+
+    console.log("🎥 Starting camera with device ID:", selectedVideo.key);
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId: { exact: selectedVideo.key } }
+      });
+
+      activeStream = stream;
+      setLocalCameraStream(stream);
+      setCameraStream(stream);
+      setDeviceStates(prev => ({ ...prev, camera: true }));
+
+      bindStreamToVideo(stream);
+    } catch (err) {
+      console.error("Error accessing selected camera:", err);
+      setLocalCameraStream(null);
+      setCameraStream(null);
+      setDeviceStates(prev => ({ ...prev, camera: false }));
+    }
+  };
+
+  startCameraWithSelectedDevice();
+
+  return () => {
+    if (activeStream) {
+      activeStream.getTracks().forEach(track => track.stop());
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+}, [selectedVideo, deviceStates.camera]);
 
   // --- Device State Toasts ---
   useEffect(() => {
@@ -685,15 +705,6 @@ useEffect(() => {
       });
     }
   }, [micStream, deviceStates.microphone, setDeviceStates, isUserAudioRecording, stopUserAudioRecording]);
-
-  const toggleVideo = useCallback(() => {
-    if (cameraStream) {
-      cameraStream.getVideoTracks().forEach(track => {
-        track.enabled = !deviceStates.camera;
-        setDeviceStates(prev => ({ ...prev, camera: !prev.camera }));
-      });
-    }
-  }, [cameraStream, deviceStates.camera, setDeviceStates]);
 
   const shareScreenHandler = useCallback(async () => {
     if (screenStream && deviceStates.screen) {
@@ -871,27 +882,27 @@ const handleEndCall = useCallback(() => {
         </div>
         
         {/* User video (small picture-in-picture) */}
-        <div className="absolute bottom-20 right-5 w-48 h-36 md:w-64 md:h-48 rounded-lg overflow-hidden border-2 border-gray-400 shadow-lg bg-black">
-          {deviceStates.camera && cameraStream ? (
-            <video
-              ref={userVideoRef}
-              autoPlay
-              playsInline
-              muted // Mute local playback of own video
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gray-800">
-              <VideoOff className="w-10 h-10 text-gray-500" />
-              <span className="absolute bottom-2 left-2 text-xs text-white bg-black/40 px-1 rounded">Camera Off</span>
-            </div>
-          )}
-          {deviceStates.camera && cameraStream && (
-            <div className="absolute bottom-0 left-0 bg-black/50 text-white px-2 py-0.5 rounded-tr-md text-xs">
-              <span>You</span>
-            </div>
-          )}
-        </div>
+          <div className="absolute bottom-20 right-5 w-48 h-36 md:w-64 md:h-48 z-10 rounded-lg overflow-hidden border-2 border-gray-400 shadow-lg bg-black">
+            {deviceStates.camera && localCameraStream ? (
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                muted
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gray-800">
+                <VideoOff className="w-10 h-10 text-gray-500" />
+                <span className="absolute bottom-2 left-2 text-xs text-white bg-black/40 px-1 rounded">Camera Off</span>
+              </div>
+            )}
+            {deviceStates.camera && localCameraStream && (
+              <div className="absolute bottom-0 left-0 bg-black/50 text-white px-2 py-0.5 rounded-tr-md text-xs">
+                <span>You</span>
+              </div>
+            )}
+          </div>
         
         {/* Controls at bottom */}
         <div className="flex-shrink-0 flex justify-center p-3 bg-black/30 backdrop-blur-sm">
@@ -910,23 +921,7 @@ const handleEndCall = useCallback(() => {
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent><p>{deviceStates.microphone ? 'Mute' : 'Unmute'}</p></TooltipContent>
-              </Tooltip>
-              
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="outline" size="icon" 
-                    className={`rounded-full w-12 h-12 border-0 text-white
-                              ${deviceStates.camera ? 'bg-gray-700 hover:bg-gray-600' : 'bg-red-600 hover:bg-red-500'}`}
-                    onClick={toggleVideo}
-                    disabled={!cameraStream}
-                  >
-                    {deviceStates.camera ? <Video className="h-6 w-6" /> : <VideoOff className="h-6 w-6" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent><p>{deviceStates.camera ? 'Turn Off Camera' : 'Turn On Camera'}</p></TooltipContent>
-              </Tooltip>
-              
+              </Tooltip>         
               {/* NEW: Start Recording Button - Adding to controls bar as well */}
               {canUserSpeak && !isUserAudioRecording && !isAiSpeaking && deviceStates.microphone && (
                 <Tooltip>

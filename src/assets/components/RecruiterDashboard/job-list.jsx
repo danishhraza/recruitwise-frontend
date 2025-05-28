@@ -159,7 +159,7 @@ export function JobList() {
     if (!jobToDelete) return
 
     try {
-      await axios.delete(`/jobs/${jobToDelete._id}`, { withCredentials: true })
+      await axios.delete(`/jobs/${jobToDelete.id}`, { withCredentials: true })
       setShowDeleteDialog(false)
       setJobToDelete(null)
       toast.success("Job deleted successfully")
