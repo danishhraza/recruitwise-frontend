@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useFilters } from '../Context/FiltersContext';
@@ -12,7 +11,6 @@ import {
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-// import { useFilters } from '../Hooks/useFilters';
 
 export default function Filters({open,onClose}) {
     const {
@@ -20,9 +18,30 @@ export default function Filters({open,onClose}) {
         setFilters
     } = useFilters();
 
-    // const { selectedTime, selectedTimeKey, selectedJobType, selectedEmploymentType } = filters;
     const [searchParams,setSearchParams] = useSearchParams()
 
+    // Define mappings for display vs actual values
+    const jobTypeMapping = {
+        'Full Time': 'Full-Time',
+        'Part Time': 'Part-Time', 
+        'Internship': 'Internship',
+        'Contract': 'Contract',
+        'Temporary': 'Temporary'
+    };
+
+    const employmentTypeMapping = {
+        'On Site': 'OnSite',
+        'Hybrid': 'Hybrid',
+        'Remote': 'Remote'
+    };
+
+    const experienceLevelMapping = {
+        'Entry-level': 'Entry-level',
+        'Junior': 'Junior',
+        'Mid-level': 'Mid-level', 
+        'Senior': 'Senior',
+        'Executive': 'Executive'
+    };
 
 // Handle time selection
 const handleSelect = ({ key }) => {
@@ -60,14 +79,14 @@ const handleDeselect = () => {
     }));
 };
 
-
 // Handle job type filter
-const handleJobTypeFilter = (jobType) => {
-    console.log(jobType)
+const handleJobTypeFilter = (displayJobType) => {
+    const actualJobType = jobTypeMapping[displayJobType];
+    console.log(actualJobType)
     setFilters(prevFilters => {
         const updatedJobTypes = { 
             ...prevFilters.selectedJobType, 
-            [jobType]: !prevFilters.selectedJobType[jobType] 
+            [actualJobType]: !prevFilters.selectedJobType[actualJobType] 
         };
 
         // Get active job types
@@ -95,12 +114,13 @@ const handleJobTypeFilter = (jobType) => {
     });
 };
 
-const handleExperienceLevel = (expLevel) => {
-    console.log(expLevel)
+const handleExperienceLevel = (displayExpLevel) => {
+    const actualExpLevel = experienceLevelMapping[displayExpLevel];
+    console.log(actualExpLevel)
     setFilters(prevFilters => {
         const updatedExperienceLevels = { 
             ...prevFilters.selectedExperienceLevel, 
-            [expLevel]: !prevFilters.selectedExperienceLevel[expLevel] 
+            [actualExpLevel]: !prevFilters.selectedExperienceLevel[actualExpLevel] 
         };
 
         // Get active experience levels
@@ -128,12 +148,13 @@ const handleExperienceLevel = (expLevel) => {
     });
 };
 
-const handleEmploymentType = (employType) => {
-    console.log(employType)
+const handleEmploymentType = (displayEmployType) => {
+    const actualEmployType = employmentTypeMapping[displayEmployType];
+    console.log(actualEmployType)
     setFilters(prevFilters => {
         const updatedEmploymentTypes = { 
             ...prevFilters.selectedEmploymentType, 
-            [employType]: !prevFilters.selectedEmploymentType[employType] 
+            [actualEmployType]: !prevFilters.selectedEmploymentType[actualEmployType] 
         };
 
         // Get active employment types
@@ -160,7 +181,6 @@ const handleEmploymentType = (employType) => {
     });
 };
 
-
 return (
 <Dialog open={open} onOpenChange={onClose}>
   <DialogContent className="sm:max-w-md">
@@ -175,16 +195,19 @@ return (
       <div>
         <h3 className="font-medium mb-3">Job Type</h3>
         <div className="grid grid-cols-2 gap-2">
-          {['Full-Time', 'Part-Time', 'Internship', 'Contract', 'Temporary'].map((type) => (
-            <div key={type} className="flex items-center space-x-2">
-              <Checkbox 
-                id={`job-type-${type}`} 
-                checked={filters.selectedJobType?.[type] || false}
-                onCheckedChange={() => handleJobTypeFilter(type)}
-              />
-              <Label htmlFor={`job-type-${type}`}>{type}</Label>
-            </div>
-          ))}
+          {Object.keys(jobTypeMapping).map((displayType) => {
+            const actualType = jobTypeMapping[displayType];
+            return (
+              <div key={displayType} className="flex items-center space-x-2">
+                <Checkbox 
+                  id={`job-type-${displayType}`} 
+                  checked={filters.selectedJobType?.[actualType] || false}
+                  onCheckedChange={() => handleJobTypeFilter(displayType)}
+                />
+                <Label htmlFor={`job-type-${displayType}`}>{displayType}</Label>
+              </div>
+            );
+          })}
         </div>
       </div>
       <hr />
@@ -193,16 +216,19 @@ return (
       <div>
         <h3 className="font-medium mb-3">Employment Type</h3>
         <div className="grid grid-cols-2 gap-2">
-          {['On Site', 'Hybrid', 'Remote'].map((type) => (
-            <div key={type} className="flex items-center space-x-2">
-              <Checkbox 
-                id={`employment-${type}`} 
-                checked={filters.selectedEmploymentType?.[type] || false}
-                onCheckedChange={() => handleEmploymentType(type)}
-              />
-              <Label htmlFor={`employment-${type}`}>{type}</Label>
-            </div>
-          ))}
+          {Object.keys(employmentTypeMapping).map((displayType) => {
+            const actualType = employmentTypeMapping[displayType];
+            return (
+              <div key={displayType} className="flex items-center space-x-2">
+                <Checkbox 
+                  id={`employment-${displayType}`} 
+                  checked={filters.selectedEmploymentType?.[actualType] || false}
+                  onCheckedChange={() => handleEmploymentType(displayType)}
+                />
+                <Label htmlFor={`employment-${displayType}`}>{displayType}</Label>
+              </div>
+            );
+          })}
         </div>
       </div>
       <hr />
@@ -211,16 +237,19 @@ return (
       <div>
         <h3 className="font-medium mb-3">Experience Level</h3>
         <div className="grid grid-cols-2 gap-2">
-          {['Entry-level', 'Junior', 'Mid-level', 'Senior', 'Executive'].map((level) => (
-            <div key={level} className="flex items-center space-x-2">
-              <Checkbox 
-                id={`level-${level}`} 
-                checked={filters.selectedExperienceLevel?.[level] || false}
-                onCheckedChange={() => handleExperienceLevel(level)}
-              />
-              <Label htmlFor={`level-${level}`}>{level}</Label>
-            </div>
-          ))}
+          {Object.keys(experienceLevelMapping).map((displayLevel) => {
+            const actualLevel = experienceLevelMapping[displayLevel];
+            return (
+              <div key={displayLevel} className="flex items-center space-x-2">
+                <Checkbox 
+                  id={`level-${displayLevel}`} 
+                  checked={filters.selectedExperienceLevel?.[actualLevel] || false}
+                  onCheckedChange={() => handleExperienceLevel(displayLevel)}
+                />
+                <Label htmlFor={`level-${displayLevel}`}>{displayLevel}</Label>
+              </div>
+            );
+          })}
         </div>
       </div>
       <hr />

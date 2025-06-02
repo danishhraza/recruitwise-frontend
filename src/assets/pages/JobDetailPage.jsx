@@ -6,7 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useFilters } from '../Context/FiltersContext';
 import JobApplicationDrawer from '../components/JobApplicationDrawer';
 import useGeneral from '../../hooks/useGeneral';
-import { fetchJobById } from '../../lib/data'; // Import the fetchJobById function
+import { fetchJobById, fetchCompanyById } from '../../lib/data';
 
 // JobDetail Component for the detailed view page
 const JobDetailPage = () => {
@@ -16,6 +16,7 @@ const JobDetailPage = () => {
   const { isLoggedIn } = useGeneral();
   const [isApplicationOpen, setIsApplicationOpen] = useState(false);
   const [job, setJob] = useState(null);
+  const [companyName, setCompanyName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -24,16 +25,30 @@ const JobDetailPage = () => {
     const getJobDetails = async () => {
       try {
         setLoading(true);
-        // First, try to find the job in the filtered jobs
-        const jobFromContext = filters.filteredJobs.find(j => j.id === jobId);
+        // First, try to find the job in the filtered jobs (match by _id)
+        const jobFromContext = filters.filteredJobs.find(j => j._id === jobId || j.id === jobId);
         
         if (jobFromContext) {
           setJob(jobFromContext);
+          // Fetch company name if company is an ID
+          if (typeof jobFromContext.company === 'string') {
+            const company = await fetchCompanyById(jobFromContext.company);
+            setCompanyName(company?.name || 'Unknown Company');
+          } else if (jobFromContext.company?.name) {
+            setCompanyName(jobFromContext.company.name);
+          }
         } else {
           // If not found in context, fetch directly using fetchJobById
           const fetchedJob = await fetchJobById(jobId);
           if (fetchedJob) {
             setJob(fetchedJob);
+            // Fetch company name if company is an ID
+            if (typeof fetchedJob.company === 'string') {
+              const company = await fetchCompanyById(fetchedJob.company);
+              setCompanyName(company?.name || 'Unknown Company');
+            } else if (fetchedJob.company?.name) {
+              setCompanyName(fetchedJob.company.name);
+            }
           } else {
             setError(true);
           }
@@ -74,9 +89,57 @@ const JobDetailPage = () => {
   // Format employment type for display
   const formatEmploymentType = (type) => {
     if (!type) return '';
-    return type.split('-').map(word => 
+    
+    // Handle specific cases
+    if (type.toLowerCase() === 'onsite') {
+      return 'On Site';
+    }
+    
+    // Handle other cases with splitting by hyphens, underscores, or camelCase
+    return type.split(/[-_]/).map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Not specified';
+    try {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch (error) {
+      return 'Invalid date';
+    }
+  };
+
+  // Parse requirements string into array
+  const parseRequirements = (requirementsString) => {
+    if (!requirementsString) return [];
+    if (Array.isArray(requirementsString)) return requirementsString;
+    
+    // Split by newlines and filter out empty strings
+    return requirementsString.split('\n').filter(req => req.trim().length > 0);
+  };
+
+  // Parse responsibilities string into array (if available)
+  const parseResponsibilities = (responsibilitiesString) => {
+    if (!responsibilitiesString) return [];
+    if (Array.isArray(responsibilitiesString)) return responsibilitiesString;
+    
+    // Split by newlines and filter out empty strings
+    return responsibilitiesString.split('\n').filter(resp => resp.trim().length > 0);
+  };
+
+  // Get company name (handle both string and object)
+  const getCompanyDisplayName = (company) => {
+    if (companyName) return companyName;
+    if (!company) return 'Not specified';
+    if (typeof company === 'string') return 'Loading...';
+    if (typeof company === 'object' && company.name) return company.name;
+    return 'Company ID: ' + company;
   };
 
   if (loading) {
@@ -96,6 +159,9 @@ const JobDetailPage = () => {
     );
   }
 
+  const requirements = parseRequirements(job.requirements);
+  const responsibilities = parseResponsibilities(job.responsibilities);
+
   return (
     <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-4xl p-4">
@@ -111,7 +177,7 @@ const JobDetailPage = () => {
         <div className="space-y-6">
           <div>
             <h2 className="text-2xl font-bold">{job.title}</h2>
-            <p className="text-lg text-blue-600">{job.company}</p>
+            <p className="text-lg text-blue-600">{getCompanyDisplayName(job.company)}</p>
             <p className="text-gray-600 dark:text-gray-400">{job.location}</p>
             <p className="text-gray-500">{formatSalary(job.salary)}</p>
             <div className="mt-4 flex gap-2">
@@ -135,11 +201,11 @@ const JobDetailPage = () => {
                   <p>{job.location}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Employment Type</p>
+                  <p className="text-gray-500">Job Type</p>
                   <p>{formatEmploymentType(job.employmentType)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Job Type</p>
+                  <p className="text-gray-500">Employment Type</p>
                   <p>{formatEmploymentType(job.jobType)}</p>
                 </div>
                 <div>
@@ -160,31 +226,25 @@ const JobDetailPage = () => {
                 </div>
                 <div>
                   <p className="text-gray-500">Posted Date</p>
-                  <p>{job.postedDate}</p>
+                  <p>{formatDate(job.createdAt)}</p>
                 </div>
                 <div>
                   <p className="text-gray-500">Application Deadline</p>
-                  <p>{job.applicationDeadline}</p>
+                  <p>{formatDate(job.deadline)}</p>
                 </div>
-                {job.recruiter && (
-                  <div>
-                    <p className="text-gray-500">Recruiter</p>
-                    <p>{job.recruiter}</p>
-                  </div>
-                )}
               </div>
             </CardContent>
           </Card>
 
           {/* Skills/Tags */}
-          {job.tags && job.tags.length > 0 && (
+          {job.skills && job.skills.length > 0 && (
             <Card>
               <CardContent className="pt-6">
-                <h3 className="text-xl font-semibold mb-4">Skills</h3>
+                <h3 className="text-xl font-semibold mb-4">Required Skills</h3>
                 <div className="flex flex-wrap gap-2">
-                  {job.tags.map((tag, index) => (
+                  {job.skills.map((skill, index) => (
                     <span key={index} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-sm">
-                      {tag}
+                      {skill}
                     </span>
                   ))}
                 </div>
@@ -196,33 +256,37 @@ const JobDetailPage = () => {
           <Card>
             <CardContent className="pt-6">
               <h3 className="text-xl font-semibold mb-4">Job Description</h3>
-              <p>{job.description}</p>
+              <div className="whitespace-pre-line">{job.description}</div>
             </CardContent>
           </Card>
 
           {/* Requirements */}
-          <Card>
-            <CardContent className="pt-6">
-              <h3 className="text-xl font-semibold mb-4">Requirements</h3>
-              <ul className="list-disc pl-5 space-y-2">
-                {job.requirements.map((req, index) => (
-                  <li key={index}>{req}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          {requirements.length > 0 && (
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-xl font-semibold mb-4">Requirements</h3>
+                <ul className="list-disc pl-5 space-y-2">
+                  {requirements.map((req, index) => (
+                    <li key={index}>{req}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Responsibilities */}
-          <Card>
-            <CardContent className="pt-6">
-              <h3 className="text-xl font-semibold mb-4">Responsibilities</h3>
-              <ul className="list-disc pl-5 space-y-2">
-                {job.responsibilities.map((resp, index) => (
-                  <li key={index}>{resp}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          {responsibilities.length > 0 && (
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-xl font-semibold mb-4">Responsibilities</h3>
+                <ul className="list-disc pl-5 space-y-2">
+                  {responsibilities.map((resp, index) => (
+                    <li key={index}>{resp}</li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
       <JobApplicationDrawer 

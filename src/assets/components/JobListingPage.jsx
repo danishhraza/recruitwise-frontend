@@ -16,7 +16,7 @@ const JobListing = () => {
 
   // Handle job selection
   const handleJobSelect = (job) => {
-    navigate(`/jobs/${job.id}`);
+    navigate(`/jobs/${job._id}`);
   };
 
   function handleSearchChange(sQuery) {
@@ -41,13 +41,25 @@ const JobListing = () => {
     });
   }
 
-  // Calculate days ago for posted date
+  // Calculate days ago for posted date - Fixed version from ViewJobs.jsx
   const getDaysAgo = (dateString) => {
+    if (!dateString) return 'Date unknown';
+    
     const today = new Date();
     const postedDate = new Date(dateString);
+    
+    // Check if the date is valid
+    if (isNaN(postedDate.getTime())) return 'Date unknown';
+    
     const differenceInTime = today - postedDate;
     const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
-    return differenceInDays === 0 ? 'Today' : `${differenceInDays} days ago`;
+    
+    if (differenceInDays < 0) return 'Coming soon';  
+    if (differenceInDays === 0) return 'Today';
+    if (differenceInDays === 1) return 'Yesterday';
+    if (differenceInDays < 7) return `${differenceInDays} days ago`;
+    if (differenceInDays < 30) return `${Math.floor(differenceInDays/7)} weeks ago`;
+    return `${Math.floor(differenceInDays/30)} months ago`;
   };
 
   return (
@@ -85,7 +97,9 @@ const JobListing = () => {
             <h3 className="font-medium text-lg">{job.title}</h3>
             <p className="text-gray-600 dark:text-gray-400">{job.company}</p>
             <p className="text-gray-500 dark:text-gray-500 text-sm">{job.location}</p>
-            <p className="text-gray-400 dark:text-gray-600 text-xs mt-2">{getDaysAgo(job.postedDate)}</p>
+            <p className="text-gray-400 dark:text-gray-600 text-xs mt-2">
+              {getDaysAgo(job.createdAt || job.postedDate)}
+            </p>
           </div>
         ))}
       </div>

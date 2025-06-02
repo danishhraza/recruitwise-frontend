@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Bookmark, ExternalLink } from 'lucide-react';
 import { ModeToggle } from "../components/mode-toggle";
 import Filters from '../components/Filters';
@@ -21,6 +22,7 @@ const JobListingPage = () => {
   const [isApplicationOpen, setIsApplicationOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   // Function to sort jobs by most recent first
   const sortJobsByRecent = (jobs) => {
@@ -154,8 +156,18 @@ const JobListingPage = () => {
     }
   };
 
-  const openApplicationDrawer = () => {
-    setIsApplicationOpen(true);
+  const openApplicationDrawer = async () => {
+    try {
+      // Check if user is authenticated
+      const response = await axios.get('/auth/me');
+      
+      // If successful, open the application drawer
+      setIsApplicationOpen(true);
+    } catch (error) {
+      // If authentication fails, show login dialog
+      console.log('User not authenticated:', error);
+      setShowLoginDialog(true);
+    }
   };
 
   function handleSearchChange(sQuery) {
@@ -207,9 +219,16 @@ const JobListingPage = () => {
     }).format(salary);
   };
 
-  // Format employment type for display
+  // Format employment type for display (OnSite -> On Site, etc.)
   const formatEmploymentType = (type) => {
     if (!type) return '';
+    
+    // Handle specific employment types
+    if (type.toLowerCase() === 'onsite') return 'On Site';
+    if (type.toLowerCase() === 'remote') return 'Remote';
+    if (type.toLowerCase() === 'hybrid') return 'Hybrid';
+    
+    // Handle job types and other cases
     return type.split('-').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
@@ -276,10 +295,10 @@ const JobListingPage = () => {
                     <p className="text-gray-500 text-sm">{job.location}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="px-2 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-xs rounded-md">
-                        {formatEmploymentType(job.employmentType)}
+                        {formatEmploymentType(job.jobType)}
                       </span>
                       <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 text-xs rounded-md">
-                        {formatEmploymentType(job.jobType)}
+                        {formatEmploymentType(job.employmentType)}
                       </span>
                     </div>
                     <div className="flex gap-2 mt-2 flex-wrap">
@@ -343,11 +362,11 @@ const JobListingPage = () => {
                             <p>{selectedJob.location}</p>
                           </div>
                           <div>
-                            <p className="text-gray-500">Employment Type</p>
+                            <p className="text-gray-500">Job Type</p>
                             <p>{formatEmploymentType(selectedJob.employmentType)}</p>
                           </div>
                           <div>
-                            <p className="text-gray-500">Job Type</p>
+                            <p className="text-gray-500">Employment Type</p>
                             <p>{formatEmploymentType(selectedJob.jobType)}</p>
                           </div>
                           <div>
@@ -477,6 +496,27 @@ const JobListingPage = () => {
         onClose={() => setIsApplicationOpen(false)} 
         job={selectedJob}
         />
+
+      {/* Login Dialog */}
+      <AlertDialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+        <AlertDialogContent onPointerDownOutside={() => setShowLoginDialog(false)} onEscapeKeyDown={() => setShowLoginDialog(false)}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Login Required</AlertDialogTitle>
+            <AlertDialogDescription>
+              You need to be logged in to apply for jobs. Please login to continue with your application.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              // Redirect to login page or handle login
+              window.location.href = '/login'; // Adjust this to your login route
+            }}>
+              Login
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
