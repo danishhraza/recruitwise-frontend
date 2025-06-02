@@ -79,19 +79,25 @@ export function JobList() {
     form.setValue("customQuestions", updatedQuestions);
   };
 
-  async function fetchJobs() {
-    setLoading(true)
-    try {
-      const response = await axios.get("/recruiter/my-jobs", { withCredentials: true })
-      console.log("Jobs fetched:", response.data)
-      setJobs(response.data)
-    } catch (error) {
-      console.error("Failed to fetch jobs:", error)
-      toast.error("Failed to fetch jobs")
-    } finally {
-      setLoading(false)
-    }
+async function fetchJobs() {
+  setLoading(true)
+  try {
+    const response = await axios.get("/recruiter/my-jobs", { withCredentials: true })
+    console.log("Jobs fetched:", response.data)
+    
+    // Sort jobs by creation date (most recent first)
+    const sortedJobs = response.data.sort((a, b) => 
+      new Date(b.createdAt) - new Date(a.createdAt)
+    )
+    
+    setJobs(sortedJobs)
+  } catch (error) {
+    console.error("Failed to fetch jobs:", error)
+    toast.error("Failed to fetch jobs")
+  } finally {
+    setLoading(false)
   }
+}
 
   useEffect(() => {
     fetchJobs()
@@ -114,30 +120,45 @@ export function JobList() {
     }
   })
 
-  const onSubmit = async (data) => {
-    try {
-      // Format the data to match the required payload structure
-      const formattedData = {
-        ...data,
-        deadline: data.deadline.toISOString(),
-        // Ensure jobType and employmentType match expected values
-        jobType: data.jobType,
-        employmentType: data.employmentType,
-        // Only include customQuestions if there are any
-        ...(data.customQuestions.length > 0 ? { customQuestions: data.customQuestions } : {})
-      };
-      
-      await axios.post("/jobs/create", formattedData, {withCredentials: true})
-      console.log(formattedData)
-      setOpen(false)
-      fetchJobs() // Refresh the job list
-      toast.success("Job created successfully!")
-      form.reset()
-    } catch (error) {
-      console.error("Failed to create job:", error)
-      toast.error("Failed to create job. Please try again.")
-    }
+ const onSubmit = async (data) => {
+  try {
+    // Format the data to match the required payload structure
+    const formattedData = {
+      ...data,
+      deadline: data.deadline.toISOString(),
+      // Ensure jobType and employmentType match expected values
+      jobType: data.jobType,
+      employmentType: data.employmentType,
+      // Only include customQuestions if there are any
+      ...(data.customQuestions.length > 0 ? { customQuestions: data.customQuestions } : {})
+    };
+    
+    await axios.post("/jobs/create", formattedData, {withCredentials: true})
+    console.log(formattedData)
+    
+    // Close the sheet first
+    setOpen(false)
+    
+    // Reset form
+    form.reset()
+    
+    // Reset custom questions state
+    setCustomQuestions([])
+    
+    // Reset to basic page
+    setCurrentPage("basic")
+    
+    // Refresh the job list to get the latest data
+    await fetchJobs()
+    
+    // Show success message
+    toast.success("Job created successfully!")
+    
+  } catch (error) {
+    console.error("Failed to create job:", error)
+    toast.error("Failed to create job. Please try again.")
   }
+}
 
   const filteredJobs = jobs.filter(
     (job) =>

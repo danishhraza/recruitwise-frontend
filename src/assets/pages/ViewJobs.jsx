@@ -22,6 +22,14 @@ const JobListingPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Function to sort jobs by most recent first
+  const sortJobsByRecent = (jobs) => {
+    return jobs.sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.postedDate || 0);
+      const dateB = new Date(b.createdAt || b.postedDate || 0);
+      return dateB - dateA; // Most recent first
+    });
+  };
   
   async function fetchJobs() {
     try {
@@ -57,11 +65,14 @@ const JobListingPage = () => {
         })
       );
       
+      // Sort jobs by most recent first
+      const sortedJobs = sortJobsByRecent(jobsWithCompanyData);
+      
       // Update state with jobs that include company names
-      setJobs(jobsWithCompanyData);
+      setJobs(sortedJobs);
       setFilters(prev => ({
         ...prev,
-        filteredJobs: jobsWithCompanyData
+        filteredJobs: sortedJobs
       }));
       setLoading(false);
       setError(null);
@@ -191,7 +202,7 @@ const JobListingPage = () => {
     if (!salary) return 'Not specified';
     return new Intl.NumberFormat('en-US', { 
       style: 'currency', 
-      currency: 'USD',
+      currency: 'PKR',
       maximumFractionDigits: 0
     }).format(salary);
   };
@@ -290,11 +301,12 @@ const JobListingPage = () => {
             )}
           </div>
 
-          {/* Job Details */}
-          <div className="w-3/5 overflow-auto p-6">
+          {/* Job Details - Sticky Container */}
+          <div className="w-3/5 flex flex-col">
             {selectedJob ? (
-              <div className="space-y-6">
-                <div>
+              <>
+                {/* Sticky Header */}
+                <div className="sticky top-0 bg-background border-b z-10 p-6 pb-4">
                   <h2 className="text-2xl font-bold">{selectedJob.title}</h2>
                   <p className="text-lg text-blue-600">{selectedJob.company}</p>
                   <p className="text-gray-600 dark:text-gray-400">{selectedJob.location}</p>
@@ -318,120 +330,125 @@ const JobListingPage = () => {
                   )}
                 </div>
 
-                {/* Job Information */}
-                <Card>
-                  <CardContent className="pt-6">
-                    <h3 className="text-xl font-semibold mb-4">Job Information</h3>
-                    <div className="grid grid-cols-2 gap-y-4">
-                      <div>
-                        <p className="text-gray-500">Location</p>
-                        <p>{selectedJob.location}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Employment Type</p>
-                        <p>{formatEmploymentType(selectedJob.employmentType)}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Job Type</p>
-                        <p>{formatEmploymentType(selectedJob.jobType)}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Experience</p>
-                        <p>{selectedJob.experience}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Salary</p>
-                        <p>{formatSalary(selectedJob.salary)}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Status</p>
-                        <div className="flex items-center">
-                          <span className={`px-2 py-1 ${selectedJob.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} text-sm rounded-md`}>
-                            {selectedJob.isActive ? 'Active' : 'Inactive'}
-                          </span>
+                {/* Scrollable Content */}
+                <div className="flex-1 overflow-auto p-6 pt-2">
+                  <div className="space-y-6">
+                    {/* Job Information */}
+                    <Card>
+                      <CardContent className="pt-6">
+                        <h3 className="text-xl font-semibold mb-4">Job Information</h3>
+                        <div className="grid grid-cols-2 gap-y-4">
+                          <div>
+                            <p className="text-gray-500">Location</p>
+                            <p>{selectedJob.location}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Employment Type</p>
+                            <p>{formatEmploymentType(selectedJob.employmentType)}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Job Type</p>
+                            <p>{formatEmploymentType(selectedJob.jobType)}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Experience</p>
+                            <p>{selectedJob.experience}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Salary</p>
+                            <p>{formatSalary(selectedJob.salary)}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Status</p>
+                            <div className="flex items-center">
+                              <span className={`px-2 py-1 ${selectedJob.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} text-sm rounded-md`}>
+                                {selectedJob.isActive ? 'Active' : 'Inactive'}
+                              </span>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Posted Date</p>
+                            <p>{new Date(selectedJob.createdAt || selectedJob.postedDate).toLocaleDateString()}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Application Deadline</p>
+                            <p>{selectedJob.deadline ? new Date(selectedJob.deadline).toLocaleDateString() : (selectedJob.applicationDeadline || 'Not specified')}</p>
+                          </div>
+                          {selectedJob.recruiter && (
+                            <div>
+                              <p className="text-gray-500">Recruiter</p>
+                              <p>{selectedJob.recruiter}</p>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Posted Date</p>
-                        <p>{new Date(selectedJob.createdAt || selectedJob.postedDate).toLocaleDateString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Application Deadline</p>
-                        <p>{selectedJob.deadline ? new Date(selectedJob.deadline).toLocaleDateString() : (selectedJob.applicationDeadline || 'Not specified')}</p>
-                      </div>
-                      {selectedJob.recruiter && (
-                        <div>
-                          <p className="text-gray-500">Recruiter</p>
-                          <p>{selectedJob.recruiter}</p>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                      </CardContent>
+                    </Card>
 
-                {/* Skills/Tags */}
-                {(selectedJob.skills || selectedJob.tags) && (selectedJob.skills?.length > 0 || selectedJob.tags?.length > 0) && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="text-xl font-semibold mb-4">Skills</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedJob.skills && selectedJob.skills.map((skill, index) => (
-                          <span key={`skill-${index}`} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-sm">
-                            {skill}
-                          </span>
-                        ))}
-                        {selectedJob.tags && selectedJob.tags.map((tag, index) => (
-                          <span key={`tag-${index}`} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-sm">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                )}
+                    {/* Skills/Tags */}
+                    {(selectedJob.skills || selectedJob.tags) && (selectedJob.skills?.length > 0 || selectedJob.tags?.length > 0) && (
+                      <Card>
+                        <CardContent className="pt-6">
+                          <h3 className="text-xl font-semibold mb-4">Skills</h3>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedJob.skills && selectedJob.skills.map((skill, index) => (
+                              <span key={`skill-${index}`} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-sm">
+                                {skill}
+                              </span>
+                            ))}
+                            {selectedJob.tags && selectedJob.tags.map((tag, index) => (
+                              <span key={`tag-${index}`} className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full text-sm">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
 
-                {/* Job Description */}
-                {selectedJob.description && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="text-xl font-semibold mb-4">Job Description</h3>
-                      <div className="whitespace-pre-line">{selectedJob.description}</div>
-                    </CardContent>
-                  </Card>
-                )}
+                    {/* Job Description */}
+                    {selectedJob.description && (
+                      <Card>
+                        <CardContent className="pt-6">
+                          <h3 className="text-xl font-semibold mb-4">Job Description</h3>
+                          <div className="whitespace-pre-line">{selectedJob.description}</div>
+                        </CardContent>
+                      </Card>
+                    )}
 
-                {/* Requirements */}
-                {selectedJob.requirements && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="text-xl font-semibold mb-4">Requirements</h3>
-                      {Array.isArray(selectedJob.requirements) ? (
-                        <ul className="list-disc pl-5 space-y-2">
-                          {selectedJob.requirements.map((req, index) => (
-                            <li key={`req-${index}`}>{req}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <div className="whitespace-pre-line">{selectedJob.requirements}</div>
-                      )}
-                    </CardContent>
-                  </Card>
-                )}
+                    {/* Requirements */}
+                    {selectedJob.requirements && (
+                      <Card>
+                        <CardContent className="pt-6">
+                          <h3 className="text-xl font-semibold mb-4">Requirements</h3>
+                          {Array.isArray(selectedJob.requirements) ? (
+                            <ul className="list-disc pl-5 space-y-2">
+                              {selectedJob.requirements.map((req, index) => (
+                                <li key={`req-${index}`}>{req}</li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <div className="whitespace-pre-line">{selectedJob.requirements}</div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    )}
 
-                {/* Responsibilities */}
-                {selectedJob.responsibilities && selectedJob.responsibilities.length > 0 && (
-                  <Card>
-                    <CardContent className="pt-6">
-                      <h3 className="text-xl font-semibold mb-4">Responsibilities</h3>
-                      <ul className="list-disc pl-5 space-y-2">
-                        {selectedJob.responsibilities.map((resp, index) => (
-                          <li key={`resp-${index}`}>{resp}</li>
-                        ))}
-                      </ul>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+                    {/* Responsibilities */}
+                    {selectedJob.responsibilities && selectedJob.responsibilities.length > 0 && (
+                      <Card>
+                        <CardContent className="pt-6">
+                          <h3 className="text-xl font-semibold mb-4">Responsibilities</h3>
+                          <ul className="list-disc pl-5 space-y-2">
+                            {selectedJob.responsibilities.map((resp, index) => (
+                              <li key={`resp-${index}`}>{resp}</li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                </div>
+              </>
             ) : (
               <div className="flex justify-center items-center h-full">
                 {error ? (

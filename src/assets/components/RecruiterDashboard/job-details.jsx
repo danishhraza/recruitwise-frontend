@@ -32,7 +32,7 @@ export function JobDetails({job}) {
             </div>
             <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Salary Range</h3>
-              <p>${job.salary.toLocaleString()}</p>
+              <p>PKR{job.salary.toLocaleString()}</p>
             </div>
             <div>
               <h3 className="mb-1 text-sm font-medium text-muted-foreground">Status</h3>

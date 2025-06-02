@@ -498,23 +498,23 @@ await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
       }
     });
 
-    // Add timeout for response
-    const timeout = setTimeout(() => {
-      if (socket) {
-        socket.off('joinInterviewResponse');
-      }
-      setIsJoining(false);
-      toast.dismiss('joining-interview');
-      toast.error("Connection timed out. Please try again.", { 
-        id: 'timeout-error', 
-        duration: 5000 
-      });
-    }, 10000); // 10 second timeout
+    // // Add timeout for response
+    // const timeout = setTimeout(() => {
+    //   if (socket) {
+    //     socket.off('joinInterviewResponse');
+    //   }
+    //   setIsJoining(false);
+    //   toast.dismiss('joining-interview');
+    //   toast.error("Connection timed out. Please try again.", { 
+    //     id: 'timeout-error', 
+    //     duration: 5000 
+    //   });
+    // }, 10000); // 10 second timeout
 
-    // Clean up timeout if response received
-    if (socket) {
-      socket.once('joinInterviewResponse', () => clearTimeout(timeout));
-    }
+    // // Clean up timeout if response received
+    // if (socket) {
+    //   socket.once('joinInterviewResponse', () => clearTimeout(timeout));
+    // }
   };
 
 async function handleMicClick(e) {
