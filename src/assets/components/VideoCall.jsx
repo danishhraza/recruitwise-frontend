@@ -248,10 +248,50 @@ function VideoCall({ roomId, socket }) {
       setInterviewSessionActive(false); // This will trigger the startInterview useEffect again
     };
 
+     const handleInterviewConcluded = ({ message, text }) => {
+      console.log('SOCKET EVENT: interviewConcluded - AI has concluded the interview:', message, text);
+      toast.success(message || 'Interview has been concluded by AI', { duration: 5000 });
+      
+      // Add the final AI message to transcript if provided
+      if (text) {
+        setLiveTranscript(prev => [...prev, { 
+          speaker: "RecruitWise AI", 
+          text, 
+          align: "left", 
+          timestamp: Date.now() 
+        }]);
+      }
+      
+      // Stop all recordings and streams
+      try {
+        if (audioMediaRecorderRef.current && audioMediaRecorderRef.current.state === "recording") {
+          audioMediaRecorderRef.current.stop();
+        }
+        if (videoMediaRecorderRef.current && videoMediaRecorderRef.current.state === "recording") {
+          videoMediaRecorderRef.current.stop();
+        }
+        if (screenMediaRecorderRef.current && screenMediaRecorderRef.current.state === "recording") {
+          screenMediaRecorderRef.current.stop();
+        }
+      } catch (err) {
+        console.warn('Error stopping recorders:', err);
+      }
+      
+      // Set interview states
+      setIsAiSpeaking(false);
+      setCanUserSpeak(false);
+      setInterviewSessionActive(false);
+      setIsUserAudioRecording(false);
+      
+      // Navigate to ended screen
+      setStage('ended');
+    };
+
     socket.on('aiResponseStart', handleAiResponseStart);
     socket.on('aiResponseEnd', handleAiResponseEnd);
     socket.on('interviewFlowError', handleInterviewFlowError);
     socket.on('transcriptionUpdate', handleTranscriptionUpdate);
+    socket.on('interviewConcluded', handleInterviewConcluded);
     socket.on('error', handleGenericError);
     socket.on('disconnect', handleDisconnect);
     socket.on('reconnect', handleReconnect);
@@ -261,6 +301,7 @@ function VideoCall({ roomId, socket }) {
       socket.off('aiResponseEnd');
       socket.off('interviewFlowError'); 
       socket.off('transcriptionUpdate'); 
+      socket.off('interviewConcluded');
       socket.off('error');
       socket.off('disconnect'); 
       socket.off('reconnect');
@@ -828,7 +869,7 @@ const handleEndCall = useCallback(() => {
         <div className="w-full flex-grow relative">
           <Spline scene="https://prod.spline.design/vWvFcD4O3twcVXiF/scene.splinecode" />
           <div className="absolute bottom-4 left-4 bg-black/50 text-white px-3 py-1.5 rounded-md text-sm">
-            <span>RecruitWise AI {isAiSpeaking && "(Responding...)"}</span>
+            <span>Maya {isAiSpeaking && "(Responding...)"}</span>
           </div>
           
           {/* Audio Buffer Status Indicator */}

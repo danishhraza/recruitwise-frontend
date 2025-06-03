@@ -1,6 +1,6 @@
 import axios from "axios";
 const BASE_URL = 'https://ecomm-server.azurewebsites.net'
-const LOCAL_URL = 'http://localhost:3000'
+const LOCAL_URL = 'process.env.SERVER_URL'
 
 export default axios.create({
     baseURL:LOCAL_URL,

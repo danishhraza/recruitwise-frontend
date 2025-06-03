@@ -12,7 +12,7 @@ import {
 } from "../../../components/ui/tooltip"
 
 // Video component that supports jumping to timestamps using ReactPlayer
-function ProctoringVideo({ applicant, onJumpToTimestamp }) {
+function ProctoringVideo({ videoLink, onJumpToTimestamp }) {
   const playerRef = useRef(null)
   const [playing, setPlaying] = useState(false)
   const [volume, setVolume] = useState(0.8)
@@ -56,7 +56,7 @@ function ProctoringVideo({ applicant, onJumpToTimestamp }) {
         <div className="aspect-video">
           <ReactPlayer
             ref={playerRef}
-            url="https://recruitwisebucket.s3.eu-north-1.amazonaws.com/webcam/WIN_20250516_23_35_59_Pro.mp4"
+            url={videoLink}
             width="100%"
             height="100%"
             playing={playing}
@@ -91,23 +91,19 @@ function ProctoringVideo({ applicant, onJumpToTimestamp }) {
 }
 
 // Incident button that can be clicked to jump to a specific timestamp
-function IncidentButton({ time, onClick }) {
-  // Convert time format like "00:45" to seconds
-  const parseTimeToSeconds = (timeStr) => {
-    console.log("IncidentButton - parseTimeToSeconds called with timeStr:", timeStr)
-    const [minutes, seconds] = timeStr.split(':').map(Number)
-    const totalSeconds = minutes * 60 + seconds
-    console.log("IncidentButton - converted to totalSeconds:", totalSeconds)
-    return totalSeconds
+function IncidentButton({ timestamp, onClick }) {
+  // Convert timestamp (in seconds) to MM:SS format for display
+  const formatTime = (timeInSeconds) => {
+    const minutes = Math.floor(timeInSeconds / 60)
+    const seconds = Math.floor(timeInSeconds % 60)
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
   }
   
   const handleClick = () => {
-    console.log("IncidentButton - handleClick called for time:", time)
-    const seconds = parseTimeToSeconds(time)
-    console.log("IncidentButton - converted to seconds:", seconds)
+    console.log("IncidentButton - handleClick called for timestamp:", timestamp)
     if (onClick) {
       console.log("IncidentButton - onClick exists, calling it")
-      onClick(seconds)
+      onClick(timestamp)
     } else {
       console.log("IncidentButton - onClick is null or undefined")
     }
@@ -123,7 +119,7 @@ function IncidentButton({ time, onClick }) {
             className="ml-2 px-2 py-0 h-6 text-xs" 
             onClick={handleClick}
           >
-            {time}
+            {formatTime(timestamp)}
           </Button>
         </TooltipTrigger>
         <TooltipContent>
@@ -135,7 +131,7 @@ function IncidentButton({ time, onClick }) {
 }
 
 // Main proctoring component
-export function ProctoringResults({ applicant }) {
+export function ProctoringResults({ proctoringResults, videoLink }) {
   // Function to jump to timestamp, will be set by the video component
   // Using a ref instead of state to ensure it's available immediately and persists across renders
   const jumpToTimestampRef = useRef(null)
@@ -147,18 +143,6 @@ export function ProctoringResults({ applicant }) {
   
   console.log("ProctoringResults - Component rendering, jumpToTimestampRef.current is:", jumpToTimestampRef.current ? "function" : "null")
 
-  // Proctoring violation data
-  const violations = {
-    cellPhone: [
-      { timestamp: "00:59" }
-    ],
-    lookingAway: [
-      { timestamp: "00:37" },
-      { timestamp: "00:46" },
-      { timestamp: "00:52" },
-    ]
-  }
-  
   // Ensure jumpToTimestamp is called properly
   const handleJumpToTimestamp = (seconds) => {
     console.log("ProctoringResults - handleJumpToTimestamp called with seconds:", seconds)
@@ -170,101 +154,90 @@ export function ProctoringResults({ applicant }) {
     }
   }
 
+  // Add debugging to see what we're receiving
+  console.log("ProctoringResults - proctoringResults:", proctoringResults)
+  console.log("ProctoringResults - type:", typeof proctoringResults)
+  console.log("ProctoringResults - isArray:", Array.isArray(proctoringResults))
+
+  // Process proctoring results to group by incident type
+  // Ensure proctoringResults is an array before processing
+  const processedResults = (Array.isArray(proctoringResults) ? proctoringResults : []).reduce((acc, result) => {
+    const incidentType = result.incident
+    if (!acc[incidentType]) {
+      acc[incidentType] = []
+    }
+    // Add all timestamps for this incident type
+    result.timestamps?.forEach(timestamp => {
+      acc[incidentType].push(timestamp)
+    })
+    return acc
+  }, {})
+
   return (
-    <div className="space-y-6 ">
+    <div className="space-y-6">
       <ProctoringVideo 
-        applicant={applicant} 
+        videoLink={videoLink} 
         onJumpToTimestamp={setJumpToTimestamp} 
       />
       
       <Card className="p-6 bg-primary-foreground">
         <h3 className="text-lg font-medium mb-4">Proctoring Results</h3>
         <div className="space-y-6">
-          {/* Identity Verification */}
-          <div>
-            <div className="flex justify-between mb-2">
-              <span>Identity Verification</span>
-              <Badge variant="outline" className="bg-green-500/10 text-green-500">
-                Passed
-              </Badge>
-            </div>
-            <Progress value={100} className="h-2 bg-muted" />
-          </div>
           
-          {/* Cell Phone Detection */}
-          <div>
-            <div className="flex justify-between mb-2">
-              <span>Cell Phone Detected</span>
-              <Badge variant="outline" className="bg-red-500/10 text-red-500">
-                {violations.cellPhone.length} incidents
-              </Badge>
+          {/* Render each incident type dynamically */}
+          {Object.entries(processedResults).map(([incidentType, timestamps]) => {
+            // Determine badge color based on incident type
+            const getBadgeColor = (incident) => {
+              switch (incident.toLowerCase()) {
+                case 'person absent from frame':
+                  return 'bg-red-500/10 text-red-500'
+                case 'looking away violation':
+                  return 'bg-amber-500/10 text-amber-500'
+                case 'cell phone detected':
+                  return 'bg-orange-500/10 text-orange-500'
+                default:
+                  return 'bg-gray-500/10 text-gray-500'
+              }
+            }
+
+            // Calculate progress value based on number of incidents (you can adjust this logic)
+            const progressValue = Math.min((timestamps.length / 10) * 100, 100)
+
+            return (
+              <div key={incidentType}>
+                <div className="flex justify-between mb-2">
+                  <span className="capitalize">{incidentType}</span>
+                  <Badge variant="outline" className={getBadgeColor(incidentType)}>
+                    {timestamps.length} incidents
+                  </Badge>
+                </div>
+                <Progress value={progressValue} className="h-2 bg-muted" />
+                <div className="flex flex-wrap mt-2">
+                  <span className="text-sm text-muted-foreground">Timestamps:</span>
+                  {timestamps.slice(0, 20).map((timestamp, index) => (
+                    <IncidentButton 
+                      key={`${incidentType}-${index}`}
+                      timestamp={timestamp} 
+                      onClick={handleJumpToTimestamp} 
+                    />
+                  ))}
+                  {timestamps.length > 20 && (
+                    <span className="text-sm text-muted-foreground ml-2">
+                      +{timestamps.length - 20} more incidents
+                    </span>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+
+          {/* Show message if no proctoring results */}
+          {Object.keys(processedResults).length === 0 && (
+            <div className="text-center text-muted-foreground py-8">
+              No proctoring incidents detected.
             </div>
-            <Progress value={70} className="h-2 bg-muted" />
-            <div className="flex flex-wrap mt-2">
-              <span className="text-sm text-muted-foreground">Timestamps:</span>
-              {violations.cellPhone.map((incident, index) => (
-                <IncidentButton 
-                  key={index} 
-                  time={incident.timestamp} 
-                  onClick={handleJumpToTimestamp} 
-                />
-              ))}
-            </div>
-          </div>
-          
-          {/* Looking Away Violation */}
-          <div>
-            <div className="flex justify-between mb-2">
-              <span>Looking Away Violation</span>
-              <Badge variant="outline" className="bg-amber-500/10 text-amber-500">
-                {violations.lookingAway.length} incidents
-              </Badge>
-            </div>
-            <Progress value={60} className="h-2 bg-muted" />
-            <div className="flex flex-wrap mt-2">
-              <span className="text-sm text-muted-foreground">Timestamps:</span>
-              {violations.lookingAway.map((incident, index) => (
-                <IncidentButton 
-                  key={index} 
-                  time={incident.timestamp} 
-                  onClick={handleJumpToTimestamp} 
-                />
-              ))}
-            </div>
-          </div>
-          
-          {/* Candidate Missing */}
-          {/* <div>
-            <div className="flex justify-between mb-2">
-              <span>Candidate Missing From Camera</span>
-              <Badge variant="outline" className="bg-red-500/10 text-red-500">
-                {violations.missing.length} incident
-              </Badge>
-            </div>
-            <Progress value={85} className="h-2 bg-muted" />
-            <div className="flex flex-wrap mt-2">
-              <span className="text-sm text-muted-foreground">Timestamps:</span>
-              {violations.missing.map((incident, index) => (
-                <IncidentButton 
-                  key={index} 
-                  time={incident.timestamp} 
-                  onClick={handleJumpToTimestamp} 
-                />
-              ))}
-            </div>
-          </div> */}
-          
-          {/* Browser Focus */}
-          <div>
-            <div className="flex justify-between mb-2">
-              <span>Browser Focus</span>
-              <Badge variant="outline" className="bg-amber-500/10 text-amber-500">
-                Warning
-              </Badge>
-            </div>
-            <Progress value={85} className="h-2 bg-muted" />
-            <p className="text-sm text-muted-foreground mt-1">Browser focus lost for 15 seconds at 12:45</p>
-          </div>
+          )}
+        
         </div>
       </Card>
     </div>

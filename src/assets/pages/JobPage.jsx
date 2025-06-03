@@ -184,7 +184,7 @@ export default function JobPage() {
 
   // Format salary if needed
   const formattedSalary = job.salary ? 
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'PKR' }).format(job.salary) : 
     'Not specified'
 
   // Enhanced job object with formatted values

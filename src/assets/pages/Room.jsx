@@ -18,52 +18,173 @@ function Room() {
     const [isAuthorized, setIsAuthorized] = useState(false); // Add authorization state
 
     // Initialize socket connection only after authorization
-    useEffect(() => {
-        if (!isAuthorized) return; // Don't connect socket until authorized
+useEffect(() => {
+    if (!isAuthorized) return;
 
-        // Connect to socket when component mounts and user is authorized
-        const socketConnection = io('http://localhost:3000/interview', {
-            withCredentials: true,
-            transports: ['websocket']
+    console.log('Initializing persistent socket connection...');
+    
+    const socketConnection = io('process.env.SERVER_URL/interview', {
+        withCredentials: true,
+        
+        // Force WebSocket and prevent fallback that might cause disconnections
+        transports: ['websocket'],
+        upgrade: false, // Don't try to upgrade - stay on websocket
+        rememberUpgrade: false,
+        
+        // Aggressive ping/pong to keep connection alive
+        pingInterval: 10000, // Ping every 10 seconds (very frequent)
+        pingTimeout: 5000,   // Wait 5 seconds for pong response
+        
+        // Disable reconnection initially - we want to prevent disconnection
+        reconnection: false, // We'll enable this after connection is stable
+        
+        // Connection timeouts
+        timeout: 20000,
+        
+        // Force new connection
+        forceNew: false,
+        
+        // Auto-connect
+        autoConnect: true,
+        
+        // Prevent browser from closing connection
+        closeOnBeforeunload: false
+    });
+
+    // Keep-alive mechanism using existing socket events
+    let keepAliveInterval;
+    
+    socketConnection.on('connect', () => {
+        console.log('✅ Socket connected - setting up keep-alive mechanism');
+        
+        // Enable reconnection after successful connection
+        socketConnection.io.opts.reconnection = true;
+        socketConnection.io.opts.reconnectionAttempts = 10;
+        socketConnection.io.opts.reconnectionDelay = 1000;
+        
+        // Use existing events to keep connection alive
+        keepAliveInterval = setInterval(() => {
+            if (socketConnection.connected) {
+                // Use existing room-based events to keep connection alive
+                socketConnection.emit('heartbeat', { roomId: roomid, timestamp: Date.now() });
+            }
+        }, 8000); // Every 8 seconds
+        
+        toast.success("Connected to interview server", { 
+            id: 'socket-connection', 
+            duration: 3000 
         });
+        setIsConnecting(false);
+    });
 
-        // Setup socket event listeners
-        socketConnection.on('connect', () => {
-            console.log('Socket connected successfully');
-            toast.success("Connected to interview server", { id: 'socket-connection', duration: 3000 });
+    socketConnection.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', reason);
+        
+        // Clear keep-alive interval
+        if (keepAliveInterval) {
+            clearInterval(keepAliveInterval);
+            keepAliveInterval = null;
+        }
+        
+        // Re-enable reconnection if it was disabled
+        socketConnection.io.opts.reconnection = true;
+        
+        toast.error(`Connection lost: ${reason}`, { 
+            id: 'socket-disconnect', 
+            duration: 5000 
         });
+    });
 
-        socketConnection.on('connect_error', (err) => {
-            console.error('Socket connection error:', err);
-            toast.error(`Connection error: ${err.message || 'Unable to connect to server'}`, { 
-                id: 'socket-error', 
-                duration: 5000 
-            });
-        });
-
-        socketConnection.on('disconnect', (reason) => {
-            console.log('Socket disconnected:', reason);
-            toast.error(`Disconnected: ${reason}`, { id: 'socket-disconnect', duration: 5000 });
-        });
-
-        // Save socket to state
-        setSocket(socketConnection);
-
-        // Clean up the socket connection when the component unmounts
-        return () => {
-            console.log('Cleaning up socket connection');
-            if (socketConnection) {
-                socketConnection.disconnect();
+    // Prevent browser from pausing the socket when tab becomes inactive
+    const preventConnectionPause = () => {
+        // Use Page Visibility API to detect tab state changes
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                console.log('Tab hidden - maintaining socket connection');
+                
+                // Immediately send a heartbeat to keep connection active
+                if (socketConnection.connected) {
+                    socketConnection.emit('heartbeat', { roomId: roomid, timestamp: Date.now() });
+                }
+                
+                // Reduce but don't stop the keep-alive pings
+                if (keepAliveInterval) {
+                    clearInterval(keepAliveInterval);
+                    keepAliveInterval = setInterval(() => {
+                        if (socketConnection.connected) {
+                            socketConnection.emit('heartbeat', { roomId: roomid, timestamp: Date.now() });
+                        }
+                    }, 5000); // More frequent when hidden (every 5 seconds)
+                }
+            } else {
+                console.log('Tab visible - resuming normal operation');
+                
+                // Resume normal keep-alive interval
+                if (keepAliveInterval) {
+                    clearInterval(keepAliveInterval);
+                    keepAliveInterval = setInterval(() => {
+                        if (socketConnection.connected) {
+                            socketConnection.emit('heartbeat', { roomId: roomid, timestamp: Date.now() });
+                        }
+                    }, 8000);
+                }
             }
         };
-    }, [isAuthorized]); // Only run when isAuthorized changes
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    };
+
+    // Set up prevention mechanism
+    const cleanupVisibility = preventConnectionPause();
+
+    // Additional: Prevent connection from being closed by browser optimization
+    const preventBrowserOptimization = () => {
+        // Keep a small amount of activity to prevent browser from optimizing away the connection
+        const activityInterval = setInterval(() => {
+            if (socketConnection.connected) {
+                // Send minimal data to keep connection active
+                socketConnection.emit('ping', Date.now());
+            }
+        }, 15000); // Every 15 seconds
+
+        return () => clearInterval(activityInterval);
+    };
+
+    const cleanupActivity = preventBrowserOptimization();
+
+    setSocket(socketConnection);
+
+    // Cleanup
+    return () => {
+        console.log('Cleaning up socket connection');
+        
+        // Clear all intervals
+        if (keepAliveInterval) {
+            clearInterval(keepAliveInterval);
+        }
+        
+        // Run cleanup functions
+        cleanupVisibility();
+        cleanupActivity();
+        
+        // Clean up socket
+        if (socketConnection) {
+            socketConnection.removeAllListeners();
+            socketConnection.disconnect();
+        }
+    };
+}, [isAuthorized, roomid]);
 
     // Fetch room data with error handling
     async function fetchRoomData() {
         try {
             setIsConnecting(true);
             setHasError(false); // Reset error state
-            const response = await axios.get(`http://localhost:3000/interview/${roomid}`, {
+            const response = await axios.get(`process.env.SERVER_URL/interview/${roomid}`, {
                 withCredentials: true
             });
             console.log('Room data:', response.data.application);

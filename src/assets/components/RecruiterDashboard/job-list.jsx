@@ -42,6 +42,8 @@ import { Plus } from "lucide-react"
 import { cn } from "../../../lib/utils"
 import axios from "../../../api/axios"
 import { toast } from "sonner"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 
 export function JobList() {
   const navigate = useNavigate()
@@ -103,7 +105,23 @@ async function fetchJobs() {
     fetchJobs()
   }, [])
 
+  const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  customQuestions: z.array(z.string()),
+  deadline: z.date(),
+  salary: z.number().min(0),
+  jobType: z.string().min(1, "Job type is required"),
+  skills: z.array(z.string()).min(1, "At least one skill is required"), // This makes skills required
+  experience: z.string().min(1, "Experience is required"),
+  employmentType: z.string().min(1, "Employment type is required"),
+  requirements: z.string().min(1, "Requirements are required"),
+  location: z.string().min(1, "Location is required"),
+  coverLetterRequired: z.boolean()
+})
+
   const form = useForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -191,8 +209,31 @@ async function fetchJobs() {
     }
   }
 
-  const jobTypes = ["Full-Time", "Part-Time", "Contract", "Temporary", "Internship"]
-  const employmentTypes = ["OnSite", "Remote", "Hybrid"]
+  // Job type configurations with display labels and backend values
+  const jobTypeOptions = [
+    { value: "Full-Time", label: "Full Time" },
+    { value: "Part-Time", label: "Part Time" },
+    { value: "Contract", label: "Contract" },
+    { value: "Temporary", label: "Temporary" },
+    { value: "Internship", label: "Internship" }
+  ]
+
+  const employmentTypeOptions = [
+    { value: "OnSite", label: "On Site" },
+    { value: "Remote", label: "Remote" },
+    { value: "Hybrid", label: "Hybrid" }
+  ]
+
+  // Helper functions to get display labels
+  const getJobTypeLabel = (value) => {
+    const option = jobTypeOptions.find(opt => opt.value === value)
+    return option ? option.label : value
+  }
+
+  const getEmploymentTypeLabel = (value) => {
+    const option = employmentTypeOptions.find(opt => opt.value === value)
+    return option ? option.label : value
+  }
 
   if (loading) {
     return (
@@ -346,7 +387,7 @@ async function fetchJobs() {
                       <circle cx="17" cy="17" r="3" />
                       <circle cx="7" cy="7" r="3" />
                     </svg>
-                    {job.jobType.charAt(0).toUpperCase() + job.jobType.slice(1)} • {job.employmentType.charAt(0).toUpperCase() + job.employmentType.slice(1)}
+                    {getJobTypeLabel(job.jobType)} • {getEmploymentTypeLabel(job.employmentType)}
                   </div>
                   <div className="flex items-center text-muted-foreground">
                     <svg
@@ -392,7 +433,7 @@ async function fetchJobs() {
                     </svg>
                     Salary: {new Intl.NumberFormat('en-US', { 
                       style: 'currency', 
-                      currency: 'USD',
+                      currency: 'PKR',
                       minimumFractionDigits: 0
                     }).format(job.salary)}
                   </div>
@@ -473,7 +514,7 @@ async function fetchJobs() {
                           <FormControl>
                             <Input 
                               type="number" 
-                              placeholder="Annual salary" 
+                              placeholder="Monthly salary" 
                               {...field}
                               onChange={e => field.onChange(Number(e.target.value))}
                             />
@@ -515,8 +556,10 @@ async function fetchJobs() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {jobTypes.map((type) => (
-                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                              {jobTypeOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
@@ -541,8 +584,10 @@ async function fetchJobs() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {employmentTypes.map((type) => (
-                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                              {employmentTypeOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
@@ -583,7 +628,7 @@ async function fetchJobs() {
                               onChange={(e) => {
                                 const value = e.target.value
                                 setSkillsInput(value)
-                                
+                              
                                 // Only update the form value on blur or when component unmounts
                                 // This allows normal typing behavior while editing
                               }}
@@ -596,6 +641,7 @@ async function fetchJobs() {
                                 
                                 onChange(skillsArray)
                               }}
+                              required
                             />
                           </FormControl>
                           <FormDescription>

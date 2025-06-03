@@ -81,7 +81,7 @@ const JobDetailPage = () => {
     if (!salary) return 'Not specified';
     return new Intl.NumberFormat('en-US', { 
       style: 'currency', 
-      currency: 'USD',
+      currency: 'PKR',
       maximumFractionDigits: 0
     }).format(salary);
   };
