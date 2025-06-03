@@ -3,13 +3,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, ImagePlus } from 'lucide-react';
+import { Upload, ImagePlus, UserPlus, ArrowLeft } from 'lucide-react';
 import { toast } from "sonner";
 import axios from '../../api/axios'
 import { useNavigate } from 'react-router-dom';
 
 const AddCompanyPage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [showRecruiterForm, setShowRecruiterForm] = useState(false);
+  const [createdCompany, setCreatedCompany] = useState(null);
+
   async function fetchData() {
     try {
       const response = await axios.get('/auth/me',{withCredentials:true});
@@ -23,12 +26,13 @@ const AddCompanyPage = () => {
     } catch (error) {
       console.error('Error fetching data:', error);
       navigate("/")
+    }
   }
-  }
-  useEffect(() => { 
-  fetchData()
 
+  useEffect(() => { 
+    fetchData()
   },[])
+
   const [companyData, setCompanyData] = useState({
     name: '',
     domain: '',
@@ -38,9 +42,24 @@ const AddCompanyPage = () => {
   const [companyLogo, setCompanyLogo] = useState(null);
   const [logoPreview, setLogoPreview] = useState(null);
 
+  const [recruiterData, setRecruiterData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    position: 'Head Recruiter'
+  });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCompanyData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleRecruiterInputChange = (e) => {
+    const { name, value } = e.target;
+    setRecruiterData(prev => ({
       ...prev,
       [name]: value
     }));
@@ -82,20 +101,14 @@ const AddCompanyPage = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-
+      console.log('Company created successfully:', response.data);
       toast.success("Company Added Successfully", {
         description: `Company ${response.data.name} has been created.`,
       });
 
-      // Reset form after successful submission
-      setCompanyData({
-        name: '',
-        domain: '',
-        location: '',
-        website: '',
-      });
-      setCompanyLogo(null);
-      setLogoPreview(null);
+      // Store the created company data and show recruiter form
+      setCreatedCompany(response.data);
+      setShowRecruiterForm(true);
 
     } catch (error) {
       toast.error("Error", {
@@ -104,6 +117,126 @@ const AddCompanyPage = () => {
       console.error('Company creation error:', error);
     }
   };
+
+  const handleRecruiterSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(`/company/${createdCompany.id}/add-recruiter`, recruiterData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Head recruiter added successfully:', response.data);
+      toast.success("Head Recruiter Added", {
+        description: `${recruiterData.name} has been added as head recruiter.`,
+      });
+
+      // Reset all forms and go back to initial state
+      setCompanyData({
+        name: '',
+        domain: '',
+        location: '',
+        website: '',
+      });
+      setCompanyLogo(null);
+      setLogoPreview(null);
+      setRecruiterData({
+        name: '',
+        email: '',
+        phone: '',
+        position: 'Head Recruiter'
+      });
+      setCreatedCompany(null);
+      setShowRecruiterForm(false);
+
+    } catch (error) {
+      toast.error("Error", {
+        description: error.response?.data?.message || "Failed to add head recruiter. Please try again.",
+      });
+      console.error('Recruiter addition error:', error);
+    }
+  };
+
+  const handleSkipRecruiter = () => {
+    // Reset all forms and go back to initial state
+    setCompanyData({
+      name: '',
+      domain: '',
+      location: '',
+      website: '',
+    });
+    setCompanyLogo(null);
+    setLogoPreview(null);
+    setRecruiterData({
+      name: '',
+      email: '',
+      phone: '',
+      position: 'Head Recruiter'
+    });
+    setCreatedCompany(null);
+    setShowRecruiterForm(false);
+    
+    toast.success("Company Setup Complete", {
+      description: "You can add recruiters later from the company management page.",
+    });
+  };
+
+  const handleBackToCompanyForm = () => {
+    setShowRecruiterForm(false);
+    setCreatedCompany(null);
+  };
+
+  if (showRecruiterForm && createdCompany) {
+    return (
+      <div className="px-4 py-8 h-screen flex justify-center items-center">
+        <Card className="w-96">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleBackToCompanyForm}
+                className="p-1"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <div>
+                <CardTitle>Add Head Recruiter</CardTitle>
+                <CardDescription>
+                  Add a head recruiter for {createdCompany.name}
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleRecruiterSubmit} className="space-y-4">
+
+
+              <div>
+                <Label htmlFor="recruiterEmail">Email Address</Label>
+                <Input
+                  type="email"
+                  id="recruiterEmail"
+                  name="email"
+                  value={recruiterData.email}
+                  onChange={handleRecruiterInputChange}
+                  required
+                  placeholder="Enter recruiter's email"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit" className="flex-1">
+                  <UserPlus className="mr-2 h-4 w-4" /> Add Recruiter
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="px-4 py-8 h-screen flex justify-center items-center">

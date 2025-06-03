@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Search } from "lucide-react"
 
 import { Badge } from "../../../components/ui/badge"
+import { Button } from "../../../components/ui/button"
 import { Input } from "../../../components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table"
@@ -80,25 +81,50 @@ export function UserApplications() {
   }, [])
 
   // Get company name for a job
-// Get company name for a job
-const getCompanyName = (job) => {
-  if (!job) return 'Unknown Company';
-  
-  if (job.company && companyNames[job.company]) {
-    return companyNames[job.company];
-  }
-  return job.location || 'Unknown Company';
-};
+  const getCompanyName = (job) => {
+    if (!job) return 'Unknown Company';
+    
+    // Check if job.company is an object with name property (like in your sample data)
+    if (job.company && typeof job.company === 'object' && job.company.name) {
+      return job.company.name;
+    }
+    
+    // Check if job.company is a string ID and we have the name cached
+    if (job.company && companyNames[job.company]) {
+      return companyNames[job.company];
+    }
+    
+    return job.location || 'Unknown Company';
+  };
+
+  // Normalize status for display and filtering
+  const normalizeStatus = (status) => {
+    if (status === 'interview_scheduled') {
+      return 'pending';
+    }
+    if (status === 'interviewed') {
+      return 'completed';
+    }
+    return status;
+  };
+
+  // Handle join interview action
+  const handleJoinInterview = (interviewLink) => {
+    if (interviewLink) {
+      window.open(interviewLink, '_blank');
+    }
+  };
 
   // Filter applications based on search query and status filter
   const filteredApplications = applications.filter((application) => {
     const companyName = getCompanyName(application.job);
+    const normalizedStatus = normalizeStatus(application.status);
     
     const matchesSearch =
       application.job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       companyName.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === "all" || application.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || normalizedStatus === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
@@ -123,11 +149,7 @@ const getCompanyName = (job) => {
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="reviewed">Reviewed</SelectItem>
-              <SelectItem value="shortlisted">Shortlisted</SelectItem>
-              <SelectItem value="interviewed">Interviewed</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-              <SelectItem value="hired">Hired</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -143,7 +165,7 @@ const getCompanyName = (job) => {
         </Card>
       ) : filteredApplications.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-8 text-center">
-          <h3 className="mb-2 text-xl font-medium">No applications found</h3>
+          <h3 className="mb-2 text-xl font-medium">No Application Found</h3>
           <p className="text-muted-foreground">
             {searchQuery || statusFilter !== "all"
               ? "No applications match your search criteria."
@@ -158,12 +180,15 @@ const getCompanyName = (job) => {
                 <TableHead>Job</TableHead>
                 <TableHead>Company</TableHead>
                 <TableHead className="hidden md:table-cell">Applied Date</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>Interview Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredApplications.map((application) => {
                 const companyName = getCompanyName(application.job);
+                const normalizedStatus = normalizeStatus(application.status);
+                const showJoinInterview = application.status === 'interview_scheduled' && application.interviewLink;
                 
                 return (
                   <TableRow key={application._id}>
@@ -174,7 +199,18 @@ const getCompanyName = (job) => {
                     <TableCell className="hidden md:table-cell">{companyName}</TableCell>
                     <TableCell className="hidden md:table-cell">{formatDate(application.createdAt)}</TableCell>
                     <TableCell>
-                      <ApplicationStatusBadge status={application.status} />
+                      <ApplicationStatusBadge status={normalizedStatus} />
+                    </TableCell>
+                    <TableCell>
+                      {showJoinInterview && (
+                        <Button
+                          size="sm"
+                          onClick={() => handleJoinInterview(application.interviewLink)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          Join Interview
+                        </Button>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
@@ -192,15 +228,7 @@ function ApplicationStatusBadge({ status }) {
     switch (status) {
       case "pending":
         return "secondary"
-      case "reviewed":
-        return "default"
-      case "shortlisted":
-        return "primary"
-      case "interviewed":
-        return "success"
-      case "rejected":
-        return "destructive"
-      case "hired":
+      case "completed":
         return "success"
       default:
         return "secondary"

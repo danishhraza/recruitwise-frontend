@@ -7,7 +7,7 @@ import { ModeToggle } from "../components/mode-toggle";
 import Filters from '../components/Filters';
 import { useFilters } from '../Context/FiltersContext';
 import SearchBar from '../components/SearchBar';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import JobListing from '../components/JobListingPage';
 import JobApplicationDrawer from '../components/JobApplicationDrawer';
 import { fetchAllJobs, fetchJobById } from '../../lib/data'; // Import functions from data.js
@@ -23,7 +23,7 @@ const JobListingPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
-
+  const navigate = useNavigate();
   // Function to sort jobs by most recent first
   const sortJobsByRecent = (jobs) => {
     return jobs.sort((a, b) => {
@@ -510,7 +510,7 @@ const JobListingPage = () => {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={() => {
               // Redirect to login page or handle login
-              window.location.href = '/login'; // Adjust this to your login route
+              navigate('/auth/login') // Adjust this to your login route
             }}>
               Login
             </AlertDialogAction>

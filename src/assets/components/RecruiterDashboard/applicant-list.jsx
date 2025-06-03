@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Badge } from "../../../components/ui/badge"
-import { Button } from "../../../components/ui/button"
-import { Card } from "../../../components/ui/card"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../../components/ui/dropdown-menu"
-import { Input } from "../../../components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../../components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table"
-import { getAllApplicants } from "../../../lib/applicant-data"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-export function ApplicantList({ applicants, jobId }) {
-  const navigate = useNavigate()
+export function ApplicantList({ applicants, jobId, onApplicantSelect }) {
   const [searchQuery, setSearchQuery] = useState("")
   const [interviewFilter, setInterviewFilter] = useState("all")
 
@@ -23,13 +20,17 @@ export function ApplicantList({ applicants, jobId }) {
       applicant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (applicant.email && applicant.email.toLowerCase().includes(searchQuery.toLowerCase()))
 
-    const matchesInterviewStatus = interviewFilter === "all" || applicant.interviewStatus === interviewFilter
+    // Use the mapped interview status for filtering
+    const interviewStatusToCheck = applicant.mappedInterviewStatus || applicant.interviewStatus
+    const matchesInterviewStatus = interviewFilter === "all" || 
+      interviewStatusToCheck?.toLowerCase() === interviewFilter.toLowerCase()
 
     return matchesSearch && matchesInterviewStatus
   })
 
   const handleApplicantClick = (applicant) => {
-    navigate(`/dashboard/${jobId}/${applicant}`);
+    // Call the callback function instead of navigating
+    onApplicantSelect(applicant)
   }
 
   if (applicants.length === 0) {
@@ -59,7 +60,6 @@ export function ApplicantList({ applicants, jobId }) {
               <SelectItem value="all">All Interviews</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="terminated">Terminated</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -74,7 +74,6 @@ export function ApplicantList({ applicants, jobId }) {
               <TableHead>Interview Status</TableHead>
               <TableHead className="hidden md:table-cell">Applied Date</TableHead>
               <TableHead>Score</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -89,7 +88,7 @@ export function ApplicantList({ applicants, jobId }) {
                 <TableRow
                   key={applicant.id}
                   className="cursor-pointer hover:bg-accent/50"
-                  onClick={() => handleApplicantClick(applicant.id)}
+                  onClick={() => handleApplicantClick(applicant)}
                 >
                   <TableCell>
                     <div>
@@ -98,62 +97,28 @@ export function ApplicantList({ applicants, jobId }) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <InterviewStatusBadge status={applicant.interviewStatus} />
+                    <InterviewStatusBadge 
+                      status={applicant.mappedInterviewStatus || applicant.interviewStatus} 
+                    />
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{applicant.appliedDate}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {applicant.formattedAppliedDate || applicant.appliedDate}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center">
                       <span
                         className={`mr-2 font-medium ${
-                          applicant.score >= 8
+                          applicant.scores?.overallScore >= 8
                             ? "text-green-600 dark:text-green-400"
-                            : applicant.score >= 6
+                            : applicant.scores?.overallScore >= 6
                               ? "text-amber-600 dark:text-amber-400"
                               : "text-red-600 dark:text-red-400"
                         }`}
                       >
-                        2
+                        {applicant.scores?.overallScore || 'N/A'}
                       </span>
                       <span className="text-xs text-muted-foreground">/10</span>
                     </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm">
-                          <span className="sr-only">Open menu</span>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="h-4 w-4"
-                          >
-                            <circle cx="12" cy="12" r="1" />
-                            <circle cx="12" cy="5" r="1" />
-                            <circle cx="12" cy="19" r="1" />
-                          </svg>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleApplicantClick(applicant)
-                          }}
-                        >
-                          View Profile
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Schedule Interview</DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Send Email</DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>Update Interview Status</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))
@@ -174,8 +139,6 @@ function InterviewStatusBadge({ status }) {
         return "secondary"
       case "completed":
         return "primary"
-      case "terminated":
-        return "destructive"
       default:
         return "secondary"
     }

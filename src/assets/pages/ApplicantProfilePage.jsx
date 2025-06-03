@@ -1,354 +1,240 @@
-import { useState, useRef} from "react"
-import { useParams, useLocation, Link  } from "react-router-dom"
-import { Star, ChevronDown, ExternalLink, Play, Volume2, Maximize2 } from "lucide-react"
-import { DashboardHeader } from "../components/RecruiterDashboard/header"
-import { DashboardSidebar } from "../components/RecruiterDashboard/sidebar"
-import { Badge } from "../../components/ui/badge"
-import { Button } from "../../components/ui/button"
-import { Card } from "../../components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs"
-import { Avatar, AvatarFallback } from "../../components/ui/avatar"
-import { Progress } from "../../components/ui/progress"
-import { getApplicantById } from "../../lib/applicant-data"
-import { ProctoringResults } from "../components/RecruiterDashboard/proctor-component"
-import ReactPlayer from "react-player"
+import { useState, useEffect } from "react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 
-export default function ApplicantProfilePage() {
+export default function ApplicantProfilePage({ applicant, jobId, onBack }) {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
-  const location = useLocation()
-  const [activeTab, setActiveTab] = useState("scores")
-
-  // NEW (using path params)
-  const { jobId, applicantId } = useParams()
-
-  const applicant =   {
-      id: applicantId,
-      name: "Muhammad Humayun Raza",
-      favorite: true,
-      role: "Data Scientist",
-      experience: 8,
-      location: "Karachi,Pakistan",
-      skills: ["Python", "pyTorch"],
-      certifications: [
-        { name: "pyTorch", primary: true },
-        { name: "Python", primary: true },
-      ],
-      hiringSignals: [
-        "Candidate did not complete their interview",
-      ],
-      email: "azraelcsofficial@gmail.com",
-      links: [
-        { type: "Resume", url: "https://recruitwisebucket.s3.eu-north-1.amazonaws.com/resumes/6825ba7cb1443a4188b2cb7e-68tplk.pdf" },
-        { type: "GitHub", url: "#" },
-        { type: "Portfolio", url: "#" },
-      ],
-      interviewImage:
-        "https://recruitwise-frontend.vercel.app/images/pov-interview5.jpg",
-      interviewScore: 2,
-      skillRatings: {
-        Python: 3,
-        pyTorch: 2,
-        "Communication Skills": 3
-      }
-    }
+  useEffect(() => {
+    console.log("Selected applicant:", applicant)
+  }, [applicant])
 
   if (!applicant) {
     return (
-
-          <main className="container mx-auto p-4 md:p-6">
-            <div className="flex flex-col items-center justify-center space-y-4 py-12">
-              <h2 className="text-2xl font-bold">Applicant not found</h2>
-              <p className="text-muted-foreground">
-                The applicant you're looking for doesn't exist or has been removed.
-              </p>
-              <Button asChild>
-                <Link to={`/dashboard/${jobId}`}>Return to Dashboard</Link>
-              </Button>
-            </div>
-          </main>
-
+      <div className="flex flex-col items-center justify-center space-y-4 py-12">
+        <h2 className="text-2xl font-bold">Applicant not found</h2>
+        <p className="text-muted-foreground">
+          The applicant profile you're looking for doesn't exist.
+        </p>
+        <Button onClick={onBack}>
+          Back to Applicants
+        </Button>
+      </div>
     )
   }
 
-  return (
-        <main className="container mx-auto p-4 md:p-6">
-          <div className="mb-6 flex items-center">
-            <Button variant="outline" size="sm" asChild className="mr-4 text-foreground">
-              <Link to={`/dashboard/${jobId}`}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-1 h-4 w-4"
-                >
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-                Back to Job
-              </Link>
-            </Button>
-            <h1 className="text-2xl font-bold tracking-tight md:text-3xl text-primary">{applicant.name}</h1>
-            {applicant.favorite}
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 text-foreground">
-            {/* Left column - Applicant details */}
-            <div className="lg:col-span-3 space-y-6">
-              <ApplicantDetails applicant={applicant} />
-              <HiringSignal applicant={applicant} />
-              <ContactInfo applicant={applicant} />
-              <Links applicant={applicant} />
-            </div>
-
-            {/* Right column - Interview content */}
-            <div className="lg:col-span-9 space-y-6">
-              <Tabs defaultValue="scores" className="w-full" onValueChange={setActiveTab}>
-                <TabsList className="mb-4 md:justify-start w-full bg-primary-foreground">
-                  <TabsTrigger value="scores">Scores and Transcript</TabsTrigger>
-                  <TabsTrigger value="proctoring">Proctoring Result</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="scores" className="mt-0">
-                  <div className="space-y-6">                
-                    <InterviewScore applicant={applicant} />
-                    <InterviewVideo applicant={applicant} />
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="proctoring" className="mt-0">
-                  {/* Replace with the new ProctoringResults component */}
-                  <ProctoringResults applicant={applicant} />
-                </TabsContent>
-              </Tabs>
-
-              <div className="flex justify-between">
-                <div className="space-x-2">
-                  <Button variant="destructive">
-                    Decline
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  </Button>
-                  <Button variant="outline">Interview</Button>
-                </div>
-                <Button className="bg-emerald-600 text-white hover:bg-emerald-700">Hire {applicant.name.split(" ")[0]}</Button>
-              </div>
-            </div>
-          </div>
-        </main>
-  )
-}
-
-function ApplicantDetails({ applicant }) {
-  return (
-    <div className="space-y-4 bg-primary-foreground p-4 rounded-lg shadow-md">
-      <div className="flex items-center">
-        <Avatar className="h-12 w-12 mr-4">
-          <AvatarFallback className="bg-primary/10 text-primary">
-            {applicant.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
-          </AvatarFallback>
-        </Avatar>
-      </div>
-
-      <div className="space-y-3">
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Role</span>
-          <span className="font-medium">{applicant.role}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Exp</span>
-          <span className="font-medium">{applicant.experience} yrs</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Rate</span>
-          <span className="font-medium">${applicant.rate}/hr</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Location</span>
-          <span className="font-medium text-right">{applicant.location}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Skills</span>
-          <span className="font-medium text-right">{applicant.skills.join(", ")}</span>
-        </div>
-        <div className="flex flex-wrap gap-2 mt-2">
-          {applicant.certifications.map((cert, index) => (
-            <Badge key={index} variant={cert.primary ? "default" : "secondary"}>
-              {cert.name}
-            </Badge>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function HiringSignal({ applicant }) {
-  return (
-    <div className="space-y-3 bg-primary-foreground p-4 rounded-lg shadow-md">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">AI Remarks</h3>
-        <ChevronDown className="h-4 w-4" />
-      </div>
-      <ul className="space-y-2 list-disc pl-5">
-        {applicant.hiringSignals.map((signal, index) => (
-          <li key={index} className="text-sm">
-            {signal}
-          </li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-function ContactInfo({ applicant }) {
-  return (
-    <div className="space-y-3 bg-primary-foreground p-4 rounded-lg shadow-md">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Contact info</h3>
-        <ChevronDown className="h-4 w-4" />
-      </div>
-      <div className="space-y-2">
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Email</span>
-          <a href={`mailto:${applicant.email}`} className="text-primary">
-            {applicant.email}
-          </a>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-muted-foreground">Phone</span>
-          <a href={`tel:${applicant.phone}`} className="text-primary">
-            {applicant.phone}
-          </a>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function Links({ applicant }) {
-  return (
-    <div className="space-y-3 bg-primary-foreground p-4 rounded-lg shadow-md">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Links</h3>
-        <ChevronDown className="h-4 w-4" />
-      </div>
-      <div className="space-y-2">
-        {applicant.links.map((link, index) => (
-          <div key={index} className="flex items-center justify-between">
-            <span className="text-muted-foreground">{link.type}</span>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-primary flex items-center">
-              View <ExternalLink className="ml-1 h-3 w-3" />
-            </a>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function InterviewVideo() {
-    const playerRef = useRef(null)
-    const [muted, setMuted] = useState(true)
-  return (
-    <Card className="overflow-hidden bg-primary-foreground">
-        <div className="aspect-video">
-          <ReactPlayer
-            ref={playerRef}
-            url="https://recruitwisebucket.s3.eu-north-1.amazonaws.com/screen-recording/anvie+-+Made+with+Clipchamp.mp4"
-            width="100%"
-            height="100%"
-            muted={muted}
-            controls={true}
-            config={{
-              file: {
-                attributes: {
-                  style: { width: '100%', height: '100%' }
-                }
-              }
-            }}
-          />
-        </div>
-      <div className="p-4">
-        <p className="text-sm">
-          Watch Humayun's full interview here.
-        </p>
-      </div>
-    </Card>
-  )
-}
-
-function InterviewScore({ applicant }) {
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Interview Performance</h3>
-        <div className="bg-primary/10 text-primary font-semibold px-4 py-2 rounded-full">
-          Overall Score: {applicant.interviewScore}/10
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-4">
-        {Object.entries(applicant.skillRatings).map(([skill, rating]) => (
-          <SkillRatingChart key={skill} skill={skill} rating={rating} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
-function SkillRatingChart({ skill, rating }) {
-  // Calculate percentage for the donut chart
-  const percentage = (rating / 10) * 100;
-  
-  // Define colors based on rating
-  let color = "text-red-500";
-  if (rating >= 8) {
-    color = "text-emerald-500";
-  } else if (rating >= 6) {
-    color = "text-amber-500";
+  const handleViewResume = () => {
+    if (applicant.ResumeUrl) {
+      window.open(applicant.ResumeUrl, '_blank')
+    }
   }
 
   return (
-    <Card className="p-4 flex flex-col items-center bg-primary-foreground">
-      <h4 className="font-medium mb-3">{skill}</h4>
-      <div className="relative w-24 h-24">
-        {/* Background circle */}
-        <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-          <circle
-            className="text-muted stroke-current"
-            strokeWidth="10"
-            cx="50"
-            cy="50"
-            r="40"
-            fill="transparent"
-          />
-          {/* Foreground circle */}
-          <circle
-            className={`${color} stroke-current`}
-            strokeWidth="10"
-            strokeLinecap="round"
-            cx="50"
-            cy="50"
-            r="40"
-            fill="transparent"
-            strokeDasharray={`${percentage * 2.51} 251`}
-          />
-        </svg>
-        {/* Rating text in the middle */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className={`${color} text-xl font-bold`}>{rating}</span>
+    <div className="space-y-6">
+      {/* Header with Back Button */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button variant="outline" size="sm" onClick={onBack}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-1 h-4 w-4"
+            >
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+            Back to Applicants
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">{applicant.name}</h1>
+            <p className="text-muted-foreground">{applicant.email}</p>
+          </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          {applicant.ResumeUrl && (
+            <Button variant="outline" onClick={handleViewResume}>
+              View Resume
+            </Button>
+          )}
+          <Button>Schedule Interview</Button>
+          <Button variant="outline">Send Message</Button>
         </div>
       </div>
-      <p className="mt-2 text-sm text-muted-foreground">
-        {rating >= 8 ? "Excellent" : rating >= 6 ? "Good" : "Not enough data to evaluate"}
-      </p>
-    </Card>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Applicant Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Applicant Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">Name</h3>
+              <p className="text-base">{applicant.name}</p>
+            </div>
+            <div>
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">Email</h3>
+              <p className="text-base">{applicant.email}</p>
+            </div>
+            <div>
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">Applied Date</h3>
+              <p className="text-base">{applicant.formattedAppliedDate || applicant.appliedDate}</p>
+            </div>
+            <div>
+              <h3 className="mb-1 text-sm font-medium text-muted-foreground">Interview Status</h3>
+              <InterviewStatusBadge 
+                status={applicant.mappedInterviewStatus || applicant.interviewStatus} 
+              />
+            </div>
+            {applicant.skills && applicant.skills.length > 0 && (
+              <div>
+                <h3 className="mb-2 text-sm font-medium text-muted-foreground">Skills</h3>
+                <div className="flex flex-wrap gap-2">
+                  {applicant.skills.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="rounded-md bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Overall Score */}
+        {applicant.scores && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Assessment Score</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center">
+                <div className="mb-2">
+                  <span
+                    className={`text-4xl font-bold ${
+                      applicant.scores.overallScore >= 8
+                        ? "text-green-600 dark:text-green-400"
+                        : applicant.scores.overallScore >= 6
+                          ? "text-amber-600 dark:text-amber-400"
+                          : "text-red-600 dark:text-red-400"
+                    }`}
+                  >
+                    {applicant.scores.overallScore}
+                  </span>
+                  <span className="text-xl text-muted-foreground">/10</span>
+                </div>
+                <p className="text-sm text-muted-foreground">Overall Score</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      {/* Skill Scores */}
+      {applicant.scores && applicant.scores.skillScores && applicant.scores.skillScores.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Skill Assessment</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {applicant.scores.skillScores.map((skillScore, index) => (
+                <div key={skillScore._id || index} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium">{skillScore.skill}</h4>
+                    <span
+                      className={`font-semibold ${
+                        skillScore.score >= 8
+                          ? "text-green-600 dark:text-green-400"
+                          : skillScore.score >= 6
+                            ? "text-amber-600 dark:text-amber-400"
+                            : "text-red-600 dark:text-red-400"
+                      }`}
+                    >
+                      {skillScore.score}/10
+                    </span>
+                  </div>
+                  {skillScore.remarks && (
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {skillScore.remarks}
+                    </p>
+                  )}
+                  {index < applicant.scores.skillScores.length - 1 && (
+                    <Separator className="mt-4" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Evaluation Summary */}
+      {applicant.evaluationSummary && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Evaluation Summary</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm leading-relaxed">
+              {applicant.evaluationSummary}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Actions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline">Update Interview Status</Button>
+            <Button variant="outline">Schedule Follow-up</Button>
+            <Button variant="outline">Add Notes</Button>
+            <Button variant="outline">Send Feedback</Button>
+            {applicant.ResumeUrl && (
+              <Button variant="outline" onClick={handleViewResume}>
+                Download Resume
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+
+function InterviewStatusBadge({ status }) {
+  const getVariant = () => {
+    if (!status) return "secondary";
+    
+    switch (status.toLowerCase()) {
+      case "pending":
+        return "secondary"
+      case "completed":
+        return "primary"
+      default:
+        return "secondary"
+    }
+  }
+
+  return (
+    <Badge variant={getVariant()} className="capitalize">
+      {status || "Not Scheduled"}
+    </Badge>
   )
 }
