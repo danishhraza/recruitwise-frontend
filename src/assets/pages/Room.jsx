@@ -23,7 +23,7 @@ useEffect(() => {
 
     console.log('Initializing persistent socket connection...');
     
-    const socketConnection = io('process.env.SERVER_URL/interview', {
+    const socketConnection = io(`${process.env.SERVER_URL}/interview`, {
         withCredentials: true,
         
         // Force WebSocket and prevent fallback that might cause disconnections
@@ -184,7 +184,7 @@ useEffect(() => {
         try {
             setIsConnecting(true);
             setHasError(false); // Reset error state
-            const response = await axios.get(`process.env.SERVER_URL/interview/${roomid}`, {
+            const response = await axios.get(`/interview/${roomid}`, {
                 withCredentials: true
             });
             console.log('Room data:', response.data.application);
