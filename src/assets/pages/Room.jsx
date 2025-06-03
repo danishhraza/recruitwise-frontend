@@ -23,7 +23,7 @@ useEffect(() => {
 
     console.log('Initializing persistent socket connection...');
     
-    const socketConnection = io(`${process.env.SERVER_URL}/interview`, {
+    const socketConnection = io(`${import.meta.env.VITE_SERVER_URL}/interview`, {
         withCredentials: true,
         
         // Force WebSocket and prevent fallback that might cause disconnections
