@@ -4,6 +4,12 @@
 
 RecruitWise is a cutting-edge recruitment platform designed to simplify and accelerate the hiring process. Built with React and Vite, it provides a seamless and efficient user experience for recruiters and candidates alike.
 
+Related Repositories: 
+
+[Cheating Detection](https://github.com/danishhraza/cheating-detection-recruitwise.git)
+[Backend](https://github.com/KhizarA77/recruit_wise)
+
+
 ## Features
 
 - **AI-Powered Recruitment**: Leverage AI to source, vet, and hire top talent globally.
