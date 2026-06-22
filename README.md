@@ -18,7 +18,7 @@ RecruitWise is a cutting-edge recruitment platform designed to simplify and acce
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-repo/recruitwise.git
+   git clone https://github.com/danishhraza/recruitwise-frontend.git
    cd recruitwise
    npm install
    npm run dev
